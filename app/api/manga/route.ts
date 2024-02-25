@@ -4,7 +4,7 @@ import {HydratedDocument} from "mongoose";
 import {MangaDB} from "@/app/types";
 import {MangaSchema} from "@/app/lib/zodSchemas";
 
-export async function GET (req: Request, {params}: {params: {id: string}}) {
+export async function GET (req: Request) {
   try {
     const mangas: HydratedDocument<MangaDB>[] = await Manga.find();
 
