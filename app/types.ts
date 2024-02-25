@@ -7,6 +7,10 @@ export type ComicsType = z.infer<typeof ComicsTypeSchema>
 
 export type Manga = z.infer<typeof MangaSchema>
 
+// Manga type that is received from mongoDB
+export interface MangaDB extends Omit<Manga, "chapters"> {
+  chapters: Types.ObjectId[]
+}
 
 export type Chapter = z.infer<typeof ChapterSchema>;
 export type Image = z.infer<typeof ImageSchema>;

@@ -1,7 +1,6 @@
 import mongoose, {model, Schema} from "mongoose";
 import {Manga} from "@/app/types";
 import {MangaStatusSchema, ComicsTypeSchema} from "@/app/lib/zodSchemas";
-import {ChapterSchema} from "@/app/models/Chapter";
 
 const MangaSchema = new Schema<Manga>({
   title: {
@@ -29,7 +28,10 @@ const MangaSchema = new Schema<Manga>({
     enum: ComicsTypeSchema.Enum,
     required: [true, "Manga must have a type"]
   },
-  chapters: [ChapterSchema]
+  chapters: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Chapter'
+  }]
 })
 
 export default mongoose.models["Manga"] || model<Manga>("Manga", MangaSchema)
