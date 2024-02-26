@@ -1,5 +1,5 @@
 import {NextResponse} from "next/server";
-import {Chapter as IChapter, MangaDB} from "@/app/types";
+import {Chapter as IChapter, Manga as IManga} from "@/app/types";
 import {ChapterSchema, ObjectIdSchema} from "@/app/lib/zodSchemas";
 import Chapter from "@/app/models/Chapter";
 import Manga from "@/app/models/Manga";
@@ -14,7 +14,7 @@ export async function GET(req: Request, {params}: {params: {id: string}}) {
       return NextResponse.json({message: "Unaccepted form of the id"}, {status: 400});
     }
 
-    const manga: HydratedDocument<MangaDB> | null = await Manga.findById(validatedId.data);
+    const manga: HydratedDocument<IManga> | null = await Manga.findById(validatedId.data);
 
     if (!manga) {
       return NextResponse.json("Manga not found", {status: 400});
@@ -46,7 +46,7 @@ export async function POST (req: Request, {params}: {params: {id: unknown}}) {
     }
 
     // Getting manga by validated id
-    const manga: HydratedDocument<MangaDB> | null = await Manga.findById(validatedId.data);
+    const manga: HydratedDocument<IManga> | null = await Manga.findById(validatedId.data);
 
     if (!manga)
       return NextResponse.json("Manga not found", {status: 400});

@@ -1,16 +1,24 @@
-import {Chapter, Manga, MangaDB} from "@/app/types";
+import {Chapter, Manga} from "@/app/types";
 
 const baseUrl = process.env.SITE_URL + "/api/manga/";
 
-export function getManga(id: string): Promise<MangaDB> {
-  return fetch(baseUrl + id).then(res => res.json());
+export function getManga(id: string): Promise<Manga> {
+  return fetch(baseUrl + id,{
+    next: {
+      revalidate: 60 * 10
+    }
+  }).then(res => res.json());
 }
 
-export function getMangas(): Promise<MangaDB[]> {
-  return fetch(baseUrl).then(res => res.json());
+export function getMangas(): Promise<Manga[]> {
+  return fetch(baseUrl, {
+    next: {
+      revalidate: 60 * 60
+    }
+  }).then(res => res.json());
 }
 
-export function newManga(manga: Manga): Promise<MangaDB> {
+export function newManga(manga: Manga): Promise<Manga> {
   return fetch(baseUrl, {
     method: "POST",
     body: JSON.stringify(manga)
@@ -18,7 +26,11 @@ export function newManga(manga: Manga): Promise<MangaDB> {
 }
 
 export function getChapter(mangaId: string, chapterNr: number): Promise<Chapter> {
-  return fetch(`${baseUrl}${mangaId}/${chapterNr}`).then(res => res.json());
+  return fetch(`${baseUrl}${mangaId}/${chapterNr}`,{
+    next: {
+      revalidate: 60 * 60 * 12
+    }
+  }).then(res => res.json());
 }
 
 export function newChapter(mangaId: string, chapter: Chapter): Promise<Chapter> {

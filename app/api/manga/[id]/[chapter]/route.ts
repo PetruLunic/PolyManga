@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import Manga from "@/app/models/Manga";
-import {Manga as IManga, MangaDB} from "@/app/types";
+import {Manga as IManga} from "@/app/types";
 import {HydratedDocument} from "mongoose";
 import Chapter from "@/app/models/Chapter";
 import {Chapter as IChapter} from "@/app/types"
@@ -15,7 +15,7 @@ export async function GET (req: Request, {params}: {params: {chapter: string, id
       return NextResponse.json({message: "Unaccepted form of the id"}, {status: 400});
     }
 
-    const manga: HydratedDocument<MangaDB> | null = await Manga.findById(validatedId.data);
+    const manga: HydratedDocument<IManga> | null = await Manga.findById(validatedId.data);
 
     if (!manga)
       return NextResponse.json("Manga not found", {status: 400});

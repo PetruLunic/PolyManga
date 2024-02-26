@@ -1,14 +1,11 @@
-import {Types} from "mongoose";
 import z from "zod";
 import {ChapterSchema, ComicsTypeSchema, ImageSchema, MangaSchema, MangaStatusSchema} from "@/app/lib/zodSchemas";
+import {Types} from "mongoose";
 
 export type MangaStatus = z.infer<typeof MangaStatusSchema>
 export type ComicsType = z.infer<typeof ComicsTypeSchema>
 
-export type Manga = z.infer<typeof MangaSchema>
-
-// Manga type that is received from mongoDB
-export interface MangaDB extends Omit<Manga, "chapters"> {
+export interface Manga extends Omit<z.infer<typeof MangaSchema>, "chapters"> {
   chapters: Types.ObjectId[]
 }
 

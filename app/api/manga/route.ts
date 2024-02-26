@@ -1,12 +1,12 @@
 import Manga from "@/app/models/Manga";
 import {NextResponse} from "next/server";
 import {HydratedDocument} from "mongoose";
-import {MangaDB} from "@/app/types";
+import {Manga as IManga} from "@/app/types";
 import {MangaSchema} from "@/app/lib/zodSchemas";
 
 export async function GET (req: Request) {
   try {
-    const mangas: HydratedDocument<MangaDB>[] = await Manga.find();
+    const mangas: HydratedDocument<IManga>[] = await Manga.find();
 
     return NextResponse.json(mangas);
   } catch(e) {
@@ -29,7 +29,7 @@ export async function POST (req: Request) {
       return NextResponse.json({message: "Manga with this title already exists"}, {status: 400});
     }
 
-    const manga = new Manga(validatedBody.data);
+    const manga: HydratedDocument<IManga> = new Manga(validatedBody.data);
 
     await manga.save();
 

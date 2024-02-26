@@ -1,6 +1,5 @@
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem} from "@nextui-org/react";
 import Link from "next/link";
-import {Button} from "@nextui-org/button";
 import {Input} from "@nextui-org/input";
 
 

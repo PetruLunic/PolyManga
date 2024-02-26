@@ -1,6 +1,7 @@
 import dbConnect from "@/app/lib/dbConnect";
 import {getMangas} from "@/app/lib/service/mangaAPI";
 import {Button} from "@nextui-org/button";
+import MangaCard from "@/app/components/MangaCard";
 
 export default async function Page() {
   await dbConnect();
@@ -9,8 +10,7 @@ export default async function Page() {
 
   return (
       <div>
-        {JSON.stringify(mangas)}
-        <Button>button</Button>
+        <MangaCard manga={mangas[0]}/>
       </div>
   );
 };

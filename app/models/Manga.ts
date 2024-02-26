@@ -31,7 +31,15 @@ const MangaSchema = new Schema<Manga>({
   chapters: [{
     type: Schema.Types.ObjectId,
     ref: 'Chapter'
-  }]
+  }],
+  image: {
+    type: String,
+    required: [true, "Manga must have an image"]
+  },
+  rating: {
+    type: Number,
+    default: 0
+  }
 })
 
 export default mongoose.models["Manga"] || model<Manga>("Manga", MangaSchema)
