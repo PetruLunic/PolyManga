@@ -1,6 +1,7 @@
 import z from "zod";
+import {nanoid} from "nanoid";
 
-export const ObjectIdSchema = z.string().length(24, "Id length should be 24");
+export const IDSchema = z.string().length(nanoid().length);
 
 export const ImageSchema = z.object({
   src: z.string().min(1).max(100),
@@ -9,6 +10,7 @@ export const ImageSchema = z.object({
 })
 
 export const ChapterSchema = z.object({
+  id: IDSchema.optional(),
   title: z.string().min(1).max(50),
   images: z.array(ImageSchema)
 })
@@ -16,14 +18,19 @@ export const ChapterSchema = z.object({
 export const MangaStatusSchema = z.enum(["ONGOING", "PAUSED", "FINISHED"]);
 export const ComicsTypeSchema = z.enum(["manhwa", "manga", "manhua"]);
 
+export const RatingSchema = z.object({
+  value: z.number().positive().max(10).default(0).optional(),
+  nrVotes: z.number().int().positive().default(0).optional()
+})
+
 export const MangaSchema = z.object({
+  id: IDSchema.optional(),
   title: z.string().min(1).max(50),
   description: z.string().min(1).max(2000),
   status: MangaStatusSchema,
   author: z.string().min(1).max(50),
-  chapters: z.array(ObjectIdSchema),
+  chapters: z.array(IDSchema),
   type: ComicsTypeSchema,
   image: z.string().min(1).max(100),
-  rating: z.number().positive().max(10).default(0).optional()
+  rating: RatingSchema.optional()
 })
-

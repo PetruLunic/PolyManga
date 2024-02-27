@@ -1,8 +1,14 @@
 import mongoose, {model, Schema} from "mongoose";
 import {Manga} from "@/app/types";
 import {MangaStatusSchema, ComicsTypeSchema} from "@/app/lib/zodSchemas";
+import {nanoid} from "nanoid";
 
 const MangaSchema = new Schema<Manga>({
+  id: {
+    type: String,
+    default: () => nanoid(),
+    unique: true
+  },
   title: {
     type: String,
     required: [true, "Manga must have a title"],
@@ -29,7 +35,7 @@ const MangaSchema = new Schema<Manga>({
     required: [true, "Manga must have a type"]
   },
   chapters: [{
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: 'Chapter'
   }],
   image: {
@@ -37,8 +43,14 @@ const MangaSchema = new Schema<Manga>({
     required: [true, "Manga must have an image"]
   },
   rating: {
-    type: Number,
-    default: 0
+    value: {
+      type: Number,
+      default: 0
+    },
+    nrVotes: {
+      type: Number,
+      default: 0
+    }
   }
 })
 

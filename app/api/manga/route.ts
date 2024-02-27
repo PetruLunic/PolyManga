@@ -1,4 +1,4 @@
-import Manga from "@/app/models/Manga";
+import Manga from "@/app/lib/models/Manga";
 import {NextResponse} from "next/server";
 import {HydratedDocument} from "mongoose";
 import {Manga as IManga} from "@/app/types";

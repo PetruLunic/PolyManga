@@ -1,23 +1,18 @@
 import {NextResponse} from "next/server";
 import {Chapter as IChapter, Manga as IManga} from "@/app/types";
-import {ChapterSchema, ObjectIdSchema} from "@/app/lib/zodSchemas";
-import Chapter from "@/app/models/Chapter";
-import Manga from "@/app/models/Manga";
+import {ChapterSchema} from "@/app/lib/zodSchemas";
+import Chapter from "@/app/lib/models/Chapter";
+import Manga from "@/app/lib/models/Manga";
 import {HydratedDocument} from "mongoose";
 
 export async function GET(req: Request, {params}: {params: {id: string}}) {
   try{
     const {id} = params;
-    const validatedId = ObjectIdSchema.safeParse(id);
 
-    if (!validatedId.success) {
-      return NextResponse.json({message: "Unaccepted form of the id"}, {status: 400});
-    }
-
-    const manga: HydratedDocument<IManga> | null = await Manga.findById(validatedId.data);
+    const manga: HydratedDocument<IManga> | null = await Manga.findOne({id});
 
     if (!manga) {
-      return NextResponse.json("Manga not found", {status: 400});
+      return NextResponse.json({message: "Manga not found"}, {status: 400});
     }
 
     return NextResponse.json(manga);
@@ -27,15 +22,9 @@ export async function GET(req: Request, {params}: {params: {id: string}}) {
   }
 }
 
-export async function POST (req: Request, {params}: {params: {id: unknown}}) {
+export async function POST (req: Request, {params}: {params: {id: string}}) {
   try {
-    // Getting id from dynamic params and validating it
     const {id} = params;
-    const validatedId = ObjectIdSchema.safeParse(id);
-
-    if (!validatedId.success) {
-      return NextResponse.json({message: "Unaccepted form of the id"}, {status: 400});
-    }
 
     // Getting body from request and validating it
     const body = await req.json();
@@ -46,7 +35,7 @@ export async function POST (req: Request, {params}: {params: {id: unknown}}) {
     }
 
     // Getting manga by validated id
-    const manga: HydratedDocument<IManga> | null = await Manga.findById(validatedId.data);
+    const manga: HydratedDocument<IManga> | null = await Manga.findOne({id});
 
     if (!manga)
       return NextResponse.json("Manga not found", {status: 400});
@@ -57,7 +46,7 @@ export async function POST (req: Request, {params}: {params: {id: unknown}}) {
     await chapter.save();
 
     // Pushing chapter to the manga
-    manga.chapters.push(chapter._id);
+    manga.chapters.push(chapter.id);
 
     await manga.save();
 

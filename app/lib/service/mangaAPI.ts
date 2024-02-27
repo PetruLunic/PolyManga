@@ -2,40 +2,60 @@ import {Chapter, Manga} from "@/app/types";
 
 const baseUrl = process.env.SITE_URL + "/api/manga/";
 
-export function getManga(id: string): Promise<Manga> {
-  return fetch(baseUrl + id,{
+export async function getManga(id: string): Promise<Manga> {
+  const data = await fetch(baseUrl + id,{
     next: {
-      revalidate: 60 * 10
+      revalidate: 1
     }
-  }).then(res => res.json());
+  })
+
+  if (!data.ok) throw data.json();
+
+  return data.json();
 }
 
-export function getMangas(): Promise<Manga[]> {
-  return fetch(baseUrl, {
+export async function getMangas(): Promise<Manga[]> {
+  const data = await fetch(baseUrl, {
     next: {
-      revalidate: 60 * 60
+      revalidate: 1
     }
-  }).then(res => res.json());
+  })
+
+  if (!data.ok) throw data.json();
+
+  return data.json();
 }
 
-export function newManga(manga: Manga): Promise<Manga> {
-  return fetch(baseUrl, {
+export async function newManga(manga: Manga): Promise<Manga> {
+  const data = await fetch(baseUrl, {
     method: "POST",
     body: JSON.stringify(manga)
-  }).then(res => res.json());
+  })
+
+  if (!data.ok) throw data.json();
+
+  return data.json();
 }
 
-export function getChapter(mangaId: string, chapterNr: number): Promise<Chapter> {
-  return fetch(`${baseUrl}${mangaId}/${chapterNr}`,{
+export async function getChapter(mangaId: string, chapterNr: number): Promise<Chapter> {
+  const data = await fetch(`${baseUrl}${mangaId}/${chapterNr}`,{
     next: {
-      revalidate: 60 * 60 * 12
+      revalidate: 1
     }
-  }).then(res => res.json());
+  })
+
+  if (!data.ok) throw data.json();
+
+  return data.json();
 }
 
-export function newChapter(mangaId: string, chapter: Chapter): Promise<Chapter> {
-  return fetch(baseUrl + mangaId, {
+export async function newChapter(mangaId: string, chapter: Chapter): Promise<Chapter> {
+  const data = await fetch(baseUrl + mangaId, {
     method: "POST",
     body: JSON.stringify(chapter)
-  }).then(res => res.json());
+  })
+
+  if (!data.ok) throw data.json();
+
+  return data.json();
 }

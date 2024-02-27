@@ -1,7 +1,13 @@
 import mongoose, {model, Schema} from "mongoose";
 import {Chapter} from "@/app/types";
+import {nanoid} from "nanoid";
 
 export const ChapterSchema = new Schema<Chapter>({
+  id: {
+    type: String,
+    default: () => nanoid(),
+    unique: true
+  },
   title: {
     type: String,
     required: [true, "Chapter must have a title"],
