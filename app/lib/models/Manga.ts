@@ -1,6 +1,6 @@
 import mongoose, {model, Schema} from "mongoose";
 import {Manga} from "@/app/types";
-import {MangaStatusSchema, ComicsTypeSchema} from "@/app/lib/zodSchemas";
+import {MangaStatusSchema, ComicsTypeSchema, ComicsGenreSchema} from "@/app/lib/zodSchemas";
 import {nanoid} from "nanoid";
 
 const MangaSchema = new Schema<Manga>({
@@ -51,6 +51,15 @@ const MangaSchema = new Schema<Manga>({
       type: Number,
       default: 0
     }
+  },
+  genre: {
+    type: [String],
+    enum: ComicsGenreSchema.Enum,
+    default: []
+  },
+  releaseYear: {
+    type: Number,
+    required: [true, "Manga must have a release year"]
   }
 })
 

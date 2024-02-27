@@ -13,10 +13,17 @@ export const ChapterSchema = z.object({
   id: IDSchema.optional(),
   title: z.string().min(1).max(50),
   images: z.array(ImageSchema)
-})
+}).readonly();
 
-export const MangaStatusSchema = z.enum(["ONGOING", "PAUSED", "FINISHED"]);
+export const MangaStatusSchema = z.enum(["ONGOING", "PAUSED", "FINISHED", "DROPPED"]);
 export const ComicsTypeSchema = z.enum(["manhwa", "manga", "manhua"]);
+
+export const ComicsGenreSchema = z.enum([
+    "action", "fantasy", "drama", "harem", "martial arts", "apocalypse", "cultivation", "game",
+  "hero", "mature", "comedy", "genius MC", "historical", "loli", "mecha", "adventure", "isekai",
+  "magic", "romance", "noble", "return", "time travel", "murim", "rebirth", "school life", "system",
+  "tower", "virtual reality" ,"regression", "sci-fi", "thriller", "tragedy", "villain", "necromancer",
+  "post-apocalyptic", "reincarnation", "revenge", "sport"]);
 
 export const RatingSchema = z.object({
   value: z.number().positive().max(10).default(0).optional(),
@@ -32,5 +39,7 @@ export const MangaSchema = z.object({
   chapters: z.array(IDSchema),
   type: ComicsTypeSchema,
   image: z.string().min(1).max(100),
-  rating: RatingSchema.optional()
-})
+  rating: RatingSchema.optional(),
+  genre: z.array(ComicsGenreSchema),
+  releaseYear: z.number().positive().int()
+}).readonly();
