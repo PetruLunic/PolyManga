@@ -11,6 +11,7 @@ export const ImageSchema = z.object({
 
 export const ChapterSchema = z.object({
   id: IDSchema.optional(),
+  number: z.number().int().min(0).positive(),
   title: z.string().min(1).max(50),
   images: z.array(ImageSchema)
 }).readonly();
@@ -30,6 +31,13 @@ export const RatingSchema = z.object({
   nrVotes: z.number().int().positive().default(0).optional()
 })
 
+export const StatsSchema = z.object({
+  rating: RatingSchema,
+  likes: z.number().int().positive().optional().default(0),
+  bookmarks: z.number().int().positive().optional().default(0),
+  visitors: z.number().int().positive().optional().default(0)
+})
+
 export const MangaSchema = z.object({
   id: IDSchema.optional(),
   title: z.string().min(1).max(50),
@@ -39,7 +47,8 @@ export const MangaSchema = z.object({
   chapters: z.array(IDSchema),
   type: ComicsTypeSchema,
   image: z.string().min(1).max(100),
-  rating: RatingSchema.optional(),
+  stats: StatsSchema,
   genre: z.array(ComicsGenreSchema),
-  releaseYear: z.number().positive().int()
+  releaseYear: z.number().positive().int(),
+  postedOn: z.date().optional()
 }).readonly();

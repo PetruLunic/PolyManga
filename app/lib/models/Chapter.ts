@@ -8,6 +8,11 @@ export const ChapterSchema = new Schema<Chapter>({
     default: () => nanoid(),
     unique: true
   },
+  number: {
+    type: Number,
+    required: [true, "Chapter must have a order number"],
+    min: 0
+  },
   title: {
     type: String,
     required: [true, "Chapter must have a title"],

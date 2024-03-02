@@ -1,9 +1,20 @@
-import mongoose, {model, Schema} from "mongoose";
-import {Manga} from "@/app/types";
+import mongoose, {HydratedDocument, Model, model, Schema} from "mongoose";
+import {MangaCard, MangaDB, Chapter as IChapter, Manga as IManga} from "@/app/types";
 import {MangaStatusSchema, ComicsTypeSchema, ComicsGenreSchema} from "@/app/lib/zodSchemas";
 import {nanoid} from "nanoid";
+import Chapter from "@/app/lib/models/Chapter";
 
-const MangaSchema = new Schema<Manga>({
+interface MangaMethods {
+  getVisitorsNr(): number,
+}
+
+// static methods
+interface MangaModel extends Model<MangaDB, {}, MangaMethods> {
+  getCardForm(id: string): Promise<HydratedDocument<MangaCard, MangaMethods> | null>
+  getFullForm(id: string): Promise<HydratedDocument<IManga, MangaMethods> | null>
+}
+
+const MangaSchema = new Schema<MangaDB, MangaModel, MangaMethods>({
   id: {
     type: String,
     default: () => nanoid(),
@@ -42,14 +53,28 @@ const MangaSchema = new Schema<Manga>({
     type: String,
     required: [true, "Manga must have an image"]
   },
-  rating: {
-    value: {
+  stats: {
+    rating: {
+      value: {
+        type: Number,
+        default: 0
+      },
+      nrVotes: {
+        type: Number,
+        default: 0
+      }
+    },
+    likes: {
       type: Number,
       default: 0
     },
-    nrVotes: {
+    bookmarks: {
       type: Number,
       default: 0
+    },
+    visitors: {
+      type: [String],
+      default: []
     }
   },
   genre: {
@@ -60,7 +85,45 @@ const MangaSchema = new Schema<Manga>({
   releaseYear: {
     type: Number,
     required: [true, "Manga must have a release year"]
+  },
+  postedOn: {
+    type: Date,
+    default: Date.now
   }
 })
 
-export default mongoose.models["Manga"] || model<Manga>("Manga", MangaSchema)
+MangaSchema.methods.getVisitorsNr = function() {
+  return this.stats.visitors.length;
+}
+
+MangaSchema.statics.getCardForm = async function(id: string): Promise<HydratedDocument<MangaCard> | null>{
+  const manga = await this.findOne({id}, "title image chapters stats")
+
+  if (!manga) return null;
+
+  const lastChapter: HydratedDocument<IChapter> | null = await Chapter.findOne({id: manga.chapters[manga.chapters.length - 1]});
+
+  const mangaCard: MangaCard = {
+    title: manga.title,
+    image: manga.image,
+    chapter: lastChapter?.number || manga.chapters.length - 1,
+    rating: manga.stats.rating.value || 0,
+    status: manga.status,
+    type: manga.type
+  }
+
+  return mongoose.models.Manga.hydrate(mangaCard);
+}
+
+MangaSchema.static("getFullForm", async function getFullForm(id: string): Promise<HydratedDocument<IManga> | null> {
+  const manga: HydratedDocument<MangaDB> | null = await this.findOne({id});
+
+  if (!manga) return null;
+
+  // Getting manga with modified visitors array into a number of visitors length
+  const modifiedManga: IManga = {...manga, stats: {...manga.stats, visitors: manga.stats.visitors.length}}
+
+  return mongoose.models.Manga.hydrate(modifiedManga);
+});
+
+export default mongoose.models["Manga"] || model<MangaDB, MangaModel>("Manga", MangaSchema)

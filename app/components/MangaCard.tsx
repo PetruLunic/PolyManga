@@ -10,7 +10,7 @@ interface Props{
 export default async function MangaCard({manga}: Props) {
 
  return (
-     <Card shadow="sm" isPressable>
+     <Card shadow="sm" isPressable isBlurred>
        <Link href={`/manga/${manga.id}`}>
          <Badge
              className="right-0 translate-x-0"

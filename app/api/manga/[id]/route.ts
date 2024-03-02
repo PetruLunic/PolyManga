@@ -1,19 +1,32 @@
-import {NextResponse} from "next/server";
-import {Chapter as IChapter, Manga as IManga} from "@/app/types";
+import {NextRequest, NextResponse} from "next/server";
+import {Chapter as IChapter, MangaDB} from "@/app/types";
 import {ChapterSchema} from "@/app/lib/zodSchemas";
 import Chapter from "@/app/lib/models/Chapter";
 import Manga from "@/app/lib/models/Manga";
 import {HydratedDocument} from "mongoose";
 
-export async function GET(req: Request, {params}: {params: {id: string}}) {
+export async function GET(req: NextRequest, {params}: {params: {id: string}}) {
   try{
     const {id} = params;
+    const query = req.nextUrl.searchParams;
 
-    const manga: HydratedDocument<IManga> | null = await Manga.findOne({id});
+    const form = query.get("form");
+
+    // Initializing manga as null
+    let manga: HydratedDocument<MangaDB> | null = await Manga.getFull;
+
+    // Getting different forms of manga
+    if (form === "minimum") {
+      manga = await Manga.findOne({id}, "title image chapters stats");
+    } else {
+      manga = await Manga.findOne({id});
+    }
 
     if (!manga) {
       return NextResponse.json({message: "Manga not found"}, {status: 400});
     }
+
+    manga.stats.visitors = manga.stats.visitors.length;
 
     return NextResponse.json(manga);
   } catch (e) {
@@ -35,7 +48,7 @@ export async function POST (req: Request, {params}: {params: {id: string}}) {
     }
 
     // Getting manga by validated id
-    const manga: HydratedDocument<IManga> | null = await Manga.findOne({id});
+    const manga: HydratedDocument<MangaDB> | null = await Manga.findOne({id});
 
     if (!manga)
       return NextResponse.json("Manga not found", {status: 400});
