@@ -8,6 +8,8 @@ import {
   MangaStatusSchema, StatsSchema
 } from "@/app/lib/zodSchemas";
 
+import {Document} from "mongoose";
+
 export type MangaStatus = z.infer<typeof MangaStatusSchema>;
 export type ComicsType = z.infer<typeof ComicsTypeSchema>;
 export type MangaStats = z.infer<typeof StatsSchema>;
@@ -20,7 +22,7 @@ export interface MangaDBStats extends Omit<MangaStats, "visitors"> {
 export type Manga = z.infer<typeof MangaSchema>;
 
 // Type for manga stored in DB
-export interface MangaDB extends Omit<Manga, "stats"> {
+export interface MangaDB extends Omit<Manga, "stats">, Omit<Document, "id">{
   stats: MangaDBStats
 }
 

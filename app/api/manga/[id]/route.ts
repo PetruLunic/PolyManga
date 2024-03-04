@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, {params}: {params: {id: string}}) {
     const form = query.get("form");
 
     // Initializing manga as null
-    let manga: HydratedDocument<MangaDB> | null = await Manga.getFull;
+    let manga: HydratedDocument<MangaDB> | null;
 
     // Getting different forms of manga
     if (form === "minimum") {
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest, {params}: {params: {id: string}}) {
       return NextResponse.json({message: "Manga not found"}, {status: 400});
     }
 
-    manga.stats.visitors = manga.stats.visitors.length;
+    // manga.stats.visitors = manga.stats.visitors.length;
 
     return NextResponse.json(manga);
   } catch (e) {

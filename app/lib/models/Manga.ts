@@ -1,20 +1,20 @@
-import mongoose, {HydratedDocument, Model, model, Schema} from "mongoose";
+import mongoose, {HydratedDocument, model, Schema} from "mongoose";
 import {MangaCard, MangaDB, Chapter as IChapter, Manga as IManga} from "@/app/types";
 import {MangaStatusSchema, ComicsTypeSchema, ComicsGenreSchema} from "@/app/lib/zodSchemas";
 import {nanoid} from "nanoid";
 import Chapter from "@/app/lib/models/Chapter";
 
-interface MangaMethods {
-  getVisitorsNr(): number,
-}
+// interface MangaMethods {
+//   getVisitorsNr(): number,
+// }
+//
+// // static methods
+// interface MangaModel extends Model<MangaDB, {}, MangaMethods> {
+//   getCardForm(id: string): Promise<HydratedDocument<MangaCard, MangaMethods> | null>
+//   getFullForm(id: string): Promise<HydratedDocument<IManga, MangaMethods> | null>
+// }
 
-// static methods
-interface MangaModel extends Model<MangaDB, {}, MangaMethods> {
-  getCardForm(id: string): Promise<HydratedDocument<MangaCard, MangaMethods> | null>
-  getFullForm(id: string): Promise<HydratedDocument<IManga, MangaMethods> | null>
-}
-
-const MangaSchema = new Schema<MangaDB, MangaModel, MangaMethods>({
+const MangaSchema = new Schema<MangaDB>({
   id: {
     type: String,
     default: () => nanoid(),
@@ -126,4 +126,4 @@ MangaSchema.static("getFullForm", async function getFullForm(id: string): Promis
   return mongoose.models.Manga.hydrate(modifiedManga);
 });
 
-export default mongoose.models["Manga"] || model<MangaDB, MangaModel>("Manga", MangaSchema)
+export default mongoose.models["Manga"] || model<MangaDB>("Manga", MangaSchema)

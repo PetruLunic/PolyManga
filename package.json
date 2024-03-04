@@ -9,9 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.9.5",
+    "@apollo/server": "^4.10.0",
     "@aws-sdk/client-s3": "^3.515.0",
     "@nextui-org/react": "^2.2.9",
     "framer-motion": "^11.0.6",
+    "graphql": "^16.8.1",
     "mongoose": "^8.2.0",
     "nanoid": "^5.0.6",
     "next": "14.1.0",
