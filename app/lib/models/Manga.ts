@@ -1,18 +1,10 @@
-import mongoose, {HydratedDocument, model, Schema} from "mongoose";
-import {MangaCard, MangaDB, Chapter as IChapter, Manga as IManga} from "@/app/types";
-import {MangaStatusSchema, ComicsTypeSchema, ComicsGenreSchema} from "@/app/lib/zodSchemas";
+import mongoose, {HydratedDocument, Model, model, Query, Schema} from "mongoose";
+import {Manga as TGManga} from "@/app/lib/graphql/schema";
+import {MangaDB, ComicsStatus, ComicsType} from "@/app/types";
+import {ComicsGenreSchema} from "@/app/lib/zodSchemas";
 import {nanoid} from "nanoid";
-import Chapter from "@/app/lib/models/Chapter";
 
-// interface MangaMethods {
-//   getVisitorsNr(): number,
-// }
-//
-// // static methods
-// interface MangaModel extends Model<MangaDB, {}, MangaMethods> {
-//   getCardForm(id: string): Promise<HydratedDocument<MangaCard, MangaMethods> | null>
-//   getFullForm(id: string): Promise<HydratedDocument<IManga, MangaMethods> | null>
-// }
+interface MangaModel extends Model<MangaDB> {}
 
 const MangaSchema = new Schema<MangaDB>({
   id: {
@@ -24,6 +16,7 @@ const MangaSchema = new Schema<MangaDB>({
     type: String,
     required: [true, "Manga must have a title"],
     maxlength: [50, "Title cannot be more than 50 characters"],
+    unique: true
   },
   author: {
     type: String,
@@ -37,12 +30,12 @@ const MangaSchema = new Schema<MangaDB>({
   },
   status: {
     type: String,
-    enum: MangaStatusSchema.Enum,
-    required: [true, "Manga must have a description"]
+    enum: ComicsStatus,
+    default: ComicsStatus.ONGOING
   },
   type: {
     type: String,
-    enum: ComicsTypeSchema.Enum,
+    enum: ComicsType,
     required: [true, "Manga must have a type"]
   },
   chapters: [{
@@ -57,7 +50,7 @@ const MangaSchema = new Schema<MangaDB>({
     rating: {
       value: {
         type: Number,
-        default: 0
+        default: 0,
       },
       nrVotes: {
         type: Number,
@@ -77,7 +70,7 @@ const MangaSchema = new Schema<MangaDB>({
       default: []
     }
   },
-  genre: {
+  genres: {
     type: [String],
     enum: ComicsGenreSchema.Enum,
     default: []
@@ -87,43 +80,35 @@ const MangaSchema = new Schema<MangaDB>({
     required: [true, "Manga must have a release year"]
   },
   postedOn: {
-    type: Date,
-    default: Date.now
+    type: String,
+    default: () => new Date().toDateString()
   }
 })
 
-MangaSchema.methods.getVisitorsNr = function() {
-  return this.stats.visitors.length;
+export function toClient(manga: MangaDB): TGManga {
+  return {
+    ...manga,
+    stats: {
+      ...manga.stats,
+      visitors: manga.stats.visitors.length
+    }
+  } as TGManga
 }
 
-MangaSchema.statics.getCardForm = async function(id: string): Promise<HydratedDocument<MangaCard> | null>{
-  const manga = await this.findOne({id}, "title image chapters stats")
+export function toClientMany(mangas: MangaDB[]): TGManga[] {
+  const newMangas: TGManga[] = [];
 
-  if (!manga) return null;
+  mangas.forEach(manga => {
+    newMangas.push({
+      ...manga,
+      stats: {
+        ...manga.stats,
+        visitors: manga.stats.visitors.length
+      }
+    } as TGManga)
+  })
 
-  const lastChapter: HydratedDocument<IChapter> | null = await Chapter.findOne({id: manga.chapters[manga.chapters.length - 1]});
-
-  const mangaCard: MangaCard = {
-    title: manga.title,
-    image: manga.image,
-    chapter: lastChapter?.number || manga.chapters.length - 1,
-    rating: manga.stats.rating.value || 0,
-    status: manga.status,
-    type: manga.type
-  }
-
-  return mongoose.models.Manga.hydrate(mangaCard);
+  return newMangas;
 }
 
-MangaSchema.static("getFullForm", async function getFullForm(id: string): Promise<HydratedDocument<IManga> | null> {
-  const manga: HydratedDocument<MangaDB> | null = await this.findOne({id});
-
-  if (!manga) return null;
-
-  // Getting manga with modified visitors array into a number of visitors length
-  const modifiedManga: IManga = {...manga, stats: {...manga.stats, visitors: manga.stats.visitors.length}}
-
-  return mongoose.models.Manga.hydrate(modifiedManga);
-});
-
-export default mongoose.models["Manga"] || model<MangaDB>("Manga", MangaSchema)
+export default mongoose.models["Manga"] as MangaModel || model<MangaDB, MangaModel>("Manga", MangaSchema);

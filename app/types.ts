@@ -1,28 +1,25 @@
 import z from "zod";
 import {
   ChapterSchema,
-  ComicsGenreSchema,
-  ComicsTypeSchema,
   ImageSchema,
   MangaSchema,
-  MangaStatusSchema, StatsSchema
+  ComicsStatsSchema
 } from "@/app/lib/zodSchemas";
+import {Manga as TGManga} from "@/app/lib/graphql/schema"
 
 import {Document} from "mongoose";
 
-export type MangaStatus = z.infer<typeof MangaStatusSchema>;
-export type ComicsType = z.infer<typeof ComicsTypeSchema>;
-export type MangaStats = z.infer<typeof StatsSchema>;
+export type ComicsStats = z.infer<typeof ComicsStatsSchema>;
 
 // Type for manga stats stored in DB
-export interface MangaDBStats extends Omit<MangaStats, "visitors"> {
+export interface MangaDBStats extends Omit<ComicsStats, "visitors"> {
   visitors: string[]
 }
 
 export type Manga = z.infer<typeof MangaSchema>;
 
 // Type for manga stored in DB
-export interface MangaDB extends Omit<Manga, "stats">, Omit<Document, "id">{
+export interface MangaDB extends Omit<TGManga, "stats"> {
   stats: MangaDBStats
 }
 
@@ -41,4 +38,55 @@ export const MangaStatusBadgeColor = {
   "DROPPED": "danger"
 } as const
 
-export type ComicsGenre = z.infer<typeof ComicsGenreSchema>
+export enum ComicsType {
+  manga = "manga",
+  manhwa = "manhwa",
+  manhua = "manhua"
+}
+
+export enum ComicsStatus {
+  ONGOING = "ONGOING",
+  FINISHED = "FINISHED",
+  PAUSED = "PAUSED",
+  DROPPED = "DROPPED"
+}
+
+export enum ComicsGenre {
+    action = 'action',
+    fantasy = 'fantasy',
+    drama = 'drama',
+    harem = 'harem',
+    martial_arts = 'martial_arts',
+    apocalypse = 'apocalypse',
+    cultivation = 'cultivation',
+    game = 'game',
+    hero = 'hero',
+    mature = 'mature',
+    comedy = 'comedy',
+    genius_MC = 'genius_MC',
+    historical = 'historical',
+    loli = 'loli',
+    mecha = 'mecha',
+    adventure = 'adventure',
+    isekai = 'isekai',
+    magic = 'magic',
+    romance = 'romance',
+    noble = 'noble',
+    time_travel = 'time_travel',
+    murim = 'murim',
+    rebirth = 'rebirth',
+    school_life = 'school_life',
+    system = 'system',
+    tower = 'tower',
+    virtual_reality = 'virtual_reality',
+    regression = 'regression',
+    sci_fi = 'sci_fi',
+    thriller = 'thriller',
+    tragedy = 'tragedy',
+    villain = 'villain',
+    necromancer = 'necromancer',
+    post_apocalyptic = 'post_apocalyptic',
+    reincarnation = 'reincarnation',
+    revenge = 'revenge',
+    sport = 'sport'
+}

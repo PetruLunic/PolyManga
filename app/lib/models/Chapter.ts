@@ -1,5 +1,5 @@
 import mongoose, {model, Schema} from "mongoose";
-import {Chapter} from "@/app/types";
+import {Chapter} from "@/app/lib/graphql/schema";
 import {nanoid} from "nanoid";
 
 export const ChapterSchema = new Schema<Chapter>({
@@ -17,6 +17,10 @@ export const ChapterSchema = new Schema<Chapter>({
     type: String,
     required: [true, "Chapter must have a title"],
     maxlength: [50, "Title cannot be more than 50 characters"]
+  },
+  mangaId: {
+    type: String,
+    required: [true, "Chapter must be linked to a manga"]
   },
   images: [{
     src: {

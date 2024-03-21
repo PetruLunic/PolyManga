@@ -1,6 +1,6 @@
 import {Chapter, Manga} from "@/app/types";
 
-const baseUrl = process.env.SITE_URL + "/api/manga/";
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL + "/api/manga/";
 
 export async function getManga(id: string): Promise<Manga> {
   const data = await fetch(baseUrl + id,{
