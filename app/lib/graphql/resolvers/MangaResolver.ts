@@ -10,7 +10,13 @@ export class MangaResolver {
   async manga(@Arg('id', () => ID) id: string): Promise<Manga | null> {
     const manga = await MangaModel.findOne({id}).lean();
 
-    if (!manga) return null;
+    if (!manga) {
+      throw new GraphQLError("Manga not found", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
 
     return toClient(manga);
   }
@@ -41,7 +47,21 @@ export class MangaResolver {
 
   @Mutation(() => ID)
   async deleteManga(@Arg("id") id: string): Promise<string> {
-    await MangaModel.findOneAndDelete({id});
+    const manga = await MangaModel.findOne({id});
+
+    if (!manga) {
+      throw new GraphQLError("Manga not found", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
+    await manga.deleteOne()
+
+    // Deleting the manga's chapters
+    await ChapterModel.deleteMany({id: {$in: manga.chapters}});
+
     return id;
   }
 
