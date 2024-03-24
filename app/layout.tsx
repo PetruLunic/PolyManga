@@ -19,9 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-          style={{backgroundImage: "url(https://img.freepik.com/free-vector/blurred-abstract-background-design_1107-169.jpg)"}}
-          className={inter.className + " min-h-screen bg-fixed relative bg-cover bg-no-repeat bg-center " +
-              "before:bg-black/65 before:content-[''] before:h-full before:w-full before:block before:t-0 before:l-0 before:absolute"
+          className={inter.className + " before:bg-[url('https://img.freepik.com/free-vector/blurred-abstract-background-design_1107-169.jpg')]" +
+              " bg-black/50 min-h-screen before:bg-fixed before:bg-cover before:bg-no-repeat before:bg-center " +
+              "before:bg-black/50 before:content-[''] before:h-full before:w-full before:block before:t-0 before:l-0 before:fixed before:z-[-1]"
       }>
         <Providers>
           <NavBar/>

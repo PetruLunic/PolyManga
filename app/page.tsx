@@ -1,9 +1,12 @@
-import dbConnect from "@/app/lib/dbConnect";
-import {getMangas} from "@/app/lib/service/mangaAPI";
 import MangaCard from "@/app/components/MangaCard";
+import createApolloClient from "@/app/lib/apollo-client";
+import {GET_MANGA_CARDS} from "@/app/lib/graphql/queries";
 
 export default async function Page() {
-  const mangas = await getMangas()
+  const client = createApolloClient();
+  const {data} = await client.query({query: GET_MANGA_CARDS})
+
+  const {mangas} = data;
 
   return (
       <div>

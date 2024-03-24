@@ -11,7 +11,8 @@ export const GET_MANGA = gql(`
     chapters {
       id,
       title,
-      number
+      number,
+      postedOn
     },
     status,
     type,
@@ -31,3 +32,47 @@ export const GET_MANGA = gql(`
 }
 `)
 
+export const GET_CHAPTER = gql(`
+  query chapter($id: ID!) {
+    chapter(id: $id) {
+      id,
+      title,
+      number,
+      images {
+        src,
+        width,
+        height
+      },
+      mangaId,
+      isFirst,
+      isLast,
+      nextChapter {
+        id
+      },
+      prevChapter {
+        id
+      }
+    }
+  }
+`)
+
+export const GET_MANGA_CARDS = gql(`
+  query mangas {
+    mangas {
+      id,
+      title,
+      image,
+      type,
+      status,
+      stats {
+        rating {
+          value
+        }
+      },
+      latestChapter {
+        id
+        number
+      }
+    }
+  }
+`)

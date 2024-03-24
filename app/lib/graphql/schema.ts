@@ -66,7 +66,22 @@ export class Chapter {
   images: ChapterImage[];
 
   @Field(() => ID)
-  mangaId: string
+  mangaId: string;
+
+  @Field()
+  postedOn: string;
+
+  @Field()
+  isFirst: boolean;
+
+  @Field()
+  isLast: boolean;
+
+  @Field(() => Chapter, {nullable: true})
+  nextChapter?: Chapter;
+
+  @Field(() => Chapter, {nullable: true})
+  prevChapter?: Chapter;
 }
 
 @ObjectType()
@@ -106,6 +121,9 @@ export class Manga {
 
   @Field(() => ComicsStats)
   stats: ComicsStats;
+
+  @Field(() => Chapter, {nullable: true})
+  latestChapter?: Chapter;
 }
 
 /********************  INPUTS  ********************/

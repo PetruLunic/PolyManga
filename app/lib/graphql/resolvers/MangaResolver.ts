@@ -67,6 +67,15 @@ export class MangaResolver {
 
   @FieldResolver(() => [Chapter])
   async chapters(@Root() manga: Manga): Promise<Chapter[]> {
-    return ChapterModel.find({id: {$in: manga.chapters}});
+    // Return manga's chapters sorted ascending by chapter's number
+    return ChapterModel.find({id: {$in: manga.chapters}})
+        .then((chapters: Chapter[]) => chapters.sort((c1, c2) => c1.number - c2.number));
+  }
+
+  @FieldResolver(() => Chapter)
+  async latestChapter(@Root() manga: Manga): Promise<Chapter> {
+    return ChapterModel.find({id: {$in: manga.chapters}})
+        .then((chapters: Chapter[]) =>
+            chapters.sort((c1, c2) => c1.number - c2.number)[manga.chapters.length - 1]);
   }
 }

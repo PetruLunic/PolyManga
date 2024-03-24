@@ -1,4 +1,4 @@
-import {Arg, ID, Mutation, Query, Resolver} from "type-graphql";
+import {Arg, FieldResolver, ID, Mutation, Query, Resolver, Root} from "type-graphql";
 import {AddChapterInput, Chapter} from "@/app/lib/graphql/schema";
 import ChapterModel from "@/app/lib/models/Chapter";
 import {GraphQLError} from "graphql/error";
@@ -79,10 +79,44 @@ export class ChapterResolver {
       })
     }
 
-    // Deleting id of the chapter from linked manga
-    manga.chapters = manga.chapters.filter(chapter => chapter !== id);
     await manga.save();
 
     return id;
+  }
+
+  // Check if the chapter is the first
+  @FieldResolver(() => Boolean)
+  async isFirst(@Root() chapter: Chapter): Promise<boolean> {
+    return ChapterModel.find({mangaId: chapter.mangaId})
+        .then((res: Chapter[]) =>
+          !res.some(ch => ch.number < chapter.number)
+        )
+  }
+
+  // Check if the chapter is the last
+  @FieldResolver(() => Boolean)
+  async isLast(@Root() chapter: Chapter): Promise<boolean> {
+    return ChapterModel.find({mangaId: chapter.mangaId})
+        .then((res: Chapter[]) =>
+            !res.some(ch => ch.number > chapter.number)
+        )
+  }
+
+  @FieldResolver(() => Chapter, {nullable: true})
+  async nextChapter(@Root() chapter: Chapter): Promise<Chapter | null> {
+    const chapters: Chapter[] = await ChapterModel.find({mangaId: chapter.mangaId}).lean();
+
+    return chapters
+        .sort((ch1, ch2) => ch1.number - ch2.number)
+        .find(ch => ch.number > chapter.number) || null
+  }
+
+  @FieldResolver(() => Chapter, {nullable: true})
+  async prevChapter(@Root() chapter: Chapter): Promise<Chapter | null> {
+    const chapters: Chapter[] = await ChapterModel.find({mangaId: chapter.mangaId}).lean();
+
+    return chapters
+        .sort((ch1, ch2) => ch1.number - ch2.number)
+        .find(ch => ch.number < chapter.number) || null
   }
 }

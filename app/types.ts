@@ -31,12 +31,18 @@ export interface MangaCard extends Pick<Manga, "title" | "image" | "status" | "t
 export type Chapter = z.infer<typeof ChapterSchema>;
 export type Image = z.infer<typeof ImageSchema>;
 
-export const MangaStatusBadgeColor = {
-  "ONGOING": "primary",
-  "FINISHED": "success",
-  "PAUSED": "warning",
-  "DROPPED": "danger"
-} as const
+export enum ComicsStatusBadgeColor {
+  "ONGOING" = "primary",
+  "FINISHED" = "success",
+  "PAUSED" = "warning",
+  "DROPPED" = "danger"
+}
+
+export enum ComicsTypeBadgeColor {
+  "manhwa" = "danger",
+  "manga" = "default",
+  "manhua" = "secondary"
+}
 
 export enum ComicsType {
   manga = "manga",

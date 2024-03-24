@@ -21,7 +21,7 @@ export default async function Page({params: {id}}: Props) {
   const {manga} = data;
 
   return (
-  <div className="md:px-4">
+  <div className="md:px-4 flex flex-col gap-3">
     <Card isBlurred>
       <CardBody className="p-2 md:p-4">
         <div className="flex flex-col md:flex-row gap-4">
@@ -117,25 +117,38 @@ export default async function Page({params: {id}}: Props) {
     <Card isBlurred>
       <CardBody className="p-2 md:p-4">
         <div className="flex flex-col gap-4">
-          <h3 className="text-center text-lg font-bold md:text-left">Chapter list</h3>
+          <h3 className="text-center text-lg font-bold md:text-left">Chapters list</h3>
           <div className="flex gap-2">
-            <Button color="primary" size="lg" className="w-1/2" as={Link} href={`${process.env.NEXT_PUBLIC_SITE_URL}/manga/${id}/${chapter.number}`}>
-              Chapter {manga?.chapters.reduce((acc, chapter) => Math.min(acc, chapter.number), 9999)}
+            <Button
+                color="primary"
+                size="lg"
+                className="w-1/2"
+                as={Link}
+                href={`${process.env.NEXT_PUBLIC_SITE_URL}/manga/${id}/${manga?.chapters[0].id}`}
+            >
+              Chapter {manga?.chapters[0].number}
             </Button>
-            <Button color="primary" size="lg" className="w-1/2">
-              Chapter {manga?.chapters.reduce((acc, chapter) => Math.max(acc, chapter.number), 0)}
+            <Button
+                color="primary"
+                size="lg"
+                className="w-1/2"
+                as={Link}
+                href={`${process.env.NEXT_PUBLIC_SITE_URL}/manga/${id}/${manga?.chapters[manga?.chapters.length - 1].id}`}
+            >
+              Chapter {manga?.chapters[manga?.chapters.length - 1].number}
             </Button>
           </div>
-          <div className="">
+          <div className="flex flex-col gap-2">
             {manga?.chapters.map((chapter, index) =>
                 <Button
                     key={index}
-                    variant="light"
-                    className="w-full justify-start"
+                    variant="bordered"
+                    className="w-full justify-between"
                     as={Link}
-                    href={`${process.env.NEXT_PUBLIC_SITE_URL}/manga/${id}/${chapter.number}`}
+                    href={`${process.env.NEXT_PUBLIC_SITE_URL}/manga/${id}/${chapter.id}`}
                 >
-                  Chapter {chapter.number}
+                  <span>Chapter {chapter.number}</span>
+                  <span>{new Date(chapter.postedOn).toLocaleDateString()}</span>
                 </Button>
             )}
           </div>

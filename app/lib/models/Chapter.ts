@@ -36,7 +36,11 @@ export const ChapterSchema = new Schema<Chapter>({
       type: Number,
       required: [true, "Image should have a height"],
     }
-  }]
+  }],
+  postedOn: {
+    type: String,
+    default: () => new Date().toISOString()
+  }
 })
 
 export default mongoose.models["Chapter"] || model<Chapter>("Chapter", ChapterSchema)
