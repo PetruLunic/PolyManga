@@ -57,6 +57,18 @@ export enum ComicsStatus {
   DROPPED = "DROPPED"
 }
 
+export enum ChapterLanguage {
+  en = "en",
+  ru = "ru",
+  ro = "ro"
+}
+
+export enum ChapterLanguageFull {
+  en = "English",
+  ru = "Russian",
+  ro = "Romanian"
+}
+
 export enum ComicsGenre {
     action = 'action',
     fantasy = 'fantasy',

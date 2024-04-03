@@ -68,14 +68,26 @@ export class MangaResolver {
   @FieldResolver(() => [Chapter])
   async chapters(@Root() manga: Manga): Promise<Chapter[]> {
     // Return manga's chapters sorted ascending by chapter's number
-    return ChapterModel.find({id: {$in: manga.chapters}})
-        .then((chapters: Chapter[]) => chapters.sort((c1, c2) => c1.number - c2.number));
+    const chapters: Chapter[] = await ChapterModel.find({id: {$in: manga.chapters}}).lean();
+
+    return chapters.sort((c1, c2) => c1.number - c2.number)
   }
 
-  @FieldResolver(() => Chapter)
-  async latestChapter(@Root() manga: Manga): Promise<Chapter> {
-    return ChapterModel.find({id: {$in: manga.chapters}})
-        .then((chapters: Chapter[]) =>
-            chapters.sort((c1, c2) => c1.number - c2.number)[manga.chapters.length - 1]);
+  @FieldResolver(() => Chapter, {nullable: true})
+  async latestChapter(@Root() manga: Manga): Promise<Chapter | null> {
+    const chapters = await ChapterModel.find({id: {$in: manga.chapters}})
+
+    if (chapters.length === 0) return null;
+
+    return chapters.reduce((acc: Chapter, ch) => acc.number > ch.number ? acc : ch, chapters[0])
+  }
+
+  @FieldResolver(() => Chapter, {nullable: true})
+  async firstChapter(@Root() manga: Manga): Promise<Chapter | null> {
+    const chapters = await ChapterModel.find({id: {$in: manga.chapters}})
+
+    if (chapters.length === 0) return null;
+
+    return chapters.reduce((acc: Chapter, ch) => acc.number < ch.number ? acc : ch, chapters[0])
   }
 }

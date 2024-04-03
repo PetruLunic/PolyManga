@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/app/providers";
-import NavBar from "@/app/NavBar";
+import NavbarRoot from "@/app/_components/NavbarRoot";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,7 +24,7 @@ export default function RootLayout({
               "before:bg-black/50 before:content-[''] before:h-full before:w-full before:block before:t-0 before:l-0 before:fixed before:z-[-1]"
       }>
         <Providers>
-          <NavBar/>
+          <NavbarRoot/>
           <main
               className="w-full max-w-[1024px] mx-auto mt-3"
           >

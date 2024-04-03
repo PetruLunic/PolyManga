@@ -1,6 +1,7 @@
-import MangaCard from "@/app/components/MangaCard";
+import MangaCard from "@/app/_components/MangaCard";
 import createApolloClient from "@/app/lib/apollo-client";
 import {GET_MANGA_CARDS} from "@/app/lib/graphql/queries";
+import mongoose from "mongoose";
 
 export default async function Page() {
   const client = createApolloClient();

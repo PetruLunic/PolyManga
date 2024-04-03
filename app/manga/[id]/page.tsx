@@ -6,6 +6,7 @@ import createApolloClient from "@/app/lib/apollo-client";
 import {IoMdHeartEmpty} from "react-icons/io";
 import {Divider} from "@nextui-org/divider";
 import Link from "next/link";
+import ChapterList from "@/app/_components/ChapterList";
 
 
 interface Props{
@@ -14,7 +15,7 @@ interface Props{
 
 export default async function Page({params: {id}}: Props) {
   const client = createApolloClient();
-  const {loading, data, error} = await client.query({query: GET_MANGA, variables: {id}});
+  const {data, error} = await client.query({query: GET_MANGA, variables: {id}});
 
   if (error) throw new Error("Unexpected error");
 
@@ -124,34 +125,23 @@ export default async function Page({params: {id}}: Props) {
                 size="lg"
                 className="w-1/2"
                 as={Link}
-                href={`${process.env.NEXT_PUBLIC_SITE_URL}/manga/${id}/${manga?.chapters[0].id}`}
+                isDisabled={!manga?.firstChapter}
+                href={`${process.env.NEXT_PUBLIC_SITE_URL}/manga/${id}/${manga?.firstChapter?.id}`}
             >
-              Chapter {manga?.chapters[0].number}
+              Chapter {manga?.firstChapter?.number || "None"}
             </Button>
             <Button
                 color="primary"
                 size="lg"
                 className="w-1/2"
                 as={Link}
-                href={`${process.env.NEXT_PUBLIC_SITE_URL}/manga/${id}/${manga?.chapters[manga?.chapters.length - 1].id}`}
+                isDisabled={!manga?.latestChapter}
+                href={`${process.env.NEXT_PUBLIC_SITE_URL}/manga/${id}/${manga?.latestChapter?.id}`}
             >
-              Chapter {manga?.chapters[manga?.chapters.length - 1].number}
+              Chapter {manga?.latestChapter?.number || "None"}
             </Button>
           </div>
-          <div className="flex flex-col gap-2">
-            {manga?.chapters.map((chapter, index) =>
-                <Button
-                    key={index}
-                    variant="bordered"
-                    className="w-full justify-between"
-                    as={Link}
-                    href={`${process.env.NEXT_PUBLIC_SITE_URL}/manga/${id}/${chapter.id}`}
-                >
-                  <span>Chapter {chapter.number}</span>
-                  <span>{new Date(chapter.postedOn).toLocaleDateString()}</span>
-                </Button>
-            )}
-          </div>
+          <ChapterList chapters={manga?.chapters}/>
         </div>
       </CardBody>
     </Card>

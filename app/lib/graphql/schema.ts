@@ -1,5 +1,5 @@
 import {Field, Float, ID, InputType, Int, ObjectType, registerEnumType} from "type-graphql";
-import {ComicsGenre, ComicsStatus, ComicsType} from "@/app/types";
+import {ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/types";
 import "reflect-metadata";
 
 // Registering enums in types graphql
@@ -13,6 +13,10 @@ registerEnumType(ComicsGenre, {
 
 registerEnumType(ComicsStatus, {
   name: "ComicsStatus"
+})
+
+registerEnumType(ChapterLanguage, {
+  name: "ChapterLanguage"
 })
 
 @ObjectType()
@@ -52,6 +56,15 @@ export class ChapterImage {
 }
 
 @ObjectType()
+export class ChapterVersion {
+  @Field(() => [ChapterImage])
+  images: ChapterImage[]
+
+  @Field(() => ChapterLanguage)
+  language: ChapterLanguage
+}
+
+@ObjectType()
 export class Chapter {
   @Field(() => ID)
   id: string;
@@ -59,11 +72,14 @@ export class Chapter {
   @Field(() => Int)
   number: number;
 
+  @Field(() => [ChapterVersion])
+  versions: ChapterVersion[]
+
+  @Field(() => [ChapterLanguage])
+  languages: ChapterLanguage[]
+
   @Field()
   title: string;
-
-  @Field(() => [ChapterImage])
-  images: ChapterImage[];
 
   @Field(() => ID)
   mangaId: string;
@@ -124,6 +140,9 @@ export class Manga {
 
   @Field(() => Chapter, {nullable: true})
   latestChapter?: Chapter;
+
+  @Field(() => Chapter, {nullable: true})
+  firstChapter?: Chapter;
 }
 
 /********************  INPUTS  ********************/
@@ -168,6 +187,15 @@ export class ImageInput implements ChapterImage {
 }
 
 @InputType()
+export class ChapterVersionInput implements ChapterVersion {
+  @Field(() => [ImageInput])
+  images: ImageInput[]
+
+  @Field(() => ChapterLanguage)
+  language: ChapterLanguage
+}
+
+@InputType()
 export class AddChapterInput implements Partial<Chapter> {
   @Field()
   title: string;
@@ -175,8 +203,8 @@ export class AddChapterInput implements Partial<Chapter> {
   @Field(() => Int)
   number: number;
 
-  @Field(() => [ImageInput])
-  images: ImageInput[];
+  @Field(() => [ChapterVersionInput])
+  versions: ChapterVersionInput[];
 
   @Field(() => ID)
   mangaId: string;

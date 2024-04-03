@@ -1,6 +1,7 @@
 import mongoose, {model, Schema} from "mongoose";
 import {Chapter} from "@/app/lib/graphql/schema";
 import {nanoid} from "nanoid";
+import {ChapterLanguage} from "@/app/types";
 
 export const ChapterSchema = new Schema<Chapter>({
   id: {
@@ -22,20 +23,27 @@ export const ChapterSchema = new Schema<Chapter>({
     type: String,
     required: [true, "Chapter must be linked to a manga"]
   },
-  images: [{
-    src: {
+  versions: [{
+    language: {
       type: String,
-      required: [true, "Image should have a source"],
-      maxlength: [100, "Source cannot be more than 100 characters"]
+      enum: ChapterLanguage,
+      required: true
     },
-    width: {
-      type: Number,
-      required: [true, "Image should have a width"],
-    },
-    height: {
-      type: Number,
-      required: [true, "Image should have a height"],
-    }
+    images: [{
+      src: {
+        type: String,
+        required: [true, "Image should have a source"],
+        maxlength: [100, "Source cannot be more than 100 characters"]
+      },
+      width: {
+        type: Number,
+        required: [true, "Image should have a width"],
+      },
+      height: {
+        type: Number,
+        required: [true, "Image should have a height"],
+      }
+    }]
   }],
   postedOn: {
     type: String,

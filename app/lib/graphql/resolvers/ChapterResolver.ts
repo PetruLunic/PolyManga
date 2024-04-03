@@ -4,6 +4,7 @@ import ChapterModel from "@/app/lib/models/Chapter";
 import {GraphQLError} from "graphql/error";
 import {HydratedDocument} from "mongoose";
 import MangaModel from "@/app/lib/models/Manga";
+import {ChapterLanguage} from "@/app/types";
 
 @Resolver(Chapter)
 export class ChapterResolver {
@@ -116,7 +117,12 @@ export class ChapterResolver {
     const chapters: Chapter[] = await ChapterModel.find({mangaId: chapter.mangaId}).lean();
 
     return chapters
-        .sort((ch1, ch2) => ch1.number - ch2.number)
+        .sort((ch1, ch2) => ch2.number - ch1.number)
         .find(ch => ch.number < chapter.number) || null
+  }
+
+  @FieldResolver(() => [ChapterLanguage])
+  async languages(@Root() chapter: Chapter): Promise<ChapterLanguage[]> {
+    return chapter.versions.map(version => version.language);
   }
 }
