@@ -1,5 +1,5 @@
 import {notFound} from "next/navigation";
-import createApolloClient from "@/app/lib/apollo-client";
+import createApolloClient from "@/app/lib/utils/apollo-client";
 import {GET_CHAPTER} from "@/app/lib/graphql/queries";
 import PrevButton from "@/app/_components/PrevButton";
 import NextButton from "@/app/_components/NextButton";

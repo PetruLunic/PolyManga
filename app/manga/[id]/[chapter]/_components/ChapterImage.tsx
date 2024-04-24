@@ -30,7 +30,7 @@ export default function ChapterImage({image}: Props) {
          <DropdownTrigger onClick={(event) => setOffset(
                event.currentTarget.getBoundingClientRect().top - event.clientY
            )}>
-             <Image src={"/manga/" + image[language]?.src}
+             <Image src={`/manga/${"2FOjpRfEafdpCY0alA-YI"}/${language}/` + image[language]?.src}
                     alt={image[language]?.src} width={image[language]?.width}
                     height={image[language]?.height}
                     radius="none"

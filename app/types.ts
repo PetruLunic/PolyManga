@@ -4,7 +4,7 @@ import {
   ImageSchema,
   MangaSchema,
   ComicsStatsSchema
-} from "@/app/lib/zodSchemas";
+} from "@/app/lib/utils/zodSchemas";
 import {Manga as TGManga} from "@/app/lib/graphql/schema"
 
 import {Document} from "mongoose";
@@ -60,13 +60,15 @@ export enum ComicsStatus {
 export enum ChapterLanguage {
   en = "en",
   ru = "ru",
-  ro = "ro"
+  ro = "ro",
+  fr = "fr"
 }
 
 export enum ChapterLanguageFull {
   en = "English",
   ru = "Russian",
-  ro = "Romanian"
+  ro = "Romanian",
+  fr = "French"
 }
 
 export enum ComicsGenre {

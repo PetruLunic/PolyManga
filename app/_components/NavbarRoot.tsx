@@ -5,10 +5,14 @@ import Link from "next/link";
 import {Input} from "@nextui-org/input";
 import {useParams} from "next/navigation";
 import NavbarChapter from "@/app/_components/NavbarChapter";
+import {useSession} from "next-auth/react";
 
 
 export default function NavbarRoot() {
   const params = useParams<{id: string, chapter: string}>();
+  const session = useSession();
+
+  console.log(session);
 
   if (params.chapter)
     return <NavbarChapter/>

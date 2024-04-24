@@ -145,7 +145,31 @@ export class Manga {
   firstChapter?: Chapter;
 }
 
+@ObjectType()
+export class User {
+  @Field()
+  username: string;
+
+  @Field()
+  email: string;
+
+  @Field()
+  image: string;
+}
+
 /********************  INPUTS  ********************/
+
+@InputType()
+export class AddUserInput implements Partial<User> {
+  @Field()
+  username: string;
+
+  @Field()
+  email: string;
+
+  @Field()
+  password: string;
+}
 
 @InputType()
 export class AddMangaInput implements Partial<Manga> {

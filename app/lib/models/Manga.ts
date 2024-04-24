@@ -1,7 +1,7 @@
 import mongoose, {Model, model, Query, Schema} from "mongoose";
 import {Manga as TGManga} from "@/app/lib/graphql/schema";
 import {MangaDB, ComicsStatus, ComicsType} from "@/app/types";
-import {ComicsGenreSchema} from "@/app/lib/zodSchemas";
+import {ComicsGenreSchema} from "@/app/lib/utils/zodSchemas";
 import {nanoid} from "nanoid";
 import Chapter from "@/app/lib/models/Chapter";
 

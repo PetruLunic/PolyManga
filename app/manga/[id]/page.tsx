@@ -2,7 +2,7 @@ import {Button, Card, CardBody, Image} from "@nextui-org/react";
 import {FaStar} from "react-icons/fa";
 import {IoBookmarks, IoBookmarksOutline, IoEyeOutline} from "react-icons/io5";
 import {GET_MANGA} from "@/app/lib/graphql/queries";
-import createApolloClient from "@/app/lib/apollo-client";
+import createApolloClient from "@/app/lib/utils/apollo-client";
 import {IoMdHeartEmpty} from "react-icons/io";
 import {Divider} from "@nextui-org/divider";
 import Link from "next/link";

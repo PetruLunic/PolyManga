@@ -58,6 +58,7 @@ export type ChapterImage = {
 
 export enum ChapterLanguage {
   En = 'en',
+  Fr = 'fr',
   Ro = 'ro',
   Ru = 'ru'
 }

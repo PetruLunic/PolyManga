@@ -2,7 +2,7 @@
 
 import {ReactNode} from "react";
 import {ApolloProvider} from "@apollo/client";
-import createApolloClient from "@/app/lib/apollo-client";
+import createApolloClient from "@/app/lib/utils/apollo-client";
 
 interface Props{
     children: ReactNode

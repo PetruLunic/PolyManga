@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/app/providers";
 import NavbarRoot from "@/app/_components/NavbarRoot";
+import {SessionProviderProps} from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,11 +12,14 @@ export const metadata: Metadata = {
   description: "Read manga online",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+interface Props {
   children: React.ReactNode;
-}>) {
+  params: {
+    session: SessionProviderProps["session"]
+  }
+}
+
+export default function RootLayout({children, params: {session}}: Props) {
   return (
     <html lang="en" className="dark">
       <body
@@ -23,7 +27,7 @@ export default function RootLayout({
               " bg-black/50 min-h-screen before:bg-fixed before:bg-cover before:bg-no-repeat before:bg-center " +
               "before:bg-black/50 before:content-[''] before:h-full before:w-full before:block before:t-0 before:l-0 before:fixed before:z-[-1]"
       }>
-        <Providers>
+        <Providers session={session}>
           <NavbarRoot/>
           <main
               className="w-full max-w-[1024px] mx-auto mt-3"
