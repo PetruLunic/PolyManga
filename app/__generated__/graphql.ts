@@ -17,6 +17,7 @@ export type Scalars = {
 };
 
 export type AddChapterInput = {
+  id: Scalars['ID']['input'];
   mangaId: Scalars['ID']['input'];
   number: Scalars['Int']['input'];
   title: Scalars['String']['input'];
@@ -36,6 +37,7 @@ export type AddMangaInput = {
 
 export type Chapter = {
   __typename?: 'Chapter';
+  createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   isFirst: Scalars['Boolean']['output'];
   isLast: Scalars['Boolean']['output'];
@@ -46,6 +48,7 @@ export type Chapter = {
   postedOn: Scalars['String']['output'];
   prevChapter?: Maybe<Chapter>;
   title: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
   versions: Array<ChapterVersion>;
 };
 
@@ -57,10 +60,10 @@ export type ChapterImage = {
 };
 
 export enum ChapterLanguage {
-  En = 'en',
-  Fr = 'fr',
-  Ro = 'ro',
-  Ru = 'ru'
+  En = 'En',
+  Fr = 'Fr',
+  Ro = 'Ro',
+  Ru = 'Ru'
 }
 
 export type ChapterVersion = {
@@ -117,7 +120,7 @@ export enum ComicsGenre {
 export type ComicsRating = {
   __typename?: 'ComicsRating';
   nrVotes: Scalars['Int']['output'];
-  value: Scalars['Int']['output'];
+  value: Scalars['Float']['output'];
 };
 
 export type ComicsStats = {
@@ -151,6 +154,7 @@ export type Manga = {
   __typename?: 'Manga';
   author: Scalars['String']['output'];
   chapters: Array<Chapter>;
+  createdAt: Scalars['String']['output'];
   description: Scalars['String']['output'];
   firstChapter?: Maybe<Chapter>;
   genres: Array<ComicsGenre>;
@@ -163,6 +167,7 @@ export type Manga = {
   status: ComicsStatus;
   title: Scalars['String']['output'];
   type: ComicsType;
+  updatedAt: Scalars['String']['output'];
 };
 
 export type Mutation = {
@@ -171,6 +176,7 @@ export type Mutation = {
   addManga: Manga;
   deleteChapter: Scalars['String']['output'];
   deleteManga: Scalars['ID']['output'];
+  signUp?: Maybe<User>;
 };
 
 
@@ -193,11 +199,17 @@ export type MutationDeleteMangaArgs = {
   id: Scalars['String']['input'];
 };
 
+
+export type MutationSignUpArgs = {
+  user: UserSignUp;
+};
+
 export type Query = {
   __typename?: 'Query';
   chapter: Chapter;
   manga?: Maybe<Manga>;
   mangas: Array<Manga>;
+  signIn?: Maybe<User>;
 };
 
 
@@ -209,6 +221,64 @@ export type QueryChapterArgs = {
 export type QueryMangaArgs = {
   id: Scalars['ID']['input'];
 };
+
+
+export type QuerySignInArgs = {
+  user: UserSignIn;
+};
+
+export type User = {
+  __typename?: 'User';
+  createdAt: Scalars['String']['output'];
+  email: Scalars['String']['output'];
+  emailToken?: Maybe<Scalars['String']['output']>;
+  emailTokenExpiry?: Maybe<Scalars['String']['output']>;
+  emailVerified: Scalars['Boolean']['output'];
+  id: Scalars['ID']['output'];
+  image: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  password?: Maybe<Scalars['String']['output']>;
+  provider: UserProvider;
+  role: UserRole;
+  updatedAt: Scalars['String']['output'];
+};
+
+export enum UserProvider {
+  Credentials = 'CREDENTIALS',
+  Facebook = 'FACEBOOK',
+  Google = 'GOOGLE'
+}
+
+export enum UserRole {
+  Admin = 'ADMIN',
+  Moderator = 'MODERATOR',
+  User = 'USER'
+}
+
+export type UserSignIn = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type UserSignUp = {
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type AddChapterMutationVariables = Exact<{
+  chapter: AddChapterInput;
+}>;
+
+
+export type AddChapterMutation = { __typename?: 'Mutation', addChapter: { __typename?: 'Chapter', id: string, mangaId: string, number: number, title: string, postedOn: string, versions: Array<{ __typename?: 'ChapterVersion', language: ChapterLanguage, images: Array<{ __typename?: 'ChapterImage', src: string }> }> } };
+
+export type SignUpMutationVariables = Exact<{
+  user: UserSignUp;
+}>;
+
+
+export type SignUpMutation = { __typename?: 'Mutation', signUp?: { __typename?: 'User', id: string, role: UserRole, image: string } | null };
 
 export type MangaQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -237,8 +307,26 @@ export type Manga_ChapterQueryVariables = Exact<{
 
 export type Manga_ChapterQuery = { __typename?: 'Query', manga?: { __typename?: 'Manga', title: string, chapters: Array<{ __typename?: 'Chapter', id: string, mangaId: string, postedOn: string, number: number }> } | null, chapter: { __typename?: 'Chapter', number: number, languages: Array<ChapterLanguage>, isLast: boolean, isFirst: boolean, prevChapter?: { __typename?: 'Chapter', id: string } | null, nextChapter?: { __typename?: 'Chapter', id: string } | null } };
 
+export type Manga_Chapter_UploadQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
 
+
+export type Manga_Chapter_UploadQuery = { __typename?: 'Query', manga?: { __typename?: 'Manga', latestChapter?: { __typename?: 'Chapter', number: number } | null } | null };
+
+export type SignInQueryVariables = Exact<{
+  user: UserSignIn;
+}>;
+
+
+export type SignInQuery = { __typename?: 'Query', signIn?: { __typename?: 'User', id: string, name: string, email: string, role: UserRole, image: string, emailVerified: boolean } | null };
+
+
+export const AddChapterDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddChapter"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chapter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddChapterInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addChapter"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"chapter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chapter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mangaId"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"src"}}]}},{"kind":"Field","name":{"kind":"Name","value":"language"}}]}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"postedOn"}}]}}]}}]} as unknown as DocumentNode<AddChapterMutation, AddChapterMutationVariables>;
+export const SignUpDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SignUp"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserSignUp"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signUp"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"image"}}]}}]}}]} as unknown as DocumentNode<SignUpMutation, SignUpMutationVariables>;
 export const MangaDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"manga"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"manga"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"author"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"chapters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mangaId"}},{"kind":"Field","name":{"kind":"Name","value":"postedOn"}},{"kind":"Field","name":{"kind":"Name","value":"number"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"genres"}},{"kind":"Field","name":{"kind":"Name","value":"releaseYear"}},{"kind":"Field","name":{"kind":"Name","value":"postedOn"}},{"kind":"Field","name":{"kind":"Name","value":"firstChapter"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}}]}},{"kind":"Field","name":{"kind":"Name","value":"latestChapter"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}}]}},{"kind":"Field","name":{"kind":"Name","value":"stats"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"bookmarks"}},{"kind":"Field","name":{"kind":"Name","value":"likes"}},{"kind":"Field","name":{"kind":"Name","value":"rating"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nrVotes"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"visitors"}}]}}]}}]}}]} as unknown as DocumentNode<MangaQuery, MangaQueryVariables>;
 export const ChapterDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"chapter"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chapter"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"src"}},{"kind":"Field","name":{"kind":"Name","value":"width"}},{"kind":"Field","name":{"kind":"Name","value":"height"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"mangaId"}},{"kind":"Field","name":{"kind":"Name","value":"isFirst"}},{"kind":"Field","name":{"kind":"Name","value":"isLast"}},{"kind":"Field","name":{"kind":"Name","value":"languages"}},{"kind":"Field","name":{"kind":"Name","value":"nextChapter"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"prevChapter"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<ChapterQuery, ChapterQueryVariables>;
 export const MangasDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"mangas"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mangas"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"stats"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rating"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"latestChapter"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}}]}}]}}]}}]} as unknown as DocumentNode<MangasQuery, MangasQueryVariables>;
 export const Manga_ChapterDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"manga_chapter"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mangaId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"chapterId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"manga"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mangaId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"chapters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mangaId"}},{"kind":"Field","name":{"kind":"Name","value":"postedOn"}},{"kind":"Field","name":{"kind":"Name","value":"number"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"chapter"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"chapterId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"languages"}},{"kind":"Field","name":{"kind":"Name","value":"isLast"}},{"kind":"Field","name":{"kind":"Name","value":"isFirst"}},{"kind":"Field","name":{"kind":"Name","value":"prevChapter"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"nextChapter"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<Manga_ChapterQuery, Manga_ChapterQueryVariables>;
+export const Manga_Chapter_UploadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"manga_chapter_upload"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"manga"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"latestChapter"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"number"}}]}}]}}]}}]} as unknown as DocumentNode<Manga_Chapter_UploadQuery, Manga_Chapter_UploadQueryVariables>;
+export const SignInDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SignIn"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserSignIn"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signIn"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerified"}}]}}]}}]} as unknown as DocumentNode<SignInQuery, SignInQueryVariables>;

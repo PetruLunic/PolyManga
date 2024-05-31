@@ -4,6 +4,7 @@ import {NextUIProvider} from "@nextui-org/react";
 import {ThemeProvider} from "next-themes";
 import ApolloClientProvider from "@/app/_components/ApolloClientProvider";
 import {SessionProvider, SessionProviderProps} from "next-auth/react";
+import {ModalsProvider} from "@/app/lib/contexts/ModalsContext";
 
 interface Props{
   children: React.ReactNode;
@@ -20,7 +21,9 @@ export default function Providers({children, session}: Props) {
              attribute="class"
              defaultTheme="dark"
          >
-           {children}
+           <ModalsProvider>
+             {children}
+           </ModalsProvider>
          </ThemeProvider>
        </NextUIProvider>
      </ApolloClientProvider>

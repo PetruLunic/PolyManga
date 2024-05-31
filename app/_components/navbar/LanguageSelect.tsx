@@ -34,6 +34,7 @@ export default function LanguageSelect({languages}: Props) {
    <Select
     items={languagesMap}
     placeholder="Select a language"
+    label="Language"
     size="sm"
     className="w-24 md:w-36 max-w-xs"
     selectedKeys={[language]}

@@ -114,3 +114,26 @@ export const GET_NAVBAR_CHAPTER = gql(`
     }
   }
 `)
+
+export const GET_MANGA_CHAPTER_UPLOAD = gql(`
+  query manga_chapter_upload($id: ID!) {
+    manga(id: $id) {
+      latestChapter {
+        number
+      }
+    }
+  }
+`)
+
+export const SIGN_IN = gql(`
+  query SignIn($user: UserSignIn!) {
+    signIn(user: $user) {
+      id,
+      name,
+      email,
+      role,
+      image,
+      emailVerified
+    }
+  }
+`)

@@ -2,9 +2,7 @@ import {Chapter, ChapterImage} from "@/app/lib/graphql/schema";
 import {ChapterLanguage} from "@/app/types";
 import {ChapterQuery} from "@/app/__generated__/graphql";
 
-export type MultiLanguageImage = {
-  [key in ChapterLanguage]?: ChapterImage
-}
+export type MultiLanguageImage = Record<ChapterLanguage, ChapterImage>
 
 interface TransformedChapter extends Omit<ChapterQuery["chapter"], "versions"> {
   images: MultiLanguageImage[]
@@ -16,7 +14,7 @@ export const transformChapter = (chapter: ChapterQuery["chapter"]): TransformedC
   let maxImages = Math.max(...chapter.versions.map(version => version.images.length));
 
   for (let i = 0; i < maxImages; i++) {
-    images.push({});
+    images.push({} as MultiLanguageImage);
   }
 
   chapter.versions.forEach(version => {

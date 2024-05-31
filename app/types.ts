@@ -6,10 +6,19 @@ import {
   ComicsStatsSchema
 } from "@/app/lib/utils/zodSchemas";
 import {Manga as TGManga} from "@/app/lib/graphql/schema"
-
-import {Document} from "mongoose";
+import {useDisclosure} from "@nextui-org/react";
+import {useState} from "react";
 
 export type ComicsStats = z.infer<typeof ComicsStatsSchema>;
+
+export interface UserSession {
+  id: string,
+  name: string,
+  email: string,
+  image: string,
+  role: UserRole,
+  userId?: string
+}
 
 // Type for manga stats stored in DB
 export interface MangaDBStats extends Omit<ComicsStats, "visitors"> {
@@ -58,17 +67,17 @@ export enum ComicsStatus {
 }
 
 export enum ChapterLanguage {
-  en = "en",
-  ru = "ru",
-  ro = "ro",
-  fr = "fr"
+  En = "en",
+  Ru = "ru",
+  Ro = "ro",
+  Fr = "fr"
 }
 
 export enum ChapterLanguageFull {
-  en = "English",
-  ru = "Russian",
-  ro = "Romanian",
-  fr = "French"
+  En = "English",
+  Ru = "Russian",
+  Ro = "Romanian",
+  Fr = "French"
 }
 
 export enum ComicsGenre {
@@ -109,4 +118,20 @@ export enum ComicsGenre {
     reincarnation = 'reincarnation',
     revenge = 'revenge',
     sport = 'sport'
+}
+
+export enum UserRole {
+  ADMIN = "ADMIN",
+  MODERATOR = "MODERATOR",
+  USER = "USER"
+}
+
+export enum UserProvider {
+  GOOGLE = "GOOGLE",
+  FACEBOOK = "FACEBOOK",
+  CREDENTIALS = "CREDENTIALS"
+}
+
+export interface ModalProps extends ReturnType<typeof useDisclosure> {
+  prop: ReturnType<typeof useState<string>>
 }

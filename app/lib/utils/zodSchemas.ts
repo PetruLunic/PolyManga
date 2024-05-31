@@ -1,6 +1,30 @@
 import z from "zod";
 import {nanoid} from "nanoid";
 
+export const TokenSchema = z.string().length(6, "Token must be 6 characters long!");
+
+export const PasswordSchema =  z.string()
+        .min(8, { message: "Password must be at least 8 characters long" })
+        .max(64, { message: "Password must be 64 characters or less" })
+        .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&_])[A-Za-z\d@$!%*?&_]{8,}$/,
+            { message: "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character" })
+
+export const ResetPasswordSchema = z.object({
+  newPassword: PasswordSchema,
+  token: TokenSchema
+})
+
+export const UserSchema = z.object({
+  name: z.string()
+      .min(3, { message: "Name must be at least 3 characters long" })
+      .max(50, { message: "Name must be 50 characters or less" }),
+  email: z.string()
+      .min(1, { message: "Email is required" })
+      .max(100, { message: "Email must be 100 characters or less" })
+      .email({ message: "Invalid email address" }),
+  password: PasswordSchema
+});
+
 export const IDSchema = z.string().length(nanoid().length);
 
 export const ImageSchema = z.object({

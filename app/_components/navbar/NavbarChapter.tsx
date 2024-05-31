@@ -5,9 +5,9 @@ import {useParams} from "next/navigation";
 import { IoArrowBackSharp } from "react-icons/io5";
 import {GET_NAVBAR_CHAPTER} from "@/app/lib/graphql/queries";
 import {useQuery} from "@apollo/client";
-import LanguageSelect from "@/app/_components/LanguageSelect";
-import NextButton from "@/app/_components/NextButton";
-import PrevButton from "@/app/_components/PrevButton";
+import LanguageSelect from "@/app/_components/navbar/LanguageSelect";
+import NextButton from "@/app/_components/navbar/NextButton";
+import PrevButton from "@/app/_components/navbar/PrevButton";
 import ChapterListModal from "@/app/_components/ChapterListModal";
 
 export default function NavbarChapter() {

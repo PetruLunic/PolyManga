@@ -88,7 +88,8 @@ const MangaSchema = new Schema<MangaDB>({
     {
       toJSON: {
         virtuals: true
-      }
+      },
+      timestamps: true
     })
 
 

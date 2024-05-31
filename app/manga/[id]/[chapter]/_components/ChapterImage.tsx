@@ -3,18 +3,21 @@
 import {Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Image} from "@nextui-org/react";
 import {useEffect, useState} from "react";
 import {MultiLanguageImage} from "@/app/manga/[id]/[chapter]/_utils/transformChapter";
-import {ChapterLanguage} from "@/app/types";
+import {ChapterLanguage} from "@/app/__generated__/graphql";
 import {useSearchParams} from "next/navigation";
 import {isStringInEnum} from "@/app/lib/utils/isStringinEnum";
+import NextImage from "next/image";
 
 interface Props{
   image: MultiLanguageImage
 }
 
+const awsURL = "https://manga-image.s3.eu-central-1.amazonaws.com/"
+
 export default function ChapterImage({image}: Props) {
-  const [language, setLanguage] = useState<ChapterLanguage>(ChapterLanguage.en);
-  const [offset, setOffset] = useState<number>(0);
   const languageQuery = useSearchParams().get("language");
+  const [language, setLanguage] = useState<ChapterLanguage>(Object.keys(image)[0] as ChapterLanguage);
+  const [offset, setOffset] = useState<number>(0);
 
   useEffect(() => {
     if (!languageQuery) return;
@@ -30,10 +33,13 @@ export default function ChapterImage({image}: Props) {
          <DropdownTrigger onClick={(event) => setOffset(
                event.currentTarget.getBoundingClientRect().top - event.clientY
            )}>
-             <Image src={`/manga/${"2FOjpRfEafdpCY0alA-YI"}/${language}/` + image[language]?.src}
-                    alt={image[language]?.src} width={image[language]?.width}
-                    height={image[language]?.height}
-                    radius="none"
+             <Image
+                 as={NextImage}
+                 src={awsURL + image[language]?.src}
+                 alt={image[language]?.src}
+                 width={image[language]?.width}
+                 height={image[language]?.height}
+                 radius="none"
              />
          </DropdownTrigger>
          <DropdownMenu

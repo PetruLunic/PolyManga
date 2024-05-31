@@ -7,9 +7,10 @@ import {Image} from "@nextui-org/react";
 interface Props{
   id: string
   setImageInputSections:  Dispatch<SetStateAction<ImageInputSection>>
+  isInvalid: boolean
 }
 
-export default function ImageInput({id, setImageInputSections}: Props) {
+export default function ImageInput({id, setImageInputSections, isInvalid}: Props) {
   const {acceptedFiles, getRootProps, getInputProps} = useDropzone({
     accept: {
       'image/*': ['.jpeg', '.png', '.jpg']
@@ -24,7 +25,7 @@ export default function ImageInput({id, setImageInputSections}: Props) {
  return (
   <div {...getRootProps({className: 'dropzone grow'})}>
     <input {...getInputProps()} />
-    <div className="flex flex-col text-gray-400 w-full border border-gray-500 border-dashed rounded-2xl ease-in duration-100 cursor-pointer p-3 hover:bg-gray-900/10">
+    <div className={`flex flex-col w-full border ${isInvalid ? "border-danger text-danger" : "border-gray-500 text-gray-400"}  border-dashed rounded-2xl ease-in duration-100 cursor-pointer p-3 hover:bg-gray-900/10`}>
       {acceptedFiles.length
         ? <ul className="flex flex-wrap gap-2">
             {acceptedFiles.map((file, index) => (

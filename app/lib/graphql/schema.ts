@@ -1,5 +1,5 @@
 import {Field, Float, ID, InputType, Int, ObjectType, registerEnumType} from "type-graphql";
-import {ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/types";
+import {ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType, UserProvider, UserRole} from "@/app/types";
 import "reflect-metadata";
 
 // Registering enums in types graphql
@@ -19,9 +19,17 @@ registerEnumType(ChapterLanguage, {
   name: "ChapterLanguage"
 })
 
+registerEnumType(UserRole, {
+  name: "UserRole"
+})
+
+registerEnumType(UserProvider, {
+  name: "UserProvider"
+})
+
 @ObjectType()
 export class ComicsRating {
-  @Field(() => Int)
+  @Field(() => Float)
   value: number;
 
   @Field(() => Int)
@@ -98,6 +106,12 @@ export class Chapter {
 
   @Field(() => Chapter, {nullable: true})
   prevChapter?: Chapter;
+
+  @Field()
+  createdAt: string;
+
+  @Field()
+  updatedAt: string;
 }
 
 @ObjectType()
@@ -143,26 +157,59 @@ export class Manga {
 
   @Field(() => Chapter, {nullable: true})
   firstChapter?: Chapter;
+
+  @Field()
+  createdAt: string;
+
+  @Field()
+  updatedAt: string;
 }
 
 @ObjectType()
 export class User {
+  @Field(() => ID)
+  id: string;
+
   @Field()
-  username: string;
+  name: string;
 
   @Field()
   email: string;
 
+  @Field(() => String, {nullable: true})
+  password: string;
+
   @Field()
   image: string;
+
+  @Field(() => UserProvider)
+  provider: UserProvider;
+
+  @Field(() => UserRole)
+  role: UserRole;
+
+  @Field()
+  emailVerified: boolean;
+
+  @Field(() => String, {nullable: true})
+  emailToken: string;
+
+  @Field(() => String, {nullable: true})
+  emailTokenExpiry: string;
+
+  @Field()
+  createdAt: string;
+
+  @Field()
+  updatedAt: string;
 }
 
 /********************  INPUTS  ********************/
 
 @InputType()
-export class AddUserInput implements Partial<User> {
+export class UserSignUp implements Partial<User> {
   @Field()
-  username: string;
+  name: string;
 
   @Field()
   email: string;
@@ -170,6 +217,16 @@ export class AddUserInput implements Partial<User> {
   @Field()
   password: string;
 }
+
+@InputType()
+export class UserSignIn implements Partial<User> {
+  @Field()
+  email: string;
+
+  @Field()
+  password: string;
+}
+
 
 @InputType()
 export class AddMangaInput implements Partial<Manga> {
@@ -221,6 +278,9 @@ export class ChapterVersionInput implements ChapterVersion {
 
 @InputType()
 export class AddChapterInput implements Partial<Chapter> {
+  @Field(() => ID)
+  id: string;
+
   @Field()
   title: string;
 

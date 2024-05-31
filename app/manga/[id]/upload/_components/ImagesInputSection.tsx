@@ -11,10 +11,11 @@ interface Props{
   id: string,
   setImageInputSections:  Dispatch<SetStateAction<ImageInputSection>>,
   imageInputSections: ImageInputSection,
-  languagesMap: ISelectItem[]
+  languagesMap: ISelectItem[],
+  errorMessage?: string
 }
 
-export default function ImagesInputSection({id, setImageInputSections, imageInputSections, languagesMap}: Props) {
+export default function ImagesInputSection({id, setImageInputSections, imageInputSections, languagesMap, errorMessage}: Props) {
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure();
 
  return (
@@ -22,7 +23,7 @@ export default function ImagesInputSection({id, setImageInputSections, imageInpu
        <div key={id} className="flex flex-col gap-3">
          <Divider/>
          <div className="flex flex-col-reverse justify-between gap-3 md:flex-row md:gap-5">
-           <ImageInput id={id} setImageInputSections={setImageInputSections}/>
+           <ImageInput id={id} setImageInputSections={setImageInputSections} isInvalid={!!(errorMessage && imageInputSections[id].images.length === 0)}/>
            <div className="flex justify-between items-center md:justify-start md:flex-col md:gap-5">
              <Select
                  className="w-36"
@@ -66,6 +67,9 @@ export default function ImagesInputSection({id, setImageInputSections, imageInpu
                  </Button>}
            </div>
          </div>
+         {errorMessage
+             && imageInputSections[id].images.length === 0
+             && <div className="text-tiny text-danger">{errorMessage}</div>}
          <Modal
              size="full"
              scrollBehavior="outside"
@@ -73,7 +77,6 @@ export default function ImagesInputSection({id, setImageInputSections, imageInpu
              onClose={onClose}
              onOpenChange={onOpenChange}
              classNames={{
-               wrapper: "[--scale-exit:0px]",
                base: "bg-transparent my-0 static",
                closeButton: "z-20 fixed text-xl right-5 top-5",
              }}

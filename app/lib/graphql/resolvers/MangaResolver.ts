@@ -60,7 +60,7 @@ export class MangaResolver {
     await manga.deleteOne()
 
     // Deleting the manga's chapters
-    await ChapterModel.deleteMany({id: {$in: manga.chapters}});
+    await ChapterModel.deleteMany({mangaId: manga.id});
 
     return id;
   }
@@ -68,14 +68,14 @@ export class MangaResolver {
   @FieldResolver(() => [Chapter])
   async chapters(@Root() manga: Manga): Promise<Chapter[]> {
     // Return manga's chapters sorted ascending by chapter's number
-    const chapters: Chapter[] = await ChapterModel.find({id: {$in: manga.chapters}}).lean();
+    const chapters: Chapter[] = await ChapterModel.find({mangaId: manga.id}).lean();
 
     return chapters.sort((c1, c2) => c1.number - c2.number)
   }
 
   @FieldResolver(() => Chapter, {nullable: true})
   async latestChapter(@Root() manga: Manga): Promise<Chapter | null> {
-    const chapters = await ChapterModel.find({id: {$in: manga.chapters}})
+    const chapters: Chapter[] = await ChapterModel.find({mangaId: manga.id}).lean();
 
     if (chapters.length === 0) return null;
 
@@ -84,7 +84,7 @@ export class MangaResolver {
 
   @FieldResolver(() => Chapter, {nullable: true})
   async firstChapter(@Root() manga: Manga): Promise<Chapter | null> {
-    const chapters = await ChapterModel.find({id: {$in: manga.chapters}})
+    const chapters: Chapter[] = await ChapterModel.find({mangaId: manga.id}).lean();
 
     if (chapters.length === 0) return null;
 

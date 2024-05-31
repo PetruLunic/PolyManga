@@ -1,7 +1,4 @@
 import mongoose from "mongoose";
-declare global {
-  var mongoose: any; // This must be a `var` and not a `let / const`
-}
 
 const MONGODB_URI = process.env.MONGODB_URI!;
 
@@ -11,11 +8,7 @@ if (!MONGODB_URI) {
   );
 }
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
+let cached: { conn?: typeof mongoose; promise?: Promise<typeof mongoose> | null } = {}
 
 async function dbConnect() {
   if (cached.conn) {

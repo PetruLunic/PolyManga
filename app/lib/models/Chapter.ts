@@ -49,6 +49,6 @@ export const ChapterSchema = new Schema<Chapter>({
     type: String,
     default: () => new Date().toISOString()
   }
-})
+}, {timestamps: true})
 
 export default mongoose.models["Chapter"] || model<Chapter>("Chapter", ChapterSchema)

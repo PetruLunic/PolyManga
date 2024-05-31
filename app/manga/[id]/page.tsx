@@ -8,14 +8,17 @@ import {Divider} from "@nextui-org/divider";
 import Link from "next/link";
 import ChapterList from "@/app/_components/ChapterList";
 
-
 interface Props{
   params: {id: string}
 }
 
+export const revalidate = 10;
+
 export default async function Page({params: {id}}: Props) {
   const client = createApolloClient();
-  const {data, error} = await client.query({query: GET_MANGA, variables: {id}});
+  const {data, error} = await client.query({
+    query: GET_MANGA, variables: {id},
+  });
 
   if (error) throw new Error("Unexpected error");
 
@@ -27,12 +30,12 @@ export default async function Page({params: {id}}: Props) {
       <CardBody className="p-2 md:p-4">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Left column of the card*/}
-          <div className="flex flex-col gap-3 w-full items-center md:w-1/4">
+          <div className="flex flex-col gap-3 w-full items-center md:w-1/3">
             <Image src={"/manga/" + manga?.image} width={250} height={300} alt={manga?.title} isBlurred/>
             <Button color="primary" className="w-full" startContent={<IoBookmarks />}>
               Bookmark
             </Button>
-            <div className="flex gap-4">
+            <div className="flex gap-2 items-center text-sm justify-center flex-wrap">
               <div className="flex gap-1 items-center">
                 <FaStar color="orange" size={22}/>
                 {manga?.stats?.rating?.value}
