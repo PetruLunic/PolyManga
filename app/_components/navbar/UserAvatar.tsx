@@ -8,8 +8,6 @@ export default function UserAvatar() {
 
   if (session.status !== "authenticated") return;
 
-  console.log(session.data)
-
  return (
      <Dropdown placement="bottom-end">
        <DropdownTrigger>
@@ -23,6 +21,9 @@ export default function UserAvatar() {
          <DropdownItem key="profile" className="h-14 gap-2">
            <p className="font-semibold">{session.data.user?.name}</p>
            {/*<p className="font-semibold">{session.data.user}</p>*/}
+         </DropdownItem>
+         <DropdownItem key="bookmarks" href={`/user/${session.data.user.id}/bookmarks`}>
+           Bookmarks
          </DropdownItem>
          <DropdownItem key="settings">
            Settings

@@ -1,9 +1,14 @@
-import {Arg, Mutation, Query, Resolver} from "type-graphql";
-import {User, UserSignIn, UserSignUp} from "@/app/lib/graphql/schema";
+import {Arg, Authorized, Ctx, FieldResolver, Mutation, Query, Resolver, Root} from "type-graphql";
+import {Bookmark, LikeInput, User, UserSignIn, UserSignUp} from "@/app/lib/graphql/schema";
 import UserModel from "@/app/lib/models/User";
+import BookmarkModel from "@/app/lib/models/Bookmark";
 import bcrypt from "bcryptjs";
 import {GraphQLError} from "graphql/error";
 import {UserSchema} from "@/app/lib/utils/zodSchemas";
+import {type ApolloContext} from "@/app/api/graphql/route";
+import {type LikeableObject, likeableObjects} from "@/app/types";
+import mongoose, {model} from "mongoose";
+import Like from "@/app/lib/models/Like";
 
 @Resolver(() => User)
 export class UserResolver {
@@ -20,7 +25,7 @@ export class UserResolver {
     }
 
     if (user.provider !== "CREDENTIALS") {
-      throw new GraphQLError("You can sign in only with credentials", {
+      throw new GraphQLError("Email or password are incorrect", {
         extensions: {
           code: "BAD_USER_INPUT"
         }
@@ -76,5 +81,16 @@ export class UserResolver {
     await newUser.save();
 
     return newUser;
+  }
+
+  @Authorized(["USER", "MODERATOR"])
+  @Query(() => User, {nullable: true})
+  async user(@Ctx() ctx: ApolloContext): Promise<User | null> {
+    return UserModel.findOne({id: ctx.user?.id}).lean();
+  }
+
+  @FieldResolver(() => Bookmark, {nullable: true})
+  async bookmarks(@Root() user: User): Promise<Bookmark | null> {
+    return BookmarkModel.findOne({id: user.bookmarkId}).lean();
   }
 }

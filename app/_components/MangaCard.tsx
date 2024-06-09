@@ -2,13 +2,13 @@ import {ComicsStatusBadgeColor, ComicsTypeBadgeColor} from "@/app/types";
 import {Badge, Card, CardBody, Image} from "@nextui-org/react";
 import { FaStar } from "react-icons/fa";
 import Link from "next/link";
-import {MangasQuery} from "@/app/__generated__/graphql";
+import {MangaCardFragment} from "@/app/__generated__/graphql";
 
 interface Props {
-  manga: MangasQuery["mangas"][number]
+  manga: MangaCardFragment
 }
 
-export default async function MangaCard({manga}: Props) {
+export default function MangaCard({manga}: Props) {
 
  return (
      <Card shadow="sm" className="w-44" isPressable isBlurred isHoverable>

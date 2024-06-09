@@ -62,7 +62,7 @@ export const ComicsStatsSchema = z.object({
   rating: RatingSchema,
   likes: z.number().int().positive().optional().default(0),
   bookmarks: z.number().int().positive().optional().default(0),
-  visitors: z.number().int().positive().optional().default(0)
+  views: z.number().int().positive().optional().default(0)
 })
 
 export const MangaSchema = z.object({

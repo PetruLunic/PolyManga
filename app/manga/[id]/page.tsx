@@ -1,12 +1,14 @@
 import {Button, Card, CardBody, Image} from "@nextui-org/react";
-import {FaStar} from "react-icons/fa";
-import {IoBookmarks, IoBookmarksOutline, IoEyeOutline} from "react-icons/io5";
+import {IoBookmarksOutline, IoEyeOutline} from "react-icons/io5";
 import {GET_MANGA} from "@/app/lib/graphql/queries";
 import createApolloClient from "@/app/lib/utils/apollo-client";
-import {IoMdHeartEmpty} from "react-icons/io";
 import {Divider} from "@nextui-org/divider";
 import Link from "next/link";
 import ChapterList from "@/app/_components/ChapterList";
+import BookmarkButton from "@/app/manga/[id]/_components/BookmarkButton";
+import LikeButton from "@/app/manga/[id]/_components/LikeButton";
+import RatingButton from "@/app/manga/[id]/_components/RatingButton";
+import IncrementViews from "@/app/manga/[id]/_components/IncrementViews";
 
 interface Props{
   params: {id: string}
@@ -17,7 +19,7 @@ export const revalidate = 10;
 export default async function Page({params: {id}}: Props) {
   const client = createApolloClient();
   const {data, error} = await client.query({
-    query: GET_MANGA, variables: {id},
+    query: GET_MANGA, variables: {id}
   });
 
   if (error) throw new Error("Unexpected error");
@@ -31,29 +33,17 @@ export default async function Page({params: {id}}: Props) {
         <div className="flex flex-col md:flex-row gap-4">
           {/* Left column of the card*/}
           <div className="flex flex-col gap-3 w-full items-center md:w-1/3">
-            <Image src={"/manga/" + manga?.image} width={250} height={300} alt={manga?.title} isBlurred/>
-            <Button color="primary" className="w-full" startContent={<IoBookmarks />}>
-              Bookmark
+            <Image src={"/manga/" + manga?.image} width={250} height={350} alt={manga?.title} isBlurred/>
+            <Button
+                as={Link}
+                href={`/manga/${id}/${manga?.firstChapter?.id}`}
+                className="w-full"
+                color="primary"
+                disabled={!manga?.firstChapter}
+            >
+              First chapter
             </Button>
-            <div className="flex gap-2 items-center text-sm justify-center flex-wrap">
-              <div className="flex gap-1 items-center">
-                <FaStar color="orange" size={22}/>
-                {manga?.stats?.rating?.value}
-                <span>({manga?.stats?.rating?.nrVotes})</span>
-              </div>
-              <div className="flex gap-1 items-center">
-                <IoEyeOutline size={22}/>
-                {manga?.stats?.visitors}
-              </div>
-              <div className="flex gap-1 items-center">
-                <IoMdHeartEmpty size={22}/>
-                {manga?.stats?.likes}
-              </div>
-              <div className="flex gap-1 items-center">
-                <IoBookmarksOutline size={22}/>
-                {manga?.stats?.bookmarks}
-              </div>
-            </div>
+            <BookmarkButton mangaId={id}/>
             <div className="flex gap-3">
               <div className="flex gap-1">
                 Status:
@@ -71,11 +61,31 @@ export default async function Page({params: {id}}: Props) {
           </div>
 
           {/*Right column of the card*/}
-          <div className="grow-0 gap-3 flex flex-col">
+          <div className="gap-3 flex flex-col w-full md:w-2/3">
             <h2 className="text-xl font-bold text-center md:text-left">
               {manga?.title}
             </h2>
             <Divider/>
+            <div className="flex justify-center md:justify-start items-center text-sm flex-wrap">
+              <RatingButton mangaId={id} rating={manga?.stats.rating.value} nrVotes={manga?.stats.rating.nrVotes}/>
+              <Button
+                  size="sm"
+                  variant="light"
+                  className="px-1 text-sm gap-1"
+              >
+                <IoEyeOutline size={22}/>
+                {manga?.stats?.views}
+              </Button>
+              <LikeButton mangaId={id} nrLikes={manga?.stats.likes}/>
+              <Button
+                  size="sm"
+                  variant="light"
+                  className="px-1 text-sm gap-1"
+              >
+                <IoBookmarksOutline size={22}/>
+                {manga?.stats?.bookmarks}
+              </Button>
+            </div>
             <p className="text-default-600 text-sm">
               {manga?.description}
             </p>
@@ -148,6 +158,7 @@ export default async function Page({params: {id}}: Props) {
         </div>
       </CardBody>
     </Card>
+    <IncrementViews mangaId={id}/>
   </div>
  );
 };

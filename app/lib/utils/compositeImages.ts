@@ -1,6 +1,4 @@
 import sharp, {Sharp} from "sharp";
-import fs from "fs";
-import {shape} from "prop-types";
 
 const combineImagesVertically = async (sharpObjects: Sharp[], minHeight: number): Promise<Sharp[]> => {
   const combinedImages: Sharp[] = [];

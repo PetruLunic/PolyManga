@@ -1,8 +1,24 @@
-import {Arg, FieldResolver, ID, Mutation, Query, Resolver, Root} from "type-graphql";
-import {AddMangaInput, Chapter, Manga} from "@/app/lib/graphql/schema";
-import MangaModel, {toClient, toClientMany} from "@/app/lib/models/Manga";
+import {Arg, Ctx, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
+import {AddMangaInput, Chapter, ComicsRating, ComicsStats, Manga} from "@/app/lib/graphql/schema";
+import MangaModel from "@/app/lib/models/Manga";
 import {GraphQLError} from "graphql/error";
 import ChapterModel from "@/app/lib/models/Chapter";
+import {type ApolloContext} from "@/app/api/graphql/route";
+import bcrypt from "bcryptjs";
+import redis from "@/app/lib/utils/redis";
+import crypto from "crypto";
+
+@Resolver(of => ComicsStats)
+export class ComicsStatsResolver {
+  // Value of rating to 2 fraction digits
+  @FieldResolver(() => ComicsRating)
+  rating(@Root() stats: ComicsStats): ComicsRating {
+    return {
+      value: Number.parseFloat(stats.rating.value.toFixed(2)),
+      nrVotes: stats.rating.nrVotes
+    }
+  }
+}
 
 @Resolver(() => Manga)
 export class MangaResolver {
@@ -18,14 +34,14 @@ export class MangaResolver {
       })
     }
 
-    return toClient(manga);
+    return manga;
   }
 
   @Query(() => [Manga])
   async mangas(): Promise<Manga[] | []> {
     const mangas = await MangaModel.find().lean();
 
-    return toClientMany(mangas);
+    return mangas;
   }
 
   @Mutation(() => Manga)
@@ -42,27 +58,36 @@ export class MangaResolver {
     const manga = new MangaModel(mangaInput);
     await manga.save();
 
-    return toClient(manga.toObject());
+    return manga.toObject();
   }
 
   @Mutation(() => ID)
   async deleteManga(@Arg("id") id: string): Promise<string> {
-    const manga = await MangaModel.findOne({id});
-
-    if (!manga) {
-      throw new GraphQLError("Manga not found", {
-        extensions: {
-          code: "BAD_USER_INPUT"
-        }
-      })
-    }
-
-    await manga.deleteOne()
+    const manga = await MangaModel.findOneAndDelete({id}).lean();
 
     // Deleting the manga's chapters
-    await ChapterModel.deleteMany({mangaId: manga.id});
+    await ChapterModel.deleteMany({mangaId: manga?.id});
 
     return id;
+  }
+
+  @Mutation(() => Int, {nullable: true})
+  async incrementViews(@Arg("id") id: string, @Ctx() {req}: ApolloContext): Promise<number | undefined> {
+    const ip = req.ip || req.headers.get('X-Forwarded-For');
+    if (!ip) return;
+
+    const hashedIp = crypto.createHash('sha256').update(ip).digest('hex');
+    const cacheKey = `manga:${id}:ip:${hashedIp}`;
+    const cachedIp = await redis.get(cacheKey);
+
+    if (!cachedIp) {
+      // IP not in cache, increment view count
+      const manga = await MangaModel.findOneAndUpdate({id}, { $inc: {"stats.views": 1} }, {new: true}).lean();
+      // Add IP to cache with for 10 days
+      await redis.set(cacheKey, '1', "EX", 10 * 24 * 60 * 60);
+
+      return manga?.stats.views;
+    }
   }
 
   @FieldResolver(() => [Chapter])

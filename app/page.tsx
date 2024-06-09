@@ -1,22 +1,18 @@
-import MangaCard from "@/app/_components/MangaCard";
 import createApolloClient from "@/app/lib/utils/apollo-client";
-import {GET_MANGA_CARDS} from "@/app/lib/graphql/queries";
-import SignUpForm from "@/app/_components/signForms/SignUpForm";
-import {nanoid} from "nanoid";
+import {GET_MANGA_CARDS, MANGA_CARD} from "@/app/lib/graphql/queries";
+import MangaList from "@/app/_components/MangaList";
+import {getFragmentData} from "@/app/__generated__";
 
 export const revalidate = 10;
 
 export default async function Page() {
   const client = createApolloClient();
+  // const {data} = useQuery(GET_MANGA_CARDS);
   const {data} = await client.query({query: GET_MANGA_CARDS})
 
-  const {mangas} = data;
+  const mangas = getFragmentData(MANGA_CARD, data?.mangas);
 
   return (
-      <div className="flex justify-center gap-3 flex-wrap md:justify-start">
-        {mangas.map((manga, index) =>
-            <MangaCard key={index} manga={manga}/>
-        )}
-      </div>
+      <MangaList mangas={mangas}/>
   );
 };

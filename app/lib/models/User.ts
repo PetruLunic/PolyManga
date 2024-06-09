@@ -2,6 +2,7 @@ import mongoose, {model, Model, Schema} from "mongoose";
 import {User} from "@/app/lib/graphql/schema";
 import {nanoid} from "nanoid";
 import {UserProvider, UserRole} from "@/app/types";
+import Bookmark from "@/app/lib/models/Bookmark";
 
 interface UserModel extends Model<User> {}
 
@@ -43,6 +44,10 @@ const UserSchema = new Schema<User>({
     enum: Object.keys(UserRole),
     default: UserRole.USER,
   },
+  bookmarkId: {
+    type: String,
+    unique: true
+  },
   provider: {
     type: String,
     enum: Object.keys(UserProvider),
@@ -61,5 +66,20 @@ const UserSchema = new Schema<User>({
     default: () => new Date().toISOString()
   }
 }, {timestamps: true})
+
+// Pre-save hook to create a bookmarks document for a new user
+UserSchema.pre('save', async function (next) {
+  if (this.isNew) {
+    const bookmark = new Bookmark({ userId: this.id });
+    await bookmark.save();
+    this.bookmarkId = bookmark.id;
+  }
+  next();
+});
+
+// Post-remove hook to delete the bookmarks document when a user is deleted
+UserSchema.post('deleteOne', async function (doc) {
+  await Bookmark.deleteOne({ userId: doc.id });
+});
 
 export default mongoose.models["User"] as UserModel || model<User, UserModel>("User", UserSchema);

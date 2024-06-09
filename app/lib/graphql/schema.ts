@@ -1,5 +1,14 @@
 import {Field, Float, ID, InputType, Int, ObjectType, registerEnumType} from "type-graphql";
-import {ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType, UserProvider, UserRole} from "@/app/types";
+import {
+  type BookmarkType,
+  type LikeableObject,
+  ChapterLanguage,
+  ComicsGenre,
+  ComicsStatus,
+  ComicsType,
+  UserProvider,
+  UserRole
+} from "@/app/types";
 import "reflect-metadata";
 
 // Registering enums in types graphql
@@ -48,7 +57,7 @@ export class ComicsStats {
   bookmarks: number;
 
   @Field(() => Int)
-  visitors: number;
+  views: number;
 }
 
 @ObjectType()
@@ -182,6 +191,9 @@ export class User {
   @Field()
   image: string;
 
+  @Field(() => ID)
+  bookmarkId: string;
+
   @Field(() => UserProvider)
   provider: UserProvider;
 
@@ -202,6 +214,66 @@ export class User {
 
   @Field()
   updatedAt: string;
+}
+
+@ObjectType()
+export class Bookmark {
+  @Field(() => ID)
+  id: string;
+
+  @Field(() => ID)
+  userId: string;
+
+  @Field(() => [Manga])
+  reading: string[];
+
+  @Field(() => [Manga])
+  finished: string[];
+
+  @Field(() => [Manga])
+  inPlans: string[];
+
+  @Field(() => [Manga])
+  dropped: string[];
+
+  @Field(() => [Manga])
+  favourite: string[];
+
+  @Field()
+  createdAt: string;
+
+  @Field()
+  updatedAt: string;
+}
+
+@ObjectType()
+export class Like {
+  @Field(() => ID)
+  id: string;
+
+  @Field(() => ID)
+  userId: string;
+
+  @Field(() => ID)
+  objectId: string;
+
+  @Field(() => String)
+  objectType: LikeableObject;
+}
+
+@ObjectType()
+export class Rating {
+  @Field(() => ID)
+  id: string;
+
+  @Field(() => ID)
+  userId: string;
+
+  @Field(() => ID)
+  mangaId: string;
+
+  @Field(() => Int)
+  value: number;
 }
 
 /********************  INPUTS  ********************/
@@ -292,4 +364,31 @@ export class AddChapterInput implements Partial<Chapter> {
 
   @Field(() => ID)
   mangaId: string;
+}
+
+@InputType()
+export class AddBookmarkInput {
+  @Field(() => ID)
+  mangaId: string;
+
+  @Field(() => String)
+  type: BookmarkType;
+}
+
+@InputType()
+export class LikeInput implements Partial<Like>{
+  @Field(() => ID)
+  objectId: string;
+
+  @Field(() => String)
+  objectType: LikeableObject
+}
+
+@InputType()
+export class RatingInput implements Partial<Rating> {
+  @Field(() => ID)
+  mangaId: string;
+
+  @Field(() => Int)
+  value: number;
 }

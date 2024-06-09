@@ -1,12 +1,21 @@
 import {buildSchemaSync} from "type-graphql";
-import {MangaResolver} from "@/app/lib/graphql/resolvers/MangaResolver";
+import {ComicsStatsResolver, MangaResolver} from "@/app/lib/graphql/resolvers/MangaResolver";
 import {ChapterResolver} from "@/app/lib/graphql/resolvers/ChapterResolver";
 import {UserResolver} from "@/app/lib/graphql/resolvers/UserResolver";
+import {authChecker} from "@/app/lib/graphql/resolvers/authChecker";
+import {BookmarkResolver} from "@/app/lib/graphql/resolvers/BookmarkResolver";
+import {LikeResolver} from "@/app/lib/graphql/resolvers/LikeResolver";
+import {RatingResolver} from "@/app/lib/graphql/resolvers/RatingResolver";
 
 export const schema = buildSchemaSync({
   resolvers: [
       MangaResolver,
       ChapterResolver,
-      UserResolver
-  ]
+      UserResolver,
+      ComicsStatsResolver,
+      BookmarkResolver,
+      LikeResolver,
+      RatingResolver
+  ],
+  authChecker
 })

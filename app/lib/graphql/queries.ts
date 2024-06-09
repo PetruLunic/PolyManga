@@ -1,5 +1,24 @@
 import {gql} from "@/app/__generated__";
 
+export const MANGA_CARD = gql(`
+  fragment MangaCard on Manga {
+    id,
+    title,
+    image,
+    type,
+    status,
+    stats {
+      rating {
+        value
+      }
+    },
+    latestChapter {
+      id
+      number
+    }
+  }
+`)
+
 export const GET_MANGA = gql(`
   query manga($id: ID!) {
   manga(id: $id) {
@@ -34,7 +53,7 @@ export const GET_MANGA = gql(`
         nrVotes,
         value
       },
-      visitors
+      views
     }
   }
 }
@@ -71,20 +90,7 @@ export const GET_CHAPTER = gql(`
 export const GET_MANGA_CARDS = gql(`
   query mangas {
     mangas {
-      id,
-      title,
-      image,
-      type,
-      status,
-      stats {
-        rating {
-          value
-        }
-      },
-      latestChapter {
-        id
-        number
-      }
+      ...MangaCard
     }
   }
 `)
@@ -135,5 +141,47 @@ export const SIGN_IN = gql(`
       image,
       emailVerified
     }
+  }
+`)
+
+export const GET_BOOKMARKS = gql(`
+  query bookmarks {
+    user {
+      bookmarks {
+        inPlans {
+          ...MangaCard
+        },
+        reading {
+          ...MangaCard
+        },
+        finished {
+          ...MangaCard
+        },
+        dropped {
+          ...MangaCard
+        },
+        favourite {
+          ...MangaCard
+        }
+      }
+    }
+  }
+`)
+
+export const IS_BOOKMARKED = gql(`
+  query isBookmarked($mangaId: String!) {
+    isBookmarked(mangaId: $mangaId)
+  }
+`)
+
+export const IS_LIKED = gql(`
+  query isLiked($objectId: String!) {
+    isLiked(objectId: $objectId)
+  }
+`)
+
+export const IS_RATED = gql(`
+  query isRated($mangaId: String!) {
+    isRated(mangaId: $mangaId)
   }
 `)

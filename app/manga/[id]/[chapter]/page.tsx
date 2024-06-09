@@ -1,12 +1,8 @@
 import {notFound} from "next/navigation";
 import createApolloClient from "@/app/lib/utils/apollo-client";
 import {GET_CHAPTER} from "@/app/lib/graphql/queries";
-import PrevButton from "@/app/_components/navbar/PrevButton";
-import NextButton from "@/app/_components/navbar/NextButton";
 import ChapterImage from "@/app/manga/[id]/[chapter]/_components/ChapterImage";
 import {transformChapter} from "@/app/manga/[id]/[chapter]/_utils/transformChapter";
-import {ChapterLanguage} from "@/app/types";
-import LanguageSelect from "@/app/_components/navbar/LanguageSelect";
 
 interface Props{
   params: {id: string, chapter: string}

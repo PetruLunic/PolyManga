@@ -20,25 +20,10 @@ export interface UserSession {
   userId?: string
 }
 
-// Type for manga stats stored in DB
-export interface MangaDBStats extends Omit<ComicsStats, "visitors"> {
-  visitors: string[]
-}
-
-export type Manga = z.infer<typeof MangaSchema>;
-
-// Type for manga stored in DB
-export interface MangaDB extends Omit<TGManga, "stats"> {
-  stats: MangaDBStats
-}
-
-export interface MangaCard extends Pick<Manga, "title" | "image" | "status" | "type"> {
-  rating: number
-  chapter: number
-}
-
-export type Chapter = z.infer<typeof ChapterSchema>;
-export type Image = z.infer<typeof ImageSchema>;
+// export interface MangaCard extends Pick<Manga, "title" | "image" | "status" | "type"> {
+//   rating: number
+//   chapter: number
+// }
 
 export enum ComicsStatusBadgeColor {
   "ONGOING" = "primary",
@@ -135,3 +120,9 @@ export enum UserProvider {
 export interface ModalProps extends ReturnType<typeof useDisclosure> {
   prop: ReturnType<typeof useState<string>>
 }
+
+export const bookmarkTypes = ["reading", "inPlans", "finished", "dropped", "favourite"] as const;
+export type BookmarkType = typeof bookmarkTypes[number];
+
+export const likeableObjects = ["Manga"] as const;
+export type LikeableObject = typeof likeableObjects[number];

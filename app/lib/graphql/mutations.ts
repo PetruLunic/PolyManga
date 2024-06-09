@@ -28,3 +28,47 @@ export const SIGN_UP = gql(`
     }
   }
 `)
+
+export const ADD_BOOKMARK = gql(`
+  mutation AddBookmark($input: AddBookmarkInput!) {
+    addBookmark(input: $input) {
+      id
+    }
+  }
+`)
+
+export const DELETE_BOOKMARK = gql(`
+  mutation DeleteBookmark($mangaId: String!) {
+    deleteBookmark(mangaId: $mangaId)
+  }
+`)
+
+export const LIKE = gql(`
+  mutation like($input: LikeInput!) {
+    like(input: $input)
+  }
+`)
+
+export const UNLIKE = gql(`
+  mutation unlike($objectId: String!) {
+    unlike(objectId: $objectId)
+  }
+`)
+
+export const ADD_RATING = gql(`
+  mutation addRating($input: RatingInput!) {
+    addRating(input: $input)
+  }
+`)
+
+export const DELETE_RATING = gql(`
+  mutation deleteRating($mangaId: String!) {
+    deleteRating(mangaId: $mangaId)
+  }
+`)
+
+export const INCREMENT_VIEWS = gql(`
+  mutation incrementViews($id: String!) {
+    incrementViews(id: $id)
+  }
+`)

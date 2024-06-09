@@ -1,13 +1,12 @@
-import mongoose, {Model, model, Query, Schema} from "mongoose";
-import {Manga as TGManga} from "@/app/lib/graphql/schema";
-import {MangaDB, ComicsStatus, ComicsType} from "@/app/types";
+import mongoose, {Model, model, Schema} from "mongoose";
+import {ComicsStatus, ComicsType} from "@/app/types";
 import {ComicsGenreSchema} from "@/app/lib/utils/zodSchemas";
 import {nanoid} from "nanoid";
-import Chapter from "@/app/lib/models/Chapter";
+import {Manga} from "@/app/lib/graphql/schema";
 
-interface MangaModel extends Model<MangaDB> {}
+interface MangaModel extends Model<Manga> {}
 
-const MangaSchema = new Schema<MangaDB>({
+const MangaSchema = new Schema<Manga>({
   id: {
     type: String,
     default: () => nanoid(),
@@ -66,9 +65,9 @@ const MangaSchema = new Schema<MangaDB>({
       type: Number,
       default: 0
     },
-    visitors: {
-      type: [String],
-      default: []
+    views: {
+      type: Number,
+      default: 0
     }
   },
   genres: {
@@ -92,31 +91,4 @@ const MangaSchema = new Schema<MangaDB>({
       timestamps: true
     })
 
-
-export function toClient(manga: MangaDB): TGManga {
-  return {
-    ...manga,
-    stats: {
-      ...manga.stats,
-      visitors: manga.stats.visitors.length
-    }
-  } as TGManga
-}
-
-export function toClientMany(mangas: MangaDB[]): TGManga[] {
-  const newMangas: TGManga[] = [];
-
-  mangas.forEach(manga => {
-    newMangas.push({
-      ...manga,
-      stats: {
-        ...manga.stats,
-        visitors: manga.stats.visitors.length
-      }
-    } as TGManga)
-  })
-
-  return newMangas;
-}
-
-export default mongoose.models["Manga"] as MangaModel || model<MangaDB, MangaModel>("Manga", MangaSchema);
+export default mongoose.models["Manga"] as MangaModel || model<Manga, MangaModel>("Manga", MangaSchema);
