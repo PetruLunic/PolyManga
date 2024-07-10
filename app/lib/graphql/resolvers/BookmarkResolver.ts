@@ -67,6 +67,16 @@ export class BookmarkResolver {
       })
     }
 
+    if (manga.isDeleted || manga.isBanned) {
+      throw new GraphQLError("This manga is banned or deleted", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
+    let isNew = true;
+
     // If there is already manga in this type of bookmark then do nothing
     if (bookmark[type].find(id => id === mangaId)) {
       return bookmark.toObject();
@@ -74,16 +84,24 @@ export class BookmarkResolver {
 
     // Deleting manga from every bookmark
     bookmarkTypes.forEach(type => {
-      bookmark[type] = bookmark[type].filter(id => id !== mangaId);
+      bookmark[type] = bookmark[type].filter(id => {
+        if (id === mangaId) {
+          isNew = false;
+          return false;
+        }
+        return true;
+      });
     })
 
     // Adding manga id to the bookmarks
     bookmark[type].push(mangaId);
     await bookmark.save();
 
-    // Incrementing the number of the bookmarks
-    manga.stats.bookmarks++;
-    await manga.save();
+    // Incrementing the number of the bookmarks if it's new bookmark
+    if (isNew) {
+      manga.stats.bookmarks++;
+      await manga.save();
+    }
 
     return bookmark.toObject();
   }
@@ -110,42 +128,52 @@ export class BookmarkResolver {
       })
     }
 
+    let wasBookmark = false;
+
     // Deleting manga id from bookmarks
     bookmarkTypes.forEach(type => {
-      bookmark[type] = bookmark[type].filter(id => id !== mangaId);
+      bookmark[type] = bookmark[type].filter(id => {
+        if (id === mangaId) {
+          wasBookmark = true;
+          return false;
+        }
+        return true;
+      });
     })
     await bookmark.save()
 
-    // Decrementing manga's bookmarks
-    manga.stats.bookmarks--;
-    await manga.save();
+    // Decrementing manga's bookmarks if it was in bookmarks
+    if (wasBookmark) {
+      manga.stats.bookmarks--;
+      await manga.save();
+    }
 
     return bookmark.id;
   }
 
   @FieldResolver(() => [Manga])
   async inPlans(@Root() bookmark: Bookmark): Promise<Manga[]> {
-    return MangaModel.find({id: {$in: bookmark.inPlans}}).lean();
+    return MangaModel.find({id: {$in: bookmark.inPlans}, isDeleted: false, isBanned: false}).lean();
   }
 
   @FieldResolver(() => [Manga])
   async reading(@Root() bookmark: Bookmark): Promise<Manga[]> {
-    return MangaModel.find({id: {$in: bookmark.reading}}).lean();
+    return MangaModel.find({id: {$in: bookmark.reading}, isDeleted: false, isBanned: false}).lean();
   }
 
   @FieldResolver(() => [Manga])
   async finished(@Root() bookmark: Bookmark): Promise<Manga[]> {
-    return MangaModel.find({id: {$in: bookmark.finished}}).lean();
+    return MangaModel.find({id: {$in: bookmark.finished}, isDeleted: false, isBanned: false}).lean();
   }
 
   @FieldResolver(() => [Manga])
   async dropped(@Root() bookmark: Bookmark): Promise<Manga[]> {
-    return MangaModel.find({id: {$in: bookmark.dropped}}).lean();
+    return MangaModel.find({id: {$in: bookmark.dropped}, isDeleted: false, isBanned: false}).lean();
   }
 
   @FieldResolver(() => [Manga])
   async favourite(@Root() bookmark: Bookmark): Promise<Manga[]> {
-    return MangaModel.find({id: {$in: bookmark.favourite}}).lean();
+    return MangaModel.find({id: {$in: bookmark.favourite}, isDeleted: false, isBanned: false}).lean();
   }
 
 }

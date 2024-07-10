@@ -23,6 +23,7 @@ import Alert from "@/app/_components/Alert";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {useRouter} from "next/navigation";
 import {ModalProps} from "@/app/types";
+import InputPassword from "@/app/_components/InputPassword";
 
 type Props = Partial<ModalProps>;
 
@@ -93,15 +94,14 @@ export default function SignInForm({isOpen, onOpenChange, onClose}: Props) {
                       type="email"
                       {...register("email")}
                   />
-                  <Input
-                      endContent={
-                        <MdOutlinePassword  className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                      }
+                  <InputPassword
+                      // endContent={
+                      //   <MdOutlinePassword  className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                      // }
                       label="Password"
                       placeholder="Enter your password"
                       errorMessage={errors.password?.message}
                       isInvalid={!!errors.password}
-                      type="password"
                       variant="bordered"
                       {...register("password")}
                   />

@@ -33,7 +33,7 @@ export const ChapterSchema = new Schema<Chapter>({
       src: {
         type: String,
         required: [true, "Image should have a source"],
-        maxlength: [100, "Source cannot be more than 100 characters"]
+        maxlength: [200, "Source cannot be more than 200 characters"]
       },
       width: {
         type: Number,
@@ -45,10 +45,6 @@ export const ChapterSchema = new Schema<Chapter>({
       }
     }]
   }],
-  postedOn: {
-    type: String,
-    default: () => new Date().toISOString()
-  }
 }, {timestamps: true})
 
 export default mongoose.models["Chapter"] || model<Chapter>("Chapter", ChapterSchema)

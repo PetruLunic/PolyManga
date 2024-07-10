@@ -1,4 +1,4 @@
-import NextAuth, {DefaultSession} from "next-auth"
+import NextAuth, {DefaultSession, Session} from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import FacebookProvider from "next-auth/providers/facebook"
 import Credentials from "next-auth/providers/credentials"
@@ -7,6 +7,7 @@ import {User as IUser} from "@/app/lib/graphql/schema"
 import dbConnect from "@/app/lib/utils/dbConnect";
 import {nanoid} from "nanoid";
 import {UserRole, UserSession} from "@/app/types";
+import {AdapterUser} from "@auth/core/adapters";
 
 const AUTH_PATH = "/api/auth";
 
@@ -33,8 +34,12 @@ declare module 'next-auth' {
 //
 // const INACTIVITY_LIMIT = 2 * 24 * 60 * 60; // 2 days
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, signIn, auth } = NextAuth({
   basePath: AUTH_PATH,
+  pages: {
+    signIn: "/unauthorized",
+    signOut: "/"
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID!,
@@ -146,24 +151,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     maxAge: 10 * 24 * 60 * 60, // 10 days in seconds
   },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.userId;
-        token.name = user.name;
-        token.email = user.email;
-        token.image = user.image;
-        token.role = user.role;
+    async jwt({ token, account, user, trigger, session }) {
+
+      if (trigger === "signIn" && user) {
+        token.user = {...user, id: user.userId};
+      }
+
+      // On session update
+      if (trigger === "update" && session) {
+        token = {...token, user: session.user};
       }
 
       return token;
     },
-    async session({ session, token, user }) {
+    async session({ session, token, trigger }) {
+      // console.log('Session Callback - Trigger:', trigger, 'Token:', token, 'Session:', session);
       if (token) {
-        session.user.id = token.id as string;
-        session.user.name = token.name as string;
-        session.user.email = token.email as string;
-        session.user.image = token.image as string;
-        session.user.role = token.role as UserRole;
+        session.user = token.user as (UserSession & AdapterUser)
       }
 
       return session;

@@ -4,7 +4,7 @@ import LikeModel from "@/app/lib/models/Like";
 import {type ApolloContext} from "@/app/api/graphql/route";
 import {likeableObjects} from "@/app/types";
 import {GraphQLError} from "graphql/error";
-import mongoose from "mongoose";
+import mongoose, {HydratedDocument} from "mongoose";
 
 @Resolver(() => Like)
 export class LikeResolver {
@@ -37,10 +37,18 @@ export class LikeResolver {
       })
     }
 
-    const object = await mongoose.models[objectType].findOne({id: objectId});
+    const object: HydratedDocument<any> | null = await mongoose.models[objectType].findOne({id: objectId});
 
     if (!object) {
       throw new GraphQLError("This object does not exist.", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
+    if (object.isDeleted || object.isBanned) {
+      throw new GraphQLError("This object is banned or deleted", {
         extensions: {
           code: "BAD_USER_INPUT"
         }

@@ -6,9 +6,6 @@ import bcrypt from "bcryptjs";
 import {GraphQLError} from "graphql/error";
 import {UserSchema} from "@/app/lib/utils/zodSchemas";
 import {type ApolloContext} from "@/app/api/graphql/route";
-import {type LikeableObject, likeableObjects} from "@/app/types";
-import mongoose, {model} from "mongoose";
-import Like from "@/app/lib/models/Like";
 
 @Resolver(() => User)
 export class UserResolver {

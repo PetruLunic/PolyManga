@@ -1,15 +1,5 @@
-import z from "zod";
-import {
-  ChapterSchema,
-  ImageSchema,
-  MangaSchema,
-  ComicsStatsSchema
-} from "@/app/lib/utils/zodSchemas";
-import {Manga as TGManga} from "@/app/lib/graphql/schema"
 import {useDisclosure} from "@nextui-org/react";
 import {useState} from "react";
-
-export type ComicsStats = z.infer<typeof ComicsStatsSchema>;
 
 export interface UserSession {
   id: string,
@@ -19,11 +9,6 @@ export interface UserSession {
   role: UserRole,
   userId?: string
 }
-
-// export interface MangaCard extends Pick<Manga, "title" | "image" | "status" | "type"> {
-//   rating: number
-//   chapter: number
-// }
 
 export enum ComicsStatusBadgeColor {
   "ONGOING" = "primary",

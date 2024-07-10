@@ -10,6 +10,9 @@ interface Props {
 
 export default function MangaCard({manga}: Props) {
 
+  // If it's path is not absolute, then the image is from local public folder
+  const imageUrl = !manga.image.startsWith("https://") ? "/manga/" + manga.image : manga.image;
+
  return (
      <Card shadow="sm" className="w-44" isPressable isBlurred isHoverable>
        <Link href={`/manga/${manga.id}`} className="h-full">
@@ -35,7 +38,7 @@ export default function MangaCard({manga}: Props) {
                    width="100%"
                    alt={manga.title}
                    className="object-cover w-44 h-[210px]"
-                   src={"/manga/" + manga.image}
+                   src={imageUrl}
                />
              </Badge>
              <div className="flex flex-col justify-between h-full">

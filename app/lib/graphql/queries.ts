@@ -30,14 +30,13 @@ export const GET_MANGA = gql(`
     chapters {
       id,
       mangaId,
-      postedOn,
+      createdAt,
       number
     },
     status,
     type,
     genres,
     releaseYear,
-    postedOn,
     firstChapter {
       id,
       number
@@ -102,7 +101,7 @@ export const GET_NAVBAR_CHAPTER = gql(`
       chapters {
         id,
         mangaId,
-        postedOn,
+        createdAt,
         number
       } 
     },
@@ -183,5 +182,21 @@ export const IS_LIKED = gql(`
 export const IS_RATED = gql(`
   query isRated($mangaId: String!) {
     isRated(mangaId: $mangaId)
+  }
+`)
+
+export const GET_MANGA_EDIT = gql(`
+  query mangaEdit($id: ID!) {
+    manga(id: $id) {
+      id,
+      title,
+      author,
+      status,
+      type,
+      genres,
+      description,
+      releaseYear,
+      image
+    }
   }
 `)

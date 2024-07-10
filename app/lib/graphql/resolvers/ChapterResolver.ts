@@ -35,6 +35,14 @@ export class ChapterResolver {
       })
     }
 
+    if (manga.isDeleted || manga.isBanned) {
+      throw new GraphQLError("This manga is deleted or banned", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
     // Check if manga has the chapter with the same number
     const hasTheSameNumber = await ChapterModel.find({id: {$in: manga.chapters}, number: chapterInput.number})
         .then(res => !!res.length)

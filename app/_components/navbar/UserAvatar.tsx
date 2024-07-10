@@ -2,6 +2,8 @@
 
 import {Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger} from "@nextui-org/react";
 import {signOut, useSession} from "next-auth/react";
+import {IoBookmarks, IoSettingsSharp} from "react-icons/io5";
+import {CiLogout} from "react-icons/ci";
 
 export default function UserAvatar() {
   const session = useSession();
@@ -20,20 +22,28 @@ export default function UserAvatar() {
        <DropdownMenu aria-label="Profile Actions" variant="flat">
          <DropdownItem key="profile" className="h-14 gap-2">
            <p className="font-semibold">{session.data.user?.name}</p>
-           {/*<p className="font-semibold">{session.data.user}</p>*/}
          </DropdownItem>
-         <DropdownItem key="bookmarks" href={`/user/${session.data.user.id}/bookmarks`}>
+         <DropdownItem
+             startContent={<IoBookmarks />}
+             key="bookmarks"
+             href={`/user/${session.data.user.id}/bookmarks`}
+         >
            Bookmarks
          </DropdownItem>
-         <DropdownItem key="settings">
+         <DropdownItem
+             startContent={<IoSettingsSharp />}
+             key="settings"
+             href={`/user/${session.data.user.id}/settings`}
+         >
            Settings
          </DropdownItem>
          <DropdownSection>
            <DropdownItem
+               startContent={<CiLogout />}
                key="logout"
                color="danger"
                className="text-danger"
-               onClick={() => signOut({redirect: false})}
+               onClick={() => signOut()}
            >
              Log Out
            </DropdownItem>

@@ -36,6 +36,14 @@ export class RatingResolver {
       })
     }
 
+    if (manga.isDeleted || manga.isBanned) {
+      throw new GraphQLError("This manga is banned or deleted", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
     const rating = await RatingModel.findOne({mangaId, userId: ctx.user?.id});
 
     const {value: mangaRating, nrVotes} = manga.stats.rating;

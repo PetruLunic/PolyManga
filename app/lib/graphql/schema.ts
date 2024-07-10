@@ -102,9 +102,6 @@ export class Chapter {
   mangaId: string;
 
   @Field()
-  postedOn: string;
-
-  @Field()
   isFirst: boolean;
 
   @Field()
@@ -155,9 +152,6 @@ export class Manga {
   @Field()
   image: string;
 
-  @Field()
-  postedOn: string;
-
   @Field(() => ComicsStats)
   stats: ComicsStats;
 
@@ -172,6 +166,15 @@ export class Manga {
 
   @Field()
   updatedAt: string;
+
+  @Field()
+  uploadedBy: string;
+
+  @Field()
+  isDeleted: boolean;
+
+  @Field()
+  isBanned: boolean;
 }
 
 @ObjectType()
@@ -302,6 +305,42 @@ export class UserSignIn implements Partial<User> {
 
 @InputType()
 export class AddMangaInput implements Partial<Manga> {
+  @Field()
+  id: string;
+
+  @Field()
+  title: string;
+
+  @Field()
+  description: string;
+
+  @Field()
+  author: string;
+
+  @Field()
+  image: string;
+
+  @Field(() => ComicsType)
+  type: ComicsType
+
+  @Field(() => ComicsStatus, {nullable: true})
+  status: ComicsStatus
+
+  @Field(() => [ComicsGenre])
+  genres: ComicsGenre[];
+
+  @Field(() => Int)
+  releaseYear: number;
+
+  @Field()
+  uploadedBy: string;
+}
+
+@InputType()
+export class EditMangaInput implements Partial<Manga> {
+  @Field()
+  id: string;
+
   @Field()
   title: string;
 

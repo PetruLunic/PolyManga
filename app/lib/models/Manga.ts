@@ -79,10 +79,18 @@ const MangaSchema = new Schema<Manga>({
     type: Number,
     required: [true, "Manga must have a release year"]
   },
-  postedOn: {
+  uploadedBy: {
     type: String,
-    default: () => new Date().toDateString()
-  }
+    required: [true, "Manga should have an uploader"]
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false
+  },
+  isBanned: {
+    type: Boolean,
+    default: false
+  },
 },
     {
       toJSON: {

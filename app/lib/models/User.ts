@@ -3,10 +3,10 @@ import {User} from "@/app/lib/graphql/schema";
 import {nanoid} from "nanoid";
 import {UserProvider, UserRole} from "@/app/types";
 import Bookmark from "@/app/lib/models/Bookmark";
+import {USER_NO_IMAGE_SRC} from "@/app/lib/utils/constants";
 
 interface UserModel extends Model<User> {}
 
-const USER_NO_IMAGE_SRC = "/user-no-image.jpg";
 
 const UserSchema = new Schema<User>({
   id: {
@@ -24,7 +24,7 @@ const UserSchema = new Schema<User>({
   email: {
     type: String,
     required: [true, "User must have an email"],
-    maxlength: [50, "Email cannot be more than 50 characters"],
+    maxlength: [100, "Email cannot be more than 100 characters"],
     match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address.'],
     unique: true
   },

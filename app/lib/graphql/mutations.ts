@@ -14,7 +14,7 @@ export const CREATE_CHAPTER = gql(`
         language
       }
       title,
-      postedOn
+      createdAt
     }
   }
 `)
@@ -70,5 +70,27 @@ export const DELETE_RATING = gql(`
 export const INCREMENT_VIEWS = gql(`
   mutation incrementViews($id: String!) {
     incrementViews(id: $id)
+  }
+`)
+
+export const CREATE_MANGA = gql(`
+  mutation addManga($manga: AddMangaInput!) {
+    addManga(manga: $manga) {
+      id
+    }
+  }
+`)
+
+export const EDIT_MANGA = gql(`
+  mutation editManga($manga: EditMangaInput!) {
+    editManga(manga: $manga) {
+      id
+    }
+  }
+`)
+
+export const DELETE_MANGA = gql(`
+  mutation deleteManga($id: String!) {
+    deleteManga(id: $id)
   }
 `)

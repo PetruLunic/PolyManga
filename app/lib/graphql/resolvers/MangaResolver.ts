@@ -1,12 +1,13 @@
-import {Arg, Ctx, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
-import {AddMangaInput, Chapter, ComicsRating, ComicsStats, Manga} from "@/app/lib/graphql/schema";
+import {Arg, Authorized, Ctx, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
+import {AddMangaInput, Chapter, ComicsRating, ComicsStats, EditMangaInput, Manga} from "@/app/lib/graphql/schema";
 import MangaModel from "@/app/lib/models/Manga";
 import {GraphQLError} from "graphql/error";
 import ChapterModel from "@/app/lib/models/Chapter";
 import {type ApolloContext} from "@/app/api/graphql/route";
-import bcrypt from "bcryptjs";
-import redis from "@/app/lib/utils/redis";
-import crypto from "crypto";
+import s3 from "@/app/lib/utils/S3Client";
+import {DeleteObjectCommand} from "@aws-sdk/client-s3";
+import {HydratedDocument} from "mongoose";
+import {cookies} from "next/headers";
 
 @Resolver(of => ComicsStats)
 export class ComicsStatsResolver {
@@ -24,10 +25,18 @@ export class ComicsStatsResolver {
 export class MangaResolver {
   @Query(() => Manga, {nullable: true})
   async manga(@Arg('id', () => ID) id: string): Promise<Manga | null> {
-    const manga = await MangaModel.findOne({id}).lean();
+    const manga: Manga | null = await MangaModel.findOne({id}).lean();
 
     if (!manga) {
       throw new GraphQLError("Manga not found", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
+    if (manga.isDeleted || manga.isBanned) {
+      throw new GraphQLError("This manga is banned or deleted", {
         extensions: {
           code: "BAD_USER_INPUT"
         }
@@ -39,11 +48,12 @@ export class MangaResolver {
 
   @Query(() => [Manga])
   async mangas(): Promise<Manga[] | []> {
-    const mangas = await MangaModel.find().lean();
+    const mangas = await MangaModel.find({isDeleted: false, isBanned: false}).lean();
 
     return mangas;
   }
 
+  @Authorized(["MODERATOR"])
   @Mutation(() => Manga)
   async addManga(@Arg("manga") mangaInput: AddMangaInput) {
     // If exists manga with the same title
@@ -61,35 +71,104 @@ export class MangaResolver {
     return manga.toObject();
   }
 
+  @Authorized(["MODERATOR"])
+  @Mutation(() => Manga)
+  async editManga(@Arg("manga") mangaInput: EditMangaInput) {
+    return MangaModel.findOneAndUpdate({id: mangaInput.id}, mangaInput);
+  }
+
+  @Authorized(["MODERATOR"])
   @Mutation(() => ID)
   async deleteManga(@Arg("id") id: string): Promise<string> {
-    const manga = await MangaModel.findOneAndDelete({id}).lean();
+    // Mark the manga as deleted
+    const manga: HydratedDocument<Manga> | null = await MangaModel.findOne({id});
 
-    // Deleting the manga's chapters
-    await ChapterModel.deleteMany({mangaId: manga?.id});
+    if (!manga) {
+      throw new GraphQLError("Manga not found", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
+    if (manga.isDeleted) {
+      throw new GraphQLError("This manga is already deleted", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
+    manga.isDeleted = true;
+    await manga.save();
+
+    // Fetch all chapters for the manga
+    const chapters = await ChapterModel.find({ mangaId: id }).lean();
+
+    const bucketName = process.env.AWS_BUCKET_NAME;
+
+    if (!bucketName) {
+      throw new GraphQLError("Aws bucket name (AWS_BUCKET_NAME) not provided in .env file.", {
+        extensions: {
+          code: "INTERNAL_SERVER_ERROR"
+        }
+      })
+    }
+
+    const bucketUrl = process.env.AWS_BUCKET_URL;
+
+    if (!bucketUrl) {
+      throw new GraphQLError("Aws bucket url (AWS_BUCKET_URL) not provided in .env file.", {
+        extensions: {
+          code: "INTERNAL_SERVER_ERROR"
+        }
+      })
+    }
+
+    let promisesBatch: any[] = [];
+
+    // Delete images from S3
+    for (const chapter of chapters) {
+      for (const version of chapter.versions) {
+        for (const image of version.images) {
+          const command = new DeleteObjectCommand({
+            Bucket: bucketName,
+            Key: image.src.replace(`${bucketUrl}`, ''),
+          });
+
+          // Pushing promise in the batch
+          promisesBatch.push(s3.send(command));
+
+          // If promises length reach 50 units, then wait, resolve them, and starting next batch;
+          if (promisesBatch.length > 50) {
+            await Promise.all(promisesBatch);
+            promisesBatch = [];
+          }
+        }
+      }
+    }
+
+    // Delete chapters from database
+    await ChapterModel.deleteMany({ mangaId: id });
 
     return id;
   }
 
   @Mutation(() => Int, {nullable: true})
   async incrementViews(@Arg("id") id: string, @Ctx() {req}: ApolloContext): Promise<number | undefined> {
-    const ip = req.ip || req.headers.get('X-Forwarded-For');
-    if (!ip) return;
+    const expireDate = req.cookies.get(id)?.value;
 
-    const hashedIp = crypto.createHash('sha256').update(ip).digest('hex');
-    const cacheKey = `manga:${id}:ip:${hashedIp}`;
-    const cachedIp = await redis.get(cacheKey);
+    const EXPIRE_TIME = 10 * 24 * 60 * 60 * 1000; // 10 days
 
-    if (!cachedIp) {
-      // IP not in cache, increment view count
-      const manga = await MangaModel.findOneAndUpdate({id}, { $inc: {"stats.views": 1} }, {new: true}).lean();
-      // Add IP to cache with for 10 days
-      await redis.set(cacheKey, '1', "EX", 10 * 24 * 60 * 60);
+    // If browser never visited, or visited a long ago this comics
+    if (!expireDate) {
+      cookies().set(id, "1", {expires: Date.now() + EXPIRE_TIME});
 
+      // Increment views for comics
+      const manga = await MangaModel.findOneAndUpdate({id, isDeleted: false, isBanned: false}, { $inc: {"stats.views": 1} }, {new: true}).lean();
       return manga?.stats.views;
     }
   }
-
   @FieldResolver(() => [Chapter])
   async chapters(@Root() manga: Manga): Promise<Chapter[]> {
     // Return manga's chapters sorted ascending by chapter's number

@@ -23,7 +23,7 @@ export default function ChapterList({chapters, selectedChapter}: Props) {
            href={`/manga/${chapter.mangaId}/${chapter.id}`}
        >
          <span>Chapter {chapter.number}</span>
-         <span>{new Date(chapter.postedOn).toLocaleDateString()}</span>
+         <span>{new Date(parseInt(chapter.createdAt)).toLocaleDateString()}</span>
        </Button>
      )
          : <div className="text-center text-gray-500 my-10">No chapter</div>

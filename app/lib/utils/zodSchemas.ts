@@ -14,6 +14,11 @@ export const ResetPasswordSchema = z.object({
   token: TokenSchema
 })
 
+export const ChangePasswordSchema = z.object({
+  oldPassword: PasswordSchema,
+  newPassword: PasswordSchema
+})
+
 export const UserSchema = z.object({
   name: z.string()
       .min(3, { message: "Name must be at least 3 characters long" })
@@ -24,6 +29,9 @@ export const UserSchema = z.object({
       .email({ message: "Invalid email address" }),
   password: PasswordSchema
 });
+
+// Getting only the fields that can be modified from user schema
+export const UserInfoSchema = UserSchema.pick({name: true});
 
 export const IDSchema = z.string().length(nanoid().length);
 
@@ -66,16 +74,11 @@ export const ComicsStatsSchema = z.object({
 })
 
 export const MangaSchema = z.object({
-  id: IDSchema.optional(),
   title: z.string().min(1).max(50),
   description: z.string().min(1).max(2000),
   status: ComicsStatusSchema,
   author: z.string().min(1).max(50),
-  chapters: z.array(IDSchema),
   type: ComicsTypeSchema,
-  image: z.string().min(1).max(100),
-  stats: ComicsStatsSchema,
-  genre: z.array(ComicsGenreSchema),
+  genres: z.string(),
   releaseYear: z.number().positive().int(),
-  postedOn: z.date().optional()
 })

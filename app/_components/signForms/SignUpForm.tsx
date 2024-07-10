@@ -23,6 +23,7 @@ import {signUp} from "@/app/userActions";
 import Alert from "@/app/_components/Alert";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {ModalProps} from "@/app/types";
+import InputPassword from "@/app/_components/InputPassword";
 
 type Props = Partial<ModalProps>;
 
@@ -100,15 +101,11 @@ export default function SignUpForm({isOpen, onOpenChange, onClose}: Props) {
                      type="email"
                      {...register("email")}
                  />
-                 <Input
-                     endContent={
-                       <MdOutlinePassword  className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                     }
+                 <InputPassword
                      label="Password"
                      placeholder="Enter your password"
                      errorMessage={errors.password?.message}
                      isInvalid={!!errors.password}
-                     type="password"
                      variant="bordered"
                      {...register("password")}
                  />
