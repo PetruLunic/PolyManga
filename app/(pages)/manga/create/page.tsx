@@ -6,7 +6,7 @@ import z from "zod";
 import {MangaSchema} from "@/app/lib/utils/zodSchemas";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button, Image, Select, SelectItem} from "@nextui-org/react";
-import {ComicsGenre, ComicsStatus, ComicsType} from "@/app/types";
+import {ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/types";
 import {useDropzone} from "react-dropzone";
 import {CiImageOn} from "react-icons/ci";
 import {createManga} from "@/app/(pages)/manga/create/actions";
@@ -66,7 +66,7 @@ export default function Page() {
     >
       <Alert title={"Submit error"} type="danger" isVisible={!!errors.root} description={errors.root?.message}/>
       <Alert title={"Manga created successfully"} type="success" isVisible={isSubmitSuccessful}/>
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 md:flex-row">
         <Input
             isRequired
             autoFocus
@@ -85,7 +85,7 @@ export default function Page() {
             {...register("author")}
         />
       </div>
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 md:flex-row">
         <Select
             isRequired
             label="Status"
@@ -137,7 +137,7 @@ export default function Page() {
             </SelectItem>
         )}
       </Select>
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 md:flex-row items-center">
         <div {...getRootProps({className: 'dropzone w-48'})}>
           <input {...getInputProps()} />
           <div className={`flex flex-col w-48 border ${errors.root && errors.root["image"] ? "border-danger text-danger" : "border-gray-500 text-gray-400"}  border-dashed rounded-2xl ease-in duration-100 cursor-pointer hover:bg-gray-900/10`}>
@@ -173,6 +173,22 @@ export default function Page() {
               isInvalid={!!errors.releaseYear}
               {...register("releaseYear", {valueAsNumber: true})}
           />
+          <Select
+              isRequired
+              label="Languages"
+              errorMessage={errors.languages?.message}
+              defaultSelectedKeys={["En"]}
+              disallowEmptySelection
+              isInvalid={!!errors.languages}
+              selectionMode="multiple"
+              {...register("languages")}
+          >
+            {Object.keys(ChapterLanguage).map(language =>
+                <SelectItem key={language}>
+                  {language}
+                </SelectItem>
+            )}
+          </Select>
         </div>
       </div>
       <Button isLoading={isSubmitting} className="self-end" type="submit">

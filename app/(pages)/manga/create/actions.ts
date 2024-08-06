@@ -9,6 +9,7 @@ import {CREATE_MANGA} from "@/app/lib/graphql/mutations";
 import {AddMangaInput, ComicsGenre, ComicsStatus, ComicsType} from "@/app/__generated__/graphql";
 import {cookies} from "next/headers";
 import {getSignedURLs} from "@/app/lib/utils/awsUtils";
+import {ChapterLanguage} from "@/app/types";
 
 export const createManga = async (formData: FormData, mangaInput: FormType) => {
   const session = await auth();
@@ -50,8 +51,9 @@ export const createManga = async (formData: FormData, mangaInput: FormType) => {
     image: awsUrl + imageUrl,
     uploadedBy: session.user.id,
     genres: mangaInput.genres.split(",") as ComicsGenre[],
+    languages: mangaInput.languages.split(",") as ChapterLanguage[],
     type: mangaInput.type as ComicsType,
-    status: mangaInput.status as ComicsStatus
+    status: mangaInput.status as ComicsStatus,
   }
 
   // Creating new manga

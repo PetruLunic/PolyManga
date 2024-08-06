@@ -81,4 +81,5 @@ export const MangaSchema = z.object({
   type: ComicsTypeSchema,
   genres: z.string(),
   releaseYear: z.number().positive().int(),
+  languages: z.string()
 })

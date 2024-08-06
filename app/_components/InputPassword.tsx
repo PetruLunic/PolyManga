@@ -1,7 +1,7 @@
 "use client"
 
 import React, {forwardRef, useState} from 'react';
-import {Input, Button, InputProps, useInput} from '@nextui-org/react';
+import {Input, Button, InputProps} from '@nextui-org/react';
 import {FaRegEye, FaRegEyeSlash} from "react-icons/fa";
 import { motion } from 'framer-motion';
 

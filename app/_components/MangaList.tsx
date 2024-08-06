@@ -9,9 +9,11 @@ export default function MangaList({mangas}: Props) {
 
  return (
      <div className="flex justify-center gap-3 flex-wrap md:justify-start">
-       {mangas?.map((manga, index) =>
+       {mangas?.length !== 0
+         ? mangas?.map((manga, index) =>
            <MangaCard key={index} manga={manga}/>
-       )}
+       )
+           : <div className="text-gray-400">There is no manga...</div>}
      </div>
  );
 };

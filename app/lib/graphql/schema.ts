@@ -1,4 +1,4 @@
-import {Field, Float, ID, InputType, Int, ObjectType, registerEnumType} from "type-graphql";
+import {ArgsType, Field, Float, ID, InputType, Int, ObjectType, registerEnumType} from "type-graphql";
 import {
   type BookmarkType,
   type LikeableObject,
@@ -160,6 +160,9 @@ export class Manga {
 
   @Field(() => Chapter, {nullable: true})
   firstChapter?: Chapter;
+
+  @Field(() => [ChapterLanguage])
+  languages: ChapterLanguage[];
 
   @Field()
   createdAt: string;
@@ -329,6 +332,9 @@ export class AddMangaInput implements Partial<Manga> {
   @Field(() => [ComicsGenre])
   genres: ComicsGenre[];
 
+  @Field(() => [ChapterLanguage])
+  languages: ChapterLanguage[];
+
   @Field(() => Int)
   releaseYear: number;
 
@@ -361,6 +367,9 @@ export class EditMangaInput implements Partial<Manga> {
 
   @Field(() => [ComicsGenre])
   genres: ComicsGenre[];
+
+  @Field(() => [ChapterLanguage])
+  languages: ChapterLanguage[];
 
   @Field(() => Int)
   releaseYear: number;
@@ -430,4 +439,30 @@ export class RatingInput implements Partial<Rating> {
 
   @Field(() => Int)
   value: number;
+}
+
+/********************  QUERY ARGUMENTS  ********************/
+
+@ArgsType()
+export class GetMangasArgs {
+  @Field({nullable: true})
+  search: string;
+
+  @Field(() => [ComicsGenre], {nullable: true})
+  genres: ComicsGenre[];
+
+  @Field(() => [ComicsStatus], {nullable: true})
+  statuses: ComicsStatus;
+
+  @Field(() => [ComicsType], {nullable: true})
+  types: ComicsType;
+
+  @Field({nullable: true})
+  sortBy: string;
+
+  @Field({nullable: true})
+  sort: string;
+
+  @Field(() => [ChapterLanguage],{nullable: true})
+  languages: ChapterLanguage[];
 }

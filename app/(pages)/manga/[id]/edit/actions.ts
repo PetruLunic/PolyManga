@@ -4,13 +4,10 @@ import {auth} from "@/auth";
 import {MangaSchema} from "@/app/lib/utils/zodSchemas";
 import createApolloClient from "@/app/lib/utils/apollo-client";
 import {nanoid} from "nanoid";
-import s3 from "@/app/lib/utils/S3Client";
-import {DeleteObjectCommand} from "@aws-sdk/client-s3";
 import {EDIT_MANGA} from "@/app/lib/graphql/mutations";
 import {EditMangaInput} from "@/app/__generated__/graphql";
 import {cookies} from "next/headers";
-import {deleteImage, getAbsoluteAwsUrl, getSignedURLs, uploadImage} from "@/app/lib/utils/awsUtils";
-import {DeleteObjectCommandOutput} from "@aws-sdk/client-s3/dist-types/commands";
+import {deleteImage, getAbsoluteAwsUrl, uploadImage} from "@/app/lib/utils/awsUtils";
 
 export const editManga = async (manga: EditMangaInput, formData?: FormData) => {
   const session = await auth();
@@ -23,7 +20,8 @@ export const editManga = async (manga: EditMangaInput, formData?: FormData) => {
   // Validating manga input
   const isValid = MangaSchema.safeParse({
     ...manga,
-    genres: manga.genres.join(",")
+    genres: manga.genres.join(","),
+    languages: manga.languages.join(",")
   });
 
   if (!isValid.success) {

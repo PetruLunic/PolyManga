@@ -54,16 +54,28 @@ export default async function Page({params: {id}}: Props) {
             <BookmarkButton mangaId={id}/>
             <div className="flex gap-3">
               <div className="flex gap-1">
-                Status:
-                <span className="text-gray-300 font-light">
+                Status
+                <Button
+                    variant="flat"
+                    as={Link}
+                    href={`/manga/?status=${manga?.status}`}
+                    size="sm"
+                    className="font-light text-sm"
+                >
                   {manga?.status}
-                </span>
+                </Button>
               </div>
               <div className="flex gap-1">
-                Type:
-                <span className="text-gray-300 font-light">
+                Type
+                <Button
+                    variant="flat"
+                    as={Link}
+                    href={`/manga/?type=${manga?.type}`}
+                    size="sm"
+                    className="font-light text-sm"
+                >
                   {manga?.type}
-                </span>
+                </Button>
               </div>
             </div>
           </div>
@@ -114,12 +126,38 @@ export default async function Page({params: {id}}: Props) {
                 </div>
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-2">
                 <p>Genres</p>
                 <div className="flex flex-wrap gap-2">
                   {manga?.genres.map(genre =>
-                      <div key={genre} className="text-gray-300 font-light">
+                      <Button
+                          key={genre}
+                          variant="flat"
+                          as={Link}
+                          href={`/manga/?genre=${genre}`}
+                          size="sm"
+                          className="font-light text-sm"
+                      >
                         {genre}
+                      </Button>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <p>Languages</p>
+                <div className="flex flex-wrap gap-2">
+                  {manga?.languages.map(language =>
+                      <div key={language} className="text-gray-300 font-light">
+                        <Button
+                            key={language}
+                            variant="flat"
+                            as={Link}
+                            href={`/manga/?language=${language}`}
+                            size="sm"
+                            className="font-light text-sm"
+                        >
+                          {language}
+                        </Button>
                       </div>
                   )}
                 </div>
@@ -133,28 +171,6 @@ export default async function Page({params: {id}}: Props) {
       <CardBody className="p-2 md:p-4">
         <div className="flex flex-col gap-4">
           <h3 className="text-center text-lg font-bold md:text-left">Chapters list</h3>
-          <div className="flex gap-2">
-            <Button
-                color="primary"
-                size="lg"
-                className="w-1/2"
-                as={Link}
-                isDisabled={!manga?.firstChapter}
-                href={`${process.env.NEXT_PUBLIC_SITE_URL}/manga/${id}/${manga?.firstChapter?.id}`}
-            >
-              Chapter {manga?.firstChapter?.number || "None"}
-            </Button>
-            <Button
-                color="primary"
-                size="lg"
-                className="w-1/2"
-                as={Link}
-                isDisabled={!manga?.latestChapter}
-                href={`${process.env.NEXT_PUBLIC_SITE_URL}/manga/${id}/${manga?.latestChapter?.id}`}
-            >
-              Chapter {manga?.latestChapter?.number || "None"}
-            </Button>
-          </div>
           <ChapterList chapters={manga?.chapters}/>
         </div>
       </CardBody>

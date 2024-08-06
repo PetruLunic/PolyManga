@@ -5,6 +5,7 @@ import {GraphQLError} from "graphql/error";
 import {HydratedDocument} from "mongoose";
 import MangaModel from "@/app/lib/models/Manga";
 import {ChapterLanguage} from "@/app/types";
+import {deleteImage} from "@/app/lib/utils/awsUtils";
 
 @Resolver(Chapter)
 export class ChapterResolver {
@@ -65,20 +66,41 @@ export class ChapterResolver {
   }
 
   @Mutation(() => String)
-  async deleteChapter(@Arg("id", () => ID) id: string): Promise<string> {
-    const chapter: HydratedDocument<Chapter> | null = await ChapterModel.findOne({id});
+  async deleteChapters(
+      @Arg("mangaId", () => ID) mangaId: string,
+      @Arg("ids", () => [ID]) ids: string[]): Promise<string> {
+    const chapters: HydratedDocument<Chapter>[] = await ChapterModel.find({id: {$in: ids}});
 
-    if (!chapter) {
-      throw new GraphQLError("Chapter not found", {
+    if (!chapters.length) {
+      throw new GraphQLError("Chapters not found", {
         extensions: {
           code: "BAD_USER_INPUT"
         }
       })
     }
 
-    await chapter.deleteOne();
+    let promisesBatch: any[] = [];
 
-    const manga = await MangaModel.findOne({id: chapter.mangaId})
+    // Delete images from S3
+    for (const chapter of chapters) {
+      for (const version of chapter.versions) {
+        for (const image of version.images) {
+          // Pushing promise in the batch
+          promisesBatch.push(deleteImage(image.src));
+
+          // If promises length reach 50 units, then wait, resolve them, and starting next batch;
+          if (promisesBatch.length > 50) {
+            await Promise.all(promisesBatch);
+            promisesBatch = [];
+          }
+        }
+      }
+    }
+
+    // Delete every chapter document
+    chapters.forEach(chapter => chapter.deleteOne());
+
+    const manga = await MangaModel.findOne({id: mangaId})
 
     if (!manga) {
       throw new GraphQLError("Manga not found", {
@@ -88,9 +110,11 @@ export class ChapterResolver {
       })
     }
 
+    // Delete chapters id from manga
+    manga.chapters = manga.chapters.filter(id => !ids.includes(id))
     await manga.save();
 
-    return id;
+    return mangaId;
   }
 
   // Check if the chapter is the first

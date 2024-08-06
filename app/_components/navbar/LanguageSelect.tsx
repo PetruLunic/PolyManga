@@ -27,7 +27,7 @@ export default function LanguageSelect({languages}: Props) {
   useEffect(() => {
     if (isStringInEnum(language, ChapterLanguage)) return;
 
-    writableParams.set({language: languages[0]});
+    writableParams.setParam({language: languages[0]});
   }, [language]);
 
  return (
@@ -42,7 +42,7 @@ export default function LanguageSelect({languages}: Props) {
     onSelectionChange={value => {
       if (value === "all") return;
       const key = Array.from(value.keys())[0];
-      writableParams.set({language: key as string});
+      writableParams.setParam({language: key as string});
     }}
    >
      {(language) => <SelectItem key={language.key}>{language.value}</SelectItem> }

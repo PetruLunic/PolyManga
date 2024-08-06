@@ -94,3 +94,9 @@ export const DELETE_MANGA = gql(`
     deleteManga(id: $id)
   }
 `)
+
+export const DELETE_CHAPTERS = gql(`
+  mutation deleteChapters($mangaId: ID!, $ids: [ID!]!) {
+    deleteChapters(mangaId: $mangaId, ids: $ids)
+  }
+`)

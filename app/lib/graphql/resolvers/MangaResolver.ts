@@ -1,13 +1,22 @@
-import {Arg, Authorized, Ctx, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
-import {AddMangaInput, Chapter, ComicsRating, ComicsStats, EditMangaInput, Manga} from "@/app/lib/graphql/schema";
+import {Arg, Args, Authorized, Ctx, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
+import {
+  AddMangaInput,
+  Chapter,
+  ComicsRating,
+  ComicsStats,
+  EditMangaInput,
+  GetMangasArgs,
+  Manga
+} from "@/app/lib/graphql/schema";
 import MangaModel from "@/app/lib/models/Manga";
 import {GraphQLError} from "graphql/error";
 import ChapterModel from "@/app/lib/models/Chapter";
 import {type ApolloContext} from "@/app/api/graphql/route";
 import s3 from "@/app/lib/utils/S3Client";
 import {DeleteObjectCommand} from "@aws-sdk/client-s3";
-import {HydratedDocument} from "mongoose";
+import {HydratedDocument, PipelineStage} from "mongoose";
 import {cookies} from "next/headers";
+import {ChapterLanguage} from "@/app/types";
 
 @Resolver(of => ComicsStats)
 export class ComicsStatsResolver {
@@ -47,10 +56,73 @@ export class MangaResolver {
   }
 
   @Query(() => [Manga])
-  async mangas(): Promise<Manga[] | []> {
-    const mangas = await MangaModel.find({isDeleted: false, isBanned: false}).lean();
+  async mangas(@Args() {search, types, statuses, genres, sort, languages, sortBy}: GetMangasArgs): Promise<Manga[] | []> {
+    const query: any = {
+      isDeleted: false,
+      isBanned: false,
+    };
 
-    return mangas;
+    const sortOrderValue = sort === 'asc' ? 1 : -1;
+    let sortField = 'stats.views';
+    let sortStage = {} as PipelineStage;
+
+    switch (sortBy) {
+      case 'rating':
+        sortField = 'stats.rating.value';
+        break;
+      case 'views':
+      case 'likes':
+      case 'bookmarks':
+        sortField = `stats.${sortBy}`;
+        break;
+      case 'createdAt':
+      case 'language':
+        sortField = sortBy;
+        break;
+      case 'chapters':
+        // Handle sorting by the length of the chapters array
+        sortStage = { $sort: { chaptersLength: sortOrderValue } };
+        break;
+      default:
+        sortField = 'stats.views';
+    }
+
+    if (!sortStage.hasOwnProperty('$sort')) {
+      sortStage = { $sort: { [sortField]: sortOrderValue } };
+    }
+
+    if (search) {
+      query.title = { $regex: new RegExp(search, 'i') }; // Case-insensitive partial match
+    }
+
+    if (types && types.length > 0) {
+      query.type = { $in: types };
+    }
+
+    if (languages && languages.length > 0) {
+      query.languages = { $all: languages };
+    }
+
+    if (statuses && statuses.length > 0) {
+      query.status = { $in: statuses };
+    }
+
+    if (genres && genres.length > 0) {
+      query.genres = { $all: genres };
+    }
+
+    // Define the aggregation pipeline
+    const aggregationPipeline = [
+      { $match: query },
+      {
+        $addFields: {
+          chaptersLength: { $size: '$chapters' }
+        }
+      },
+      sortStage
+    ] satisfies PipelineStage[]
+
+    return MangaModel.aggregate(aggregationPipeline).exec();
   }
 
   @Authorized(["MODERATOR"])
@@ -125,28 +197,8 @@ export class MangaResolver {
       })
     }
 
-    let promisesBatch: any[] = [];
 
-    // Delete images from S3
-    for (const chapter of chapters) {
-      for (const version of chapter.versions) {
-        for (const image of version.images) {
-          const command = new DeleteObjectCommand({
-            Bucket: bucketName,
-            Key: image.src.replace(`${bucketUrl}`, ''),
-          });
 
-          // Pushing promise in the batch
-          promisesBatch.push(s3.send(command));
-
-          // If promises length reach 50 units, then wait, resolve them, and starting next batch;
-          if (promisesBatch.length > 50) {
-            await Promise.all(promisesBatch);
-            promisesBatch = [];
-          }
-        }
-      }
-    }
 
     // Delete chapters from database
     await ChapterModel.deleteMany({ mangaId: id });

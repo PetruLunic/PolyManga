@@ -13,7 +13,7 @@ interface Props{
 }
 
 export default function BookmarksPage({data}: Props) {
-  const {set} = useQueryParams();
+  const {setParam} = useQueryParams();
   const bookmarkType = useSearchParams().get("type");
   const bookmarks = data?.user?.bookmarks
 
@@ -25,7 +25,7 @@ export default function BookmarksPage({data}: Props) {
         variant="underlined"
         defaultSelectedKey={bookmarkType as any}
         onSelectionChange={key => {
-          set({type: key as string})
+          setParam({type: key as string})
         }}
         classNames={{
           tabList: "gap-0 md:gap-3",

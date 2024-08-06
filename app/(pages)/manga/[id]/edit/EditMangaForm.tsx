@@ -10,6 +10,7 @@ import {Input, Textarea} from "@nextui-org/input";
 import {Button, Image, Select, SelectItem} from "@nextui-org/react";
 import z from "zod";
 import {editManga} from "@/app/(pages)/manga/[id]/edit/actions";
+import {ChapterLanguage} from "@/app/types";
 
 interface Props{
   manga: Exclude<MangaEditQuery["manga"], null | undefined>;
@@ -50,6 +51,7 @@ export default function EditMangaForm({manga}: Props) {
         id: manga.id,
         image: manga.image,
         genres: data.genres.split(",") as ComicsGenre[],
+        languages: data.languages.split(",") as ChapterLanguage[],
         type: data.type as ComicsType,
         status: data.status as ComicsStatus
       }
@@ -69,7 +71,7 @@ export default function EditMangaForm({manga}: Props) {
         >
           <Alert title={"Submit error"} type="danger" isVisible={!!errors.root} description={errors.root?.message}/>
           <Alert title={"Manga edited successfully"} type="success" isVisible={isSubmitSuccessful}/>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 md:flex-row">
             <Input
                 isRequired
                 autoFocus
@@ -90,7 +92,7 @@ export default function EditMangaForm({manga}: Props) {
                 {...register("author")}
             />
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 md:flex-row">
             <Select
                 isRequired
                 label="Status"
@@ -144,7 +146,7 @@ export default function EditMangaForm({manga}: Props) {
                 </SelectItem>
             )}
           </Select>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 md:flex-row items-center">
             <div {...getRootProps({className: 'dropzone w-48'})}>
               <input {...getInputProps()} />
               <div className={`flex flex-col w-48 h-64 border ${errors.root && errors.root["image"] ? "border-danger text-danger" : "border-gray-500 text-gray-400"}  border-dashed rounded-2xl ease-in duration-100 cursor-pointer hover:bg-gray-900/10`}>
@@ -182,6 +184,22 @@ export default function EditMangaForm({manga}: Props) {
                   isInvalid={!!errors.releaseYear}
                   {...register("releaseYear", {valueAsNumber: true})}
               />
+              <Select
+                  isRequired
+                  label="Languages"
+                  errorMessage={errors.languages?.message}
+                  defaultSelectedKeys={manga.languages}
+                  disallowEmptySelection
+                  isInvalid={!!errors.languages}
+                  selectionMode="multiple"
+                  {...register("languages")}
+              >
+                {Object.keys(ChapterLanguage).map(language =>
+                    <SelectItem key={language}>
+                      {language}
+                    </SelectItem>
+                )}
+              </Select>
             </div>
           </div>
           <Button isLoading={isSubmitting} className="self-end" type="submit">

@@ -12,7 +12,7 @@ interface Props{
 }
 
 export default function SettingsPage({user}: Props) {
-  const {set} = useQueryParams();
+  const {setParam} = useQueryParams();
   const section = useSearchParams().get("section");
 
  return (
@@ -23,7 +23,7 @@ export default function SettingsPage({user}: Props) {
         variant="underlined"
         defaultSelectedKey={section as string}
         onSelectionChange={key => {
-          set({section: key as string})
+          setParam({section: key as string})
         }}
         classNames={{
           tabList: "gap-0 md:gap-3",
@@ -40,7 +40,7 @@ export default function SettingsPage({user}: Props) {
         key="security"
         title="Security"
       >
-        <SecuritySection user={user}/>
+        <SecuritySection/>
       </Tab>
     </Tabs>
   </div>

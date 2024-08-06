@@ -44,7 +44,7 @@ export default function MangaCard({manga}: Props) {
              <div className="flex flex-col justify-between h-full">
                <p className="block font-medium p-2 text-sm">{manga.title}</p>
                <div className="flex justify-between px-2 pb-2">
-                 <span className="text-default-500 text-sm">Chapter {manga.latestChapter?.number}</span>
+                 <span className="text-default-500 text-sm">{manga.latestChapter ? `Chapter ${manga.latestChapter?.number}` : "No chapter"}</span>
                  <span className="flex gap-1 items-center">
                <FaStar color="orange"/>
               <span className="text-sm">{manga.stats.rating?.value}</span>

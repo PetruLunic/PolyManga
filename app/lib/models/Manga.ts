@@ -1,5 +1,5 @@
 import mongoose, {Model, model, Schema} from "mongoose";
-import {ComicsStatus, ComicsType} from "@/app/types";
+import {ChapterLanguage, ComicsStatus, ComicsType} from "@/app/types";
 import {ComicsGenreSchema} from "@/app/lib/utils/zodSchemas";
 import {nanoid} from "nanoid";
 import {Manga} from "@/app/lib/graphql/schema";
@@ -73,6 +73,11 @@ const MangaSchema = new Schema<Manga>({
   genres: {
     type: [String],
     enum: ComicsGenreSchema.Enum,
+    default: []
+  },
+  languages: {
+    type: [String],
+    enum: ChapterLanguage,
     default: []
   },
   releaseYear: {

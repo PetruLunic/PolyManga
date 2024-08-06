@@ -33,7 +33,7 @@ export default function ChapterListModal({data}: Props) {
         Chapter {data.chapter.number}
       </div>
     </Button>
-    <Modal placement="center" isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
       <ModalContent>
         <ModalHeader>
           Chapters
