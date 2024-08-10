@@ -4,29 +4,40 @@ import {combineAndCropImagesVertically} from "@/app/lib/utils/compositeImages";
 import {nanoid} from "nanoid";
 import {AddChapterInput, ChapterLanguage} from "@/app/__generated__/graphql";
 import {getImageURLs} from "@/app/lib/utils/getImageURL";
-import createApolloClient from "@/app/lib/utils/apollo-client";
-import {CREATE_CHAPTER} from "@/app/lib/graphql/mutations";
-import {isGraphQLErrors} from "@/app/lib/utils/errorsNarrowing";
-import {getSignedURLs} from "@/app/lib/utils/awsUtils";
+import {deleteImage, getSignedURLs} from "@/app/lib/utils/awsUtils";
 import {CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT} from "@/app/lib/utils/constants";
 import {auth} from "@/auth";
+import ChapterModel from "@/app/lib/models/Chapter";
+import {HydratedDocument} from "mongoose";
+import {Chapter} from "@/app/lib/graphql/schema";
 
-export async function createChapter(formData: FormData, languages: ChapterLanguage[]) {
+export async function editChapter(formData: FormData, languages: ChapterLanguage[]) {
   const session = await auth();
 
   if (!session || session.user.role !== "ADMIN" && session.user.role !== "MODERATOR") {
     throw new Error("Forbidden action!");
   }
 
-  const client = createApolloClient();
-
   const mangaId = formData.get("mangaId") as string;
   const number = Number(formData.get("number") as string);
   const title = formData.get("title") as string;
+  const id = formData.get("id") as string;
 
-  if (!mangaId || !title || !number) return;
+  if (!mangaId || !title || !number || !id) return;
 
-  const chapterId = nanoid();
+  const chapter: HydratedDocument<Chapter> | null = await ChapterModel.findOne({id});
+
+  if (!chapter) {
+    throw new Error("No chapter found");
+  }
+
+  if (number !== chapter.number) {
+    const chapterWithTheSameNumber = await ChapterModel.findOne({mangaId, number});
+
+    if (chapterWithTheSameNumber) {
+      throw new Error("Chapter with the same number already exists");
+    }
+  }
 
   // Cropping images into slices of MAX_HEIGHT and WIDTH
   const croppedImages: Record<ChapterLanguage, Buffer[]> = {} as Record<ChapterLanguage, Buffer[]>;
@@ -45,7 +56,7 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
   languages.forEach(language => {
     const imagesIds = Array.from({length: croppedImages[language].length}, () => nanoid());
 
-    imagesURLs[language] = getImageURLs(mangaId, chapterId, language, imagesIds);
+    imagesURLs[language] = getImageURLs(mangaId, id, language, imagesIds);
   })
 
   // Generating signed urls for images
@@ -88,7 +99,7 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
 
   languages.forEach(language => {
     versions.push({
-      language,
+      language: language.toLowerCase() as ChapterLanguage,
       images: imagesURLs[language].map(url => ({
         src: awsUrl + url,
         width: CHAPTER_IMAGE_WIDTH,
@@ -97,27 +108,35 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
     })
   })
 
-  // Creating chapter
-  const chapter: AddChapterInput = {
-    id: chapterId,
-    title,
-    number,
-    mangaId,
-    versions
-  }
+  // Deleting the images that are getting replaced
+  for (let language of languages) {
+    const images = chapter.versions.find(e => e.language === language.toLowerCase())?.images;
 
-  // Fetching chapter to GraphQL resolver
-  try {
-    await client.mutate({mutation: CREATE_CHAPTER, variables: {chapter}});
-  } catch (e: any) {
-    console.error(e);
+    console.log(images);
+    if (!images) continue;
 
-    if (isGraphQLErrors(e)) {
-      return {success: false, message: e.graphQLErrors[0].message}
+    for (let image of images) {
+      await deleteImage(image.src);
     }
-
-    return {success: false, message: "Unexpected error"}
   }
+
+  // Editing the chapter
+  chapter.title = title;
+  chapter.number = number;
+
+  versions.forEach(version => {
+    const index = chapter.versions.findIndex(e => e.language === version.language);
+
+    // If there are images for this language, then replace them, otherwise push them
+    if (index === -1) {
+      chapter.versions.push(version);
+    } else {
+      chapter.versions[index] = version;
+    }
+  })
+
+  // Saving the chapter
+  await chapter.save();
 
   // Fetching images to aws cloud
   await Promise.all(fetchImagesPromises);

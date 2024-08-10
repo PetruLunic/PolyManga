@@ -87,6 +87,17 @@ export const GET_CHAPTER = gql(`
   }
 `)
 
+export const GET_CHAPTER_EDIT = gql(`
+  query chapterEdit($id: ID!) {
+    chapter(id: $id) {
+      id,
+      title,
+      number,
+      mangaId
+    }
+  }
+`)
+
 export const GET_MANGA_CARDS = gql(`
   query mangas($search: String, $genres: [ComicsGenre!], $statuses: [ComicsStatus!], $types: [ComicsType!], $sortBy: String, $sort: String, $languages: [ChapterLanguage!]) {
     mangas(search: $search, genres: $genres, statuses: $statuses, types: $types, sortBy: $sortBy, sort: $sort, languages: $languages) {
@@ -136,6 +147,7 @@ export const GET_CHAPTERS = gql(`
     manga(id: $id) {
      chapters {
       id,
+      title,
       mangaId,
       createdAt,
       number

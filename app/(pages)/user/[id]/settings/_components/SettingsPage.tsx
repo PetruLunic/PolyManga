@@ -42,6 +42,12 @@ export default function SettingsPage({user}: Props) {
       >
         <SecuritySection/>
       </Tab>
+      <Tab
+        key="preferences"
+        title="Preferences"
+      >
+
+      </Tab>
     </Tabs>
   </div>
  );

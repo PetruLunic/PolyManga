@@ -98,7 +98,9 @@ export class ChapterResolver {
     }
 
     // Delete every chapter document
-    chapters.forEach(chapter => chapter.deleteOne());
+    for (let chapter of chapters) {
+      await chapter.deleteOne();
+    }
 
     const manga = await MangaModel.findOne({id: mangaId})
 

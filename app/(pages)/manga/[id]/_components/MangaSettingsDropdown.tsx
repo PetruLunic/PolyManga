@@ -63,6 +63,9 @@ export default function MangaSettingsDropdown({className, mangaId}: Props) {
            <DropdownItem key="edit" aria-label="edit" href={path + "/edit"} startContent={<FiEdit />}>
              Edit
            </DropdownItem>
+           <DropdownItem key="editChapters" aria-label="edit chapters" href={path + "/edit/chapters"} startContent={<FiEdit />}>
+             Edit Chapters
+           </DropdownItem>
            <DropdownItem key="upload" aria-label="upload" href={path + "/upload"} startContent={<FiUpload />}>
              Upload
            </DropdownItem>

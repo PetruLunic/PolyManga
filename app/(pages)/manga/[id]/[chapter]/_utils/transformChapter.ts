@@ -3,7 +3,7 @@ import {ChapterQuery, ChapterLanguage} from "@/app/__generated__/graphql";
 
 export type MultiLanguageImage = Record<ChapterLanguage, ChapterImage>
 
-interface TransformedChapter extends Omit<ChapterQuery["chapter"], "versions"> {
+export interface TransformedChapter extends Omit<ChapterQuery["chapter"], "versions"> {
   images: MultiLanguageImage[]
 }
 

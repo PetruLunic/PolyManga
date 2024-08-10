@@ -8,6 +8,8 @@ interface Props{
   params: {id: string, chapter: string}
 }
 
+export const revalidate = 4
+
 export default async function Page({params: {chapter: chapterId, id}}: Props) {
   const client = createApolloClient();
   const {data, error} = await client.query({query: GET_CHAPTER, variables: {id: chapterId}});
