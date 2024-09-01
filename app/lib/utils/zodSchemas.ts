@@ -1,5 +1,6 @@
 import z from "zod";
 import {nanoid} from "nanoid";
+import {ChapterLanguage} from "@/app/types";
 
 export const TokenSchema = z.string().length(6, "Token must be 6 characters long!");
 
@@ -32,6 +33,10 @@ export const UserSchema = z.object({
 
 // Getting only the fields that can be modified from user schema
 export const UserInfoSchema = UserSchema.pick({name: true});
+
+export const UserPreferencesSchema = z.object({
+  language: z.string(),
+})
 
 export const IDSchema = z.string().length(nanoid().length);
 

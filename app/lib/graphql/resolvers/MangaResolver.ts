@@ -12,11 +12,9 @@ import MangaModel from "@/app/lib/models/Manga";
 import {GraphQLError} from "graphql/error";
 import ChapterModel from "@/app/lib/models/Chapter";
 import {type ApolloContext} from "@/app/api/graphql/route";
-import s3 from "@/app/lib/utils/S3Client";
-import {DeleteObjectCommand} from "@aws-sdk/client-s3";
 import {HydratedDocument, PipelineStage} from "mongoose";
 import {cookies} from "next/headers";
-import {ChapterLanguage} from "@/app/types";
+import ChapterBookmarkModel from "@/app/lib/models/ChapterBookmark";
 
 @Resolver(of => ComicsStats)
 export class ComicsStatsResolver {
@@ -245,5 +243,16 @@ export class MangaResolver {
     if (chapters.length === 0) return null;
 
     return chapters.reduce((acc: Chapter, ch) => acc.number < ch.number ? acc : ch, chapters[0])
+  }
+
+  @FieldResolver(() => Chapter, {nullable: true})
+  async bookmarkedChapter(@Root() manga: Manga, @Ctx() {user}: ApolloContext): Promise<Chapter | null> {
+    if (!user) return null;
+
+    const bookmark = await ChapterBookmarkModel.findOne({userId: user?.id, mangaId: manga.id}).lean();
+
+    if (!bookmark) return null;
+
+    return ChapterModel.findOne({id: bookmark.chapterId}).lean();
   }
 }

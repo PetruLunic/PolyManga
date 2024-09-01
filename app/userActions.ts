@@ -71,7 +71,11 @@ export const signIn = async (user: UserSignIn):  Promise<ResponseType> => {
       return {success: false, message: "Unverified email"};
     }
 
-    await authSignIn("credentials", {...data.signIn, redirect: false});
+    await authSignIn("credentials", {
+      ...data.signIn,
+      preferences: JSON.stringify(data.signIn.preferences),
+      redirect: false
+    });
 
     return {success: true, message: "Successful sign in"};
   } catch(e) {
@@ -113,7 +117,8 @@ export const verifyEmailAndSignIn = async (email: string, token: string): Promis
       name: user.name,
       email: user.email,
       role: user.role,
-      image: user.image
+      image: user.image,
+      preferences: JSON.stringify(user.preferences)
     })
 
     return {success: true, message: "Email verified successfully!"};

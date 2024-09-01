@@ -6,6 +6,7 @@ import {authChecker} from "@/app/lib/graphql/resolvers/authChecker";
 import {BookmarkResolver} from "@/app/lib/graphql/resolvers/BookmarkResolver";
 import {LikeResolver} from "@/app/lib/graphql/resolvers/LikeResolver";
 import {RatingResolver} from "@/app/lib/graphql/resolvers/RatingResolver";
+import {ChapterBookmarkResolver} from "@/app/lib/graphql/resolvers/ChapterBookmarkResolver";
 
 export const schema = buildSchemaSync({
   resolvers: [
@@ -15,7 +16,8 @@ export const schema = buildSchemaSync({
       ComicsStatsResolver,
       BookmarkResolver,
       LikeResolver,
-      RatingResolver
+      RatingResolver,
+      ChapterBookmarkResolver
   ],
   authChecker
 })

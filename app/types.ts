@@ -1,5 +1,6 @@
 import {useDisclosure} from "@nextui-org/react";
 import {useState} from "react";
+import {UserPreferences} from "@/app/lib/graphql/schema";
 
 export interface UserSession {
   id: string,
@@ -7,7 +8,8 @@ export interface UserSession {
   email: string,
   image: string,
   role: UserRole,
-  userId?: string
+  userId?: string,
+  preferences: UserPreferences
 }
 
 export enum ComicsStatusBadgeColor {

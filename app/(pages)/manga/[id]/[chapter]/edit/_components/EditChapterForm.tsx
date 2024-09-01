@@ -1,7 +1,6 @@
 "use client"
 
 import {useRef, useState} from "react";
-import {createChapter} from "@/app/(pages)/manga/[id]/upload/actions";
 import {Button, SelectItem} from "@nextui-org/react";
 import {Input} from "@nextui-org/input";
 import {ChapterEditQuery, ChapterLanguage} from "@/app/__generated__/graphql";
@@ -13,7 +12,6 @@ import ImagesInputSection from "@/app/(pages)/manga/[id]/upload/_components/Imag
 import z from "zod";
 import {useForm} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Alert from "@/app/_components/Alert";
 import {editChapter} from "@/app/(pages)/manga/[id]/[chapter]/edit/actions";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
 
@@ -67,7 +65,6 @@ export default function UploadChapterForm({chapter}: Props) {
     formState: {
       errors ,
       isSubmitting,
-      isSubmitSuccessful
     },
     setError,
     clearErrors

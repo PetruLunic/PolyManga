@@ -13,7 +13,7 @@ export class BookmarkResolver {
   @Authorized(["USER", "MODERATOR"])
   @Query(() => String, {nullable: true})
   async isBookmarked(@Arg("mangaId") mangaId: string, @Ctx() ctx: ApolloContext): Promise<BookmarkType | null> {
-    const bookmark: HydratedDocument<Bookmark> | null = await BookmarkModel.findOne({userId: ctx.user?.id}).lean();
+    const bookmark: Bookmark | null = await BookmarkModel.findOne({userId: ctx.user?.id}).lean();
 
     if (!bookmark) {
       throw new GraphQLError("Bookmark not found", {
@@ -106,6 +106,7 @@ export class BookmarkResolver {
     return bookmark.toObject();
   }
 
+  @Authorized(["USER", "MODERATOR"])
   @Mutation(() => String, {nullable: true})
   async deleteBookmark(@Arg("mangaId") mangaId: string, @Ctx() ctx: ApolloContext): Promise<string | null> {
     const bookmark: HydratedDocument<Bookmark> | null = await BookmarkModel.findOne({userId: ctx.user?.id});

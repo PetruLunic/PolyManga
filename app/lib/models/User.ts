@@ -1,7 +1,7 @@
 import mongoose, {model, Model, Schema} from "mongoose";
 import {User} from "@/app/lib/graphql/schema";
 import {nanoid} from "nanoid";
-import {UserProvider, UserRole} from "@/app/types";
+import {UserProvider, UserRole, ChapterLanguage} from "@/app/types";
 import Bookmark from "@/app/lib/models/Bookmark";
 import {USER_NO_IMAGE_SRC} from "@/app/lib/utils/constants";
 
@@ -64,6 +64,13 @@ const UserSchema = new Schema<User>({
   emailTokenExpiry: {
     type: String,
     default: () => new Date().toISOString()
+  },
+  preferences: {
+    language: {
+      type: String,
+      enum: ChapterLanguage,
+      default: null
+    }
   }
 }, {timestamps: true})
 

@@ -31,6 +31,7 @@ export const GET_MANGA = gql(`
       id,
       mangaId,
       createdAt,
+	  title,
       number
     },
     status,
@@ -53,8 +54,12 @@ export const GET_MANGA = gql(`
         nrVotes,
         value
       },
-      views
-    }
+      views,
+    },
+	bookmarkedChapter {
+	  id,
+	  title
+	 }
   }
 }
 `)
@@ -114,8 +119,13 @@ export const GET_NAVBAR_CHAPTER = gql(`
         id,
         mangaId,
         createdAt,
+        title,
         number
-      } 
+      },
+	  bookmarkedChapter {
+	    id,
+	    number
+      }
     },
     chapter(id: $chapterId) {
       number,
@@ -164,7 +174,10 @@ export const SIGN_IN = gql(`
       email,
       role,
       image,
-      emailVerified
+      emailVerified,
+      preferences {
+        language
+      }
     }
   }
 `)
@@ -224,6 +237,24 @@ export const GET_MANGA_EDIT = gql(`
       releaseYear,
       image,
       languages
+    }
+  }
+`)
+
+export const GET_USER_PREFERENCES = gql(`
+    query userPreferences {
+      user {
+        preferences {
+          language
+        }
+      }  
+    }
+`)
+
+export const GET_BOOKMARKED_CHAPTER = gql(`
+  query getBookmarkedChapter($mangaId: String!) {
+    getBookmarkedChapter(mangaId: $mangaId) {
+      chapterId
     }
   }
 `)

@@ -11,6 +11,7 @@ import RatingButton from "@/app/(pages)/manga/[id]/_components/RatingButton";
 import IncrementViews from "@/app/(pages)/manga/[id]/_components/IncrementViews";
 import MangaSettingsDropdown from "@/app/(pages)/manga/[id]/_components/MangaSettingsDropdown";
 import {notFound} from "next/navigation";
+import {cookies} from "next/headers";
 
 interface Props{
   params: {id: string}
@@ -21,7 +22,7 @@ export const revalidate = 10;
 export default async function Page({params: {id}}: Props) {
   const client = createApolloClient();
   const {data} = await client.query({
-    query: GET_MANGA, variables: {id}
+    query: GET_MANGA, variables: {id}, context: {headers: {cookie: cookies()}}
   }).catch(() => notFound());
 
   const {manga} = data;
@@ -49,7 +50,9 @@ export default async function Page({params: {id}}: Props) {
                 color="primary"
                 isDisabled={!manga?.firstChapter}
             >
-              First chapter
+              {manga?.bookmarkedChapter?.title
+                ? "Continue " + manga?.bookmarkedChapter?.title
+                : "First Chapter"}
             </Button>
             <BookmarkButton mangaId={id}/>
             <div className="flex gap-3">
@@ -171,7 +174,7 @@ export default async function Page({params: {id}}: Props) {
       <CardBody className="p-2 md:p-4">
         <div className="flex flex-col gap-4">
           <h3 className="text-center text-lg font-bold md:text-left">Chapters list</h3>
-          <ChapterList chapters={manga?.chapters}/>
+          <ChapterList chapters={manga?.chapters} bookmarkedChapter={manga?.bookmarkedChapter?.id}/>
         </div>
       </CardBody>
     </Card>

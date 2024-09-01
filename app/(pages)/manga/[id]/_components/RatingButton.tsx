@@ -169,4 +169,4 @@ export function RatingButtonAuthenticated({mangaId, rating, nrVotes}: Props) {
     </Modal>
   </>
  );
-};
+}

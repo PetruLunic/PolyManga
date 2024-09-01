@@ -1,7 +1,9 @@
-import mongoose, {model, Schema} from "mongoose";
+import mongoose, {Model, model, Schema} from "mongoose";
 import {Chapter} from "@/app/lib/graphql/schema";
 import {nanoid} from "nanoid";
 import {ChapterLanguage} from "@/app/types";
+
+interface ChapterModel extends Model<Chapter> {}
 
 export const ChapterSchema = new Schema<Chapter>({
   id: {
@@ -47,4 +49,4 @@ export const ChapterSchema = new Schema<Chapter>({
   }],
 }, {timestamps: true})
 
-export default mongoose.models["Chapter"] || model<Chapter>("Chapter", ChapterSchema)
+export default mongoose.models["Chapter"] as ChapterModel || model<Chapter, ChapterModel>("Chapter", ChapterSchema)

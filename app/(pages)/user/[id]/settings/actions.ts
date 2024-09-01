@@ -6,13 +6,15 @@ import {nanoid} from "nanoid";
 import {auth} from "@/auth";
 import dbConnect from "@/app/lib/utils/dbConnect";
 import UserModel from "@/app/lib/models/User";
-import {ChangePasswordSchema, UserInfoSchema} from "@/app/lib/utils/zodSchemas";
+import {ChangePasswordSchema, UserInfoSchema, UserPreferencesSchema} from "@/app/lib/utils/zodSchemas";
 import {USER_IMAGE_MAX_SIZE, USER_NO_IMAGE_SRC} from "@/app/lib/utils/constants";
-import {deleteImage, getAbsoluteAwsUrl, getSignedURLs, uploadImage} from "@/app/lib/utils/awsUtils";
+import {deleteImage, getAbsoluteAwsUrl, uploadImage} from "@/app/lib/utils/awsUtils";
 import {DeleteObjectCommandOutput} from "@aws-sdk/client-s3/dist-types/commands";
 import bcrypt from "bcryptjs";
 import {HydratedDocument} from "mongoose";
 import {User} from "@/app/lib/graphql/schema";
+import {FormType as PreferencesFormType} from "@/app/(pages)/user/[id]/settings/_components/PreferencesSection";
+import {ChapterLanguage} from "@/app/types";
 
 export async function modifyUserInfo(input: InfoFormType, formData?: FormData): Promise<{success: boolean, imageUrl?: string}> {
   const session = await auth();
@@ -62,8 +64,6 @@ export async function modifyUserInfo(input: InfoFormType, formData?: FormData): 
       deleteImageFetchPromise = deleteImage(prevImage);
     }
   }
-
-  await dbConnect();
 
   // If were provided new image to change
   if (imageUrl) {
@@ -126,4 +126,31 @@ export async function changePassword({oldPassword, newPassword}: SecurityFormTyp
   user.password = bcrypt.hashSync(newPassword, 7);
 
   await user.save()
+}
+
+export async function changeUserPreferences({language}: PreferencesFormType) {
+  const session = await auth();
+
+  if (!session) {
+    throw new Error("Forbidden action");
+  }
+
+  const isValid = UserPreferencesSchema.safeParse({language});
+
+  if (!isValid.success) {
+    throw new Error("Validation error: " + isValid.error.message);
+  }
+
+  await dbConnect();
+  const user: HydratedDocument<User> | null = await UserModel.findOne({id: session.user.id});
+
+  if (!user) {
+    throw new Error(`There is no user with ${session.user.id} id`);
+  }
+
+  user.preferences.language = language ? language as ChapterLanguage : null;
+
+  await user.save();
+
+  return user.id;
 }

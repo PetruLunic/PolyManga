@@ -10,8 +10,9 @@ import SignUpButton from "@/app/_components/navbar/SignUpButton";
 export default function NavbarRoot() {
   const params = useParams<{id: string, chapter: string}>();
 
+  // No client side navbar on chapter page
   if (params.chapter)
-    return <NavbarChapter/>
+    return <></>;
 
  return (
    <Navbar shouldHideOnScroll>

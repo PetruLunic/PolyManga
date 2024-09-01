@@ -6,6 +6,7 @@ import {useSearchParams} from "next/navigation";
 import {Session} from "next-auth";
 import InfoSection from "@/app/(pages)/user/[id]/settings/_components/InfoSection";
 import SecuritySection from "@/app/(pages)/user/[id]/settings/_components/SecuritySection";
+import PreferencesSection from "@/app/(pages)/user/[id]/settings/_components/PreferencesSection";
 
 interface Props{
   user: Session["user"]
@@ -46,7 +47,7 @@ export default function SettingsPage({user}: Props) {
         key="preferences"
         title="Preferences"
       >
-
+        <PreferencesSection user={user}/>
       </Tab>
     </Tabs>
   </div>

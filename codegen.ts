@@ -4,7 +4,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
 
 const config: CodegenConfig = {
   schema: siteUrl + "/api/graphql",
-  documents: ['app/**/*.{ts,tsx}'],
+  documents: ['app/lib/graphql/*.ts'],
   generates: {
     './app/__generated__/': {
       preset: 'client',

@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google"
 import FacebookProvider from "next-auth/providers/facebook"
 import Credentials from "next-auth/providers/credentials"
 import User from "@/app/lib/models/User";
-import {User as IUser} from "@/app/lib/graphql/schema"
+import {User as IUser, UserPreferences} from "@/app/lib/graphql/schema"
 import dbConnect from "@/app/lib/utils/dbConnect";
 import {nanoid} from "nanoid";
 import {UserRole, UserSession} from "@/app/types";
@@ -47,7 +47,7 @@ export const { handlers, signIn, auth } = NextAuth({
       async profile(profile) {
         await dbConnect();
 
-        const user: IUser | null = await User.findOne({ email: profile.email }, "id name email image role").lean();
+        const user: IUser | null = await User.findOne({ email: profile.email }, "id name email image role preferences").lean();
 
         if (!user) {
           const name = `${profile.name}_${nanoid()}`;
@@ -68,6 +68,7 @@ export const { handlers, signIn, auth } = NextAuth({
             email: newUser.email,
             image: newUser.image,
             role: newUser.role,
+            preferences: newUser.preferences,
           };
         }
 
@@ -80,7 +81,7 @@ export const { handlers, signIn, auth } = NextAuth({
       async profile(profile) {
         await dbConnect();
 
-        const user: IUser | null = await User.findOne({ email: profile.email }, "id name email image role").lean();
+        const user: IUser | null = await User.findOne({ email: profile.email }, "id name email image role preferences").lean();
 
         if (!user) {
           const name = `${profile.name}_${nanoid()}`;
@@ -101,6 +102,7 @@ export const { handlers, signIn, auth } = NextAuth({
             email: newUser.email,
             image: newUser.image,
             role: newUser.role,
+            preferences: newUser.preferences,
           };
         }
 
@@ -133,6 +135,11 @@ export const { handlers, signIn, auth } = NextAuth({
           label: "role",
           type: "text",
           required: true
+        },
+        preferences: {
+          label: "preferences",
+          type: "text",
+          required: false
         }
       },
       async authorize(credentials) {
@@ -142,7 +149,8 @@ export const { handlers, signIn, auth } = NextAuth({
           name: credentials.name as string,
           email: credentials.email as string,
           role: credentials.role as UserRole,
-          image: credentials.image as string
+          image: credentials.image as string,
+          preferences: JSON.parse(credentials.preferences as string) as UserPreferences,
         };
       }
     })
@@ -154,7 +162,9 @@ export const { handlers, signIn, auth } = NextAuth({
     async jwt({ token, account, user, trigger, session }) {
 
       if (trigger === "signIn" && user) {
-        token.user = {...user, id: user.userId};
+        token.user = {...user,
+          id: user.userId
+        };
       }
 
       // On session update

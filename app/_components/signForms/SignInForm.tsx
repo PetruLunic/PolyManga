@@ -2,26 +2,21 @@
 
 import {
   Button,
-  Checkbox,
-  Link,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  useDisclosure
 } from "@nextui-org/react";
 import React from "react";
 import {Input} from "@nextui-org/input";
 import {IoIosMail} from "react-icons/io";
-import {MdOutlinePassword} from "react-icons/md";
 import AuthButtons from "@/app/_components/signForms/AuthButtons";
 import {useForm} from "react-hook-form";
 import {UserSignIn} from "@/app/lib/graphql/schema";
 import {signIn} from "@/app/userActions";
 import Alert from "@/app/_components/Alert";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
-import {useRouter} from "next/navigation";
 import {ModalProps} from "@/app/types";
 import InputPassword from "@/app/_components/InputPassword";
 

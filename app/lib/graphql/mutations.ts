@@ -1,6 +1,5 @@
 import {gql} from "@/app/__generated__";
 
-
 export const CREATE_CHAPTER = gql(`
   mutation AddChapter($chapter: AddChapterInput!) {
     addChapter(chapter: $chapter) {
@@ -98,5 +97,21 @@ export const DELETE_MANGA = gql(`
 export const DELETE_CHAPTERS = gql(`
   mutation deleteChapters($mangaId: ID!, $ids: [ID!]!) {
     deleteChapters(mangaId: $mangaId, ids: $ids)
+  }
+`)
+
+export const ADD_CHAPTER_BOOKMARK = gql(`
+  mutation addChapterBookmark($chapterId: String!) {
+    addChapterBookmark(chapterId: $chapterId) {
+      id
+    }
+  }
+`)
+
+export const DELETE_CHAPTER_BOOKMARK = gql(`
+  mutation deleteChapterBookmark($chapterId: String!) {
+    deleteChapterBookmark(chapterId: $chapterId) {
+      id
+    }
   }
 `)

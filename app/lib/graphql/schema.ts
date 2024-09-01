@@ -181,6 +181,12 @@ export class Manga {
 }
 
 @ObjectType()
+export class UserPreferences {
+  @Field(() => ChapterLanguage, {nullable: true})
+  language: ChapterLanguage | null;
+}
+
+@ObjectType()
 export class User {
   @Field(() => ID)
   id: string;
@@ -214,6 +220,9 @@ export class User {
 
   @Field(() => String, {nullable: true})
   emailTokenExpiry: string;
+
+  @Field(() => UserPreferences)
+  preferences: UserPreferences;
 
   @Field()
   createdAt: string;
@@ -280,6 +289,21 @@ export class Rating {
 
   @Field(() => Int)
   value: number;
+}
+
+@ObjectType()
+export class ChapterBookmark {
+  @Field(() => ID)
+  id: string;
+
+  @Field(() => ID)
+  userId: string;
+
+  @Field(() => ID)
+  mangaId: string;
+
+  @Field(() => ID)
+  chapterId: string;
 }
 
 /********************  INPUTS  ********************/
