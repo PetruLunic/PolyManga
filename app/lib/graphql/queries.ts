@@ -258,3 +258,19 @@ export const GET_BOOKMARKED_CHAPTER = gql(`
     }
   }
 `)
+
+export const GET_MANGAS_WITH_BOOKMARKED_CHAPTERS = gql(`
+  query getMangaWithBookmarkedChapters {
+    user {
+      chapterBookmarks {
+        manga {
+          ...MangaCard
+        },
+        chapter {
+          title
+        },
+        createdAt
+      }
+    }
+  }
+`)

@@ -113,3 +113,5 @@ export type BookmarkType = typeof bookmarkTypes[number];
 
 export const likeableObjects = ["Manga"] as const;
 export type LikeableObject = typeof likeableObjects[number];
+
+export type MangaCardType = "default" | "history" | "bookmark";

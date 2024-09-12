@@ -304,6 +304,12 @@ export class ChapterBookmark {
 
   @Field(() => ID)
   chapterId: string;
+
+  @Field()
+  createdAt: string;
+
+  @Field()
+  updatedAt: string;
 }
 
 /********************  INPUTS  ********************/

@@ -4,6 +4,7 @@ import {Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownT
 import {signOut, useSession} from "next-auth/react";
 import {IoBookmarks, IoSettingsSharp} from "react-icons/io5";
 import {CiLogout} from "react-icons/ci";
+import {MdHistory} from "react-icons/md";
 
 export default function UserAvatar() {
   const session = useSession();
@@ -29,6 +30,13 @@ export default function UserAvatar() {
              href={`/user/${session.data.user.id}/bookmarks`}
          >
            Bookmarks
+         </DropdownItem>
+         <DropdownItem
+             startContent={<MdHistory />}
+             key="history"
+             href={`/user/${session.data.user.id}/history`}
+         >
+           History
          </DropdownItem>
          <DropdownItem
              startContent={<IoSettingsSharp />}

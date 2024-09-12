@@ -1,11 +1,13 @@
 import {Arg, Authorized, Ctx, FieldResolver, Mutation, Query, Resolver, Root} from "type-graphql";
-import {Bookmark, LikeInput, User, UserSignIn, UserSignUp} from "@/app/lib/graphql/schema";
+import {Bookmark, ChapterBookmark, Manga, User, UserSignIn, UserSignUp} from "@/app/lib/graphql/schema";
 import UserModel from "@/app/lib/models/User";
+import MangaModel from "@/app/lib/models/Manga";
 import BookmarkModel from "@/app/lib/models/Bookmark";
 import bcrypt from "bcryptjs";
 import {GraphQLError} from "graphql/error";
 import {UserSchema} from "@/app/lib/utils/zodSchemas";
 import {type ApolloContext} from "@/app/api/graphql/route";
+import ChapterBookmarkModel from "@/app/lib/models/ChapterBookmark";
 
 @Resolver(() => User)
 export class UserResolver {
@@ -89,5 +91,10 @@ export class UserResolver {
   @FieldResolver(() => Bookmark, {nullable: true})
   async bookmarks(@Root() user: User): Promise<Bookmark | null> {
     return BookmarkModel.findOne({id: user.bookmarkId}).lean();
+  }
+
+  @FieldResolver(() => [ChapterBookmark])
+  async chapterBookmarks(@Root() user: User): Promise<ChapterBookmark[]> {
+    return ChapterBookmarkModel.find({userId: user.id}).lean();
   }
 }

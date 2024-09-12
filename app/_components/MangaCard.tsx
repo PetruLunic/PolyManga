@@ -5,10 +5,13 @@ import Link from "next/link";
 import {MangaCardFragment} from "@/app/__generated__/graphql";
 
 interface Props {
-  manga: MangaCardFragment
+  manga: MangaCardFragment,
+  type?: "default" | "history" | "bookmark",
+  bookmarkedChapter?: string,
+  chapterBookmarkCreationDate?: Date
 }
 
-export default function MangaCard({manga}: Props) {
+export default function MangaCard({manga, type, bookmarkedChapter, chapterBookmarkCreationDate}: Props) {
 
   // If it's path is not absolute, then the image is from local public folder
   const imageUrl = !manga.image.startsWith("https://") ? "/manga/" + manga.image : manga.image;
@@ -44,10 +47,18 @@ export default function MangaCard({manga}: Props) {
              <div className="flex flex-col justify-between h-full">
                <p className="block font-medium p-2 text-sm">{manga.title}</p>
                <div className="flex justify-between px-2 pb-2">
-                 <span className="text-default-500 text-sm">{manga.latestChapter ? `Chapter ${manga.latestChapter?.number}` : "No chapter"}</span>
+                 <span className="text-default-500 text-sm">
+                   {type === "history"
+                       ? bookmarkedChapter
+                       : manga.latestChapter ? `Chapter ${manga.latestChapter?.number}` : "No chapter"}
+                 </span>
                  <span className="flex gap-1 items-center">
-               <FaStar color="orange"/>
-              <span className="text-sm">{manga.stats.rating?.value}</span>
+               {type !== "history" && <FaStar color="orange"/>}
+              <span className="text-sm">
+                {type === "history"
+                  ? chapterBookmarkCreationDate?.toLocaleDateString()
+                    : manga.stats.rating?.value}
+              </span>
              </span>
                </div>
              </div>

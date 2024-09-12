@@ -1,9 +1,10 @@
-import {Chapter, ChapterBookmark} from "@/app/lib/graphql/schema";
+import {Chapter, ChapterBookmark, Manga} from "@/app/lib/graphql/schema";
 import ChapterBookmarkModel from "@/app/lib/models/ChapterBookmark"
-import {Arg, Authorized, Ctx, Mutation, Query, Resolver} from "type-graphql";
+import {Arg, Authorized, Ctx, FieldResolver, Mutation, Query, Resolver, Root} from "type-graphql";
 import type {ApolloContext} from "@/app/api/graphql/route";
 import {GraphQLError} from "graphql/error";
 import ChapterModel from "@/app/lib/models/Chapter";
+import MangaModel from "@/app/lib/models/Manga";
 
 
 @Resolver(() => ChapterBookmark)
@@ -38,13 +39,10 @@ export class ChapterBookmarkResolver {
     }
 
     // If there is an old bookmark then delete it
-    const deletedBookmark = await ChapterBookmarkModel.findOneAndDelete({userId: ctx.user?.id, mangaId: chapter.mangaId});
-
-    console.log("Deleted bookmark: ", deletedBookmark);
+    await ChapterBookmarkModel.findOneAndDelete({userId: ctx.user?.id, mangaId: chapter.mangaId});
 
     // Create new bookmark
     const newBookmark = new ChapterBookmarkModel({chapterId, mangaId: chapter.mangaId, userId: ctx.user?.id});
-    console.log("New bookmark: ", newBookmark);
     await newBookmark.save();
 
     return newBookmark;
@@ -53,5 +51,16 @@ export class ChapterBookmarkResolver {
   @Authorized(["USER", "MODERATOR"])
   @Mutation(() => ChapterBookmark, { nullable: true })
   async deleteChapterBookmark(@Arg("chapterId") chapterId: string, @Ctx() ctx: ApolloContext): Promise<ChapterBookmark | null> {
-    return ChapterBookmarkModel.findOneAndDelete({chapterId: chapterId, userId: ctx.user?.id});  }
+    return ChapterBookmarkModel.findOneAndDelete({chapterId: chapterId, userId: ctx.user?.id});
+  }
+
+  @FieldResolver(() => Manga, {nullable: true})
+  async manga(@Root() bookmark: ChapterBookmark): Promise<Manga | null> {
+    return MangaModel.findOne({id: bookmark.mangaId}).lean();
+  }
+
+  @FieldResolver(() => Chapter, {nullable: true})
+  async chapter(@Root() bookmark: ChapterBookmark): Promise<Chapter | null> {
+    return ChapterModel.findOne({id: bookmark.chapterId}).lean();
+  }
 }

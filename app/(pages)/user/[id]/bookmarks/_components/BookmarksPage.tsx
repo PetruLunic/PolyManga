@@ -7,6 +7,7 @@ import {useSearchParams} from "next/navigation";
 import MangaList from "@/app/_components/MangaList";
 import {getFragmentData} from "@/app/__generated__";
 import {MANGA_CARD} from "@/app/lib/graphql/queries";
+import MangaCard from "@/app/_components/MangaCard";
 
 interface Props{
   data?: BookmarksQuery
@@ -33,19 +34,39 @@ export default function BookmarksPage({data}: Props) {
     }}
     >
       <Tab key="reading" title={`Reading (${bookmarks?.reading?.length})`}>
-        <MangaList mangas={getFragmentData(MANGA_CARD, bookmarks?.reading)}/>
+        <MangaList>
+          {getFragmentData(MANGA_CARD, bookmarks?.reading)?.map(manga =>
+            <MangaCard manga={manga} key={manga.id}/>
+          )}
+        </MangaList>
       </Tab>
       <Tab key="inPlans" title={`In plans (${bookmarks?.inPlans?.length})`}>
-        <MangaList mangas={getFragmentData(MANGA_CARD, bookmarks?.inPlans)}/>
+        <MangaList>
+          {getFragmentData(MANGA_CARD, bookmarks?.inPlans)?.map(manga =>
+              <MangaCard manga={manga} key={manga.id}/>
+          )}
+        </MangaList>
       </Tab>
       <Tab key="finished" title={`Finished (${bookmarks?.finished?.length})`}>
-        <MangaList mangas={getFragmentData(MANGA_CARD, bookmarks?.finished)}/>
+        <MangaList>
+          {getFragmentData(MANGA_CARD, bookmarks?.finished)?.map(manga =>
+              <MangaCard manga={manga} key={manga.id}/>
+          )}
+        </MangaList>
       </Tab>
       <Tab key="dropped" title={`Dropped (${bookmarks?.dropped?.length})`}>
-        <MangaList mangas={getFragmentData(MANGA_CARD, bookmarks?.dropped)}/>
+        <MangaList>
+          {getFragmentData(MANGA_CARD, bookmarks?.dropped)?.map(manga =>
+              <MangaCard manga={manga} key={manga.id}/>
+          )}
+        </MangaList>
       </Tab>
       <Tab key="favourite" title={`Favourite (${bookmarks?.favourite?.length})`}>
-        <MangaList mangas={getFragmentData(MANGA_CARD, bookmarks?.favourite)}/>
+        <MangaList>
+          {getFragmentData(MANGA_CARD, bookmarks?.favourite)?.map(manga =>
+              <MangaCard manga={manga} key={manga.id}/>
+          )}
+        </MangaList>
       </Tab>
     </Tabs>
 
