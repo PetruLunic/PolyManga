@@ -9,20 +9,22 @@ import {IS_LIKED} from "@/app/lib/graphql/queries";
 import {useSession} from "next-auth/react";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
+import {MangaQuery} from "@/app/__generated__/graphql";
 
 interface Props{
   mangaId: string,
-  nrLikes?: number
+  nrLikes?: number,
+  isLiked: MangaQuery["isLiked"]
 }
 
-export default function LikeButton({mangaId, nrLikes}: Props) {
+export default function LikeButton({mangaId, nrLikes, isLiked}: Props) {
   const session = useSession();
   const {onOpen} = useModal("signIn")
 
  return (
    <>
      {session.data
-         ? <LikeButtonAuthenticated mangaId={mangaId} nrLikes={nrLikes}/>
+         ? <LikeButtonAuthenticated mangaId={mangaId} nrLikes={nrLikes} isLiked={isLiked}/>
          : <Button
              size="sm"
              variant="light"
@@ -36,25 +38,18 @@ export default function LikeButton({mangaId, nrLikes}: Props) {
  );
 };
 
-function LikeButtonAuthenticated({mangaId, nrLikes}: Props) {
-  const {data, loading: loadingIsLiked} = useQuery(IS_LIKED, {variables: {objectId: mangaId}});
+function LikeButtonAuthenticated({mangaId, nrLikes, isLiked}: Props) {
   const [like, {loading: loadingLike}] = useMutation(LIKE);
   const [unlike, {loading: loadingUnlike}] = useMutation(UNLIKE);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLikedState, setIsLikedState] = useState(isLiked);
   const {addAlert} = useAlert();
-
-  useEffect(() => {
-    if (!data?.isLiked) return;
-
-    setIsLiked(data.isLiked);
-  }, [data]);
 
   const onClick = async () => {
     try {
       // Update optimistic the like button
-      setIsLiked(prev => !prev);
+      setIsLikedState(prev => !prev);
 
-      if (isLiked) {
+      if (isLikedState) {
         await unlike({variables: {objectId: mangaId}});
 
         addAlert({message: "Unliked!", type: "success"});
@@ -73,7 +68,7 @@ function LikeButtonAuthenticated({mangaId, nrLikes}: Props) {
       console.error(e);
       
       // Rollback state on error
-      setIsLiked(prev => !prev);
+      setIsLikedState(prev => !prev);
       addAlert({message: "Unexpected error!", type: "danger"});
     }
   }
@@ -84,9 +79,9 @@ function LikeButtonAuthenticated({mangaId, nrLikes}: Props) {
           variant="light"
           className="px-1 text-sm gap-1"
           onClick={onClick}
-          disabled={loadingLike || loadingUnlike || loadingIsLiked}
+          disabled={loadingLike || loadingUnlike}
       >
-        {isLiked
+        {isLikedState
             ? <IoMdHeart size={22}/>
             : <IoMdHeartEmpty size={22}/>}
         {nrLikes}

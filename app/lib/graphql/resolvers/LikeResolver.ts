@@ -1,4 +1,4 @@
-import {Arg, Authorized, Ctx, Mutation, Query, Resolver} from "type-graphql";
+import {Arg, Authorized, Ctx, ID, Mutation, Query, Resolver} from "type-graphql";
 import {Like, LikeInput} from "@/app/lib/graphql/schema";
 import LikeModel from "@/app/lib/models/Like";
 import {type ApolloContext} from "@/app/api/graphql/route";
@@ -10,7 +10,7 @@ import mongoose, {HydratedDocument} from "mongoose";
 export class LikeResolver {
   @Authorized(["USER", "MODERATOR"])
   @Query(() => Boolean)
-  async isLiked(@Arg("objectId") objectId: string, @Ctx() ctx: ApolloContext): Promise<boolean> {
+  async isLiked(@Arg("objectId", () => ID) objectId: string, @Ctx() ctx: ApolloContext): Promise<boolean> {
     return LikeModel.findOne({objectId, userId: ctx.user?.id}).then(res => !!res);
   }
 

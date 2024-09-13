@@ -1,4 +1,4 @@
-import {Arg, Authorized, Ctx, FieldResolver, Mutation, Query, Resolver, Root} from "type-graphql";
+import {Arg, Authorized, Ctx, FieldResolver, ID, Mutation, Query, Resolver, Root} from "type-graphql";
 import {AddBookmarkInput, Bookmark, Manga} from "@/app/lib/graphql/schema";
 import MangaModel from "@/app/lib/models/Manga";
 import BookmarkModel from "@/app/lib/models/Bookmark";
@@ -12,7 +12,7 @@ export class BookmarkResolver {
 
   @Authorized(["USER", "MODERATOR"])
   @Query(() => String, {nullable: true})
-  async isBookmarked(@Arg("mangaId") mangaId: string, @Ctx() ctx: ApolloContext): Promise<BookmarkType | null> {
+  async isBookmarked(@Arg("mangaId", () => ID) mangaId: string, @Ctx() ctx: ApolloContext): Promise<BookmarkType | null> {
     const bookmark: Bookmark | null = await BookmarkModel.findOne({userId: ctx.user?.id}).lean();
 
     if (!bookmark) {

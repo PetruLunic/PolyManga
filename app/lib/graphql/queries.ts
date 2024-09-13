@@ -60,7 +60,10 @@ export const GET_MANGA = gql(`
 	  id,
 	  title
 	 }
-  }
+  },
+  isBookmarked(mangaId: $id),
+  isRated(mangaId: $id),
+  isLiked(objectId: $id)
 }
 `)
 
@@ -207,19 +210,19 @@ export const GET_BOOKMARKS = gql(`
 `)
 
 export const IS_BOOKMARKED = gql(`
-  query isBookmarked($mangaId: String!) {
+  query isBookmarked($mangaId: ID!) {
     isBookmarked(mangaId: $mangaId)
   }
 `)
 
 export const IS_LIKED = gql(`
-  query isLiked($objectId: String!) {
+  query isLiked($objectId: ID!) {
     isLiked(objectId: $objectId)
   }
 `)
 
 export const IS_RATED = gql(`
-  query isRated($mangaId: String!) {
+  query isRated($mangaId: ID!) {
     isRated(mangaId: $mangaId)
   }
 `)

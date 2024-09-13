@@ -25,7 +25,7 @@ export default async function Page({params: {id}}: Props) {
     query: GET_MANGA, variables: {id}, context: {headers: {cookie: cookies()}}
   }).catch(() => notFound());
 
-  const {manga} = data;
+  const {manga, isBookmarked, isRated, isLiked} = data;
 
   return (
   <div className="md:px-4 flex flex-col gap-3">
@@ -54,7 +54,7 @@ export default async function Page({params: {id}}: Props) {
                 ? "Continue " + manga?.bookmarkedChapter?.title
                 : "First Chapter"}
             </Button>
-            <BookmarkButton mangaId={id}/>
+            <BookmarkButton isBookmarked={isBookmarked} mangaId={id}/>
             <div className="flex gap-3">
               <div className="flex gap-1">
                 Status
@@ -90,7 +90,7 @@ export default async function Page({params: {id}}: Props) {
             </h2>
             <Divider/>
             <div className="flex justify-center md:justify-start items-center text-sm flex-wrap">
-              <RatingButton mangaId={id} rating={manga?.stats.rating.value} nrVotes={manga?.stats.rating.nrVotes}/>
+              <RatingButton isRated={isRated} mangaId={id} rating={manga?.stats.rating.value} nrVotes={manga?.stats.rating.nrVotes}/>
               <Button
                   size="sm"
                   variant="light"
@@ -99,7 +99,7 @@ export default async function Page({params: {id}}: Props) {
                 <IoEyeOutline size={22}/>
                 {manga?.stats?.views}
               </Button>
-              <LikeButton mangaId={id} nrLikes={manga?.stats.likes}/>
+              <LikeButton isLiked={isLiked} mangaId={id} nrLikes={manga?.stats.likes}/>
               <Button
                   size="sm"
                   variant="light"

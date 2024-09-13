@@ -1,4 +1,4 @@
-import {Arg, Authorized, Ctx, Float, Int, Mutation, Query, Resolver} from "type-graphql";
+import {Arg, Authorized, Ctx, Float, ID, Int, Mutation, Query, Resolver} from "type-graphql";
 import {Rating, RatingInput} from "@/app/lib/graphql/schema";
 import MangaModel from "@/app/lib/models/Manga";
 import RatingModel from "@/app/lib/models/Rating";
@@ -130,7 +130,7 @@ export class RatingResolver {
 
   @Authorized(["USER", "MODERATOR"])
   @Query(() => Int, {nullable: true})
-  async isRated(@Arg("mangaId") mangaId: string, @Ctx() ctx: ApolloContext): Promise<number | undefined> {
+  async isRated(@Arg("mangaId", () => ID) mangaId: string, @Ctx() ctx: ApolloContext): Promise<number | undefined> {
     return RatingModel
         .findOne({mangaId, userId: ctx.user?.id})
         .lean()

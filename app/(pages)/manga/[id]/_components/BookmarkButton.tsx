@@ -4,13 +4,13 @@ import {useSession} from "next-auth/react";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {IoBookmarks} from "react-icons/io5";
 import {Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger} from "@nextui-org/react";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {BookmarkType, bookmarkTypes} from "@/app/types";
 import {ADD_BOOKMARK, DELETE_BOOKMARK} from "@/app/lib/graphql/mutations";
-import {useMutation, useQuery} from "@apollo/client";
-import {IS_BOOKMARKED} from "@/app/lib/graphql/queries";
+import {useMutation} from "@apollo/client";
 import {FiTrash2} from "react-icons/fi";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
+import {MangaQuery} from "@/app/__generated__/graphql";
 
 const bookmarkDoc: Record<BookmarkType | "delete", string> = {
   reading: "Reading",
@@ -22,17 +22,18 @@ const bookmarkDoc: Record<BookmarkType | "delete", string> = {
 }
 
 interface Props{
-  mangaId: string
+  mangaId: string,
+  isBookmarked: MangaQuery["isBookmarked"]
 }
 
-export default function BookmarkButton({mangaId}: Props) {
+export default function BookmarkButton({mangaId, isBookmarked}: Props) {
   const session = useSession();
   const {onOpen} = useModal("signIn");
 
  return (
      <>
        {session.status === "authenticated"
-       ? <BookmarkDropdown mangaId={mangaId}/>
+       ? <BookmarkDropdown isBookmarked={isBookmarked} mangaId={mangaId}/>
        : <Button
                className="w-full"
                variant="bordered"
@@ -46,33 +47,20 @@ export default function BookmarkButton({mangaId}: Props) {
  );
 };
 
+let prevBookmark: BookmarkType | "delete" | null = null;
 
-function BookmarkDropdown ({mangaId}: Props) {
+function BookmarkDropdown ({mangaId, isBookmarked}: Props) {
   const [addBookmark, { loading: loadingAddBookmark}] = useMutation(ADD_BOOKMARK);
   const [deleteBookmark, {loading: loadingDeleteBookmark}] = useMutation(DELETE_BOOKMARK);
-  const {data, loading: loadingQuery} = useQuery(IS_BOOKMARKED, {variables: {mangaId}});
-  const [bookmark, setBookmark] = useState<(BookmarkType | "delete")[]>(data?.isBookmarked ? [data?.isBookmarked as BookmarkType] : []);
-  const isFirstLoad = useRef<boolean>(true);
+  const [bookmark, setBookmark] = useState<(BookmarkType | "delete")[]>(isBookmarked ? [isBookmarked as BookmarkType] : []);
   const {addAlert} = useAlert();
-
-  // Set the bookmark if it's already bookmarked
-  useEffect(() => {
-    if (data && !data?.isBookmarked) {
-      isFirstLoad.current = false;
-      return
-    }
-    if (!data) return;
-
-    setBookmark([data.isBookmarked as BookmarkType]);
-  }, [data]);
 
   // Mutate the bookmark on every bookmark change
   useEffect(() => {
     if (bookmark.length === 0) return;
-    if (isFirstLoad.current) {
-      isFirstLoad.current = false;
-      return
-    }
+    if (isBookmarked === bookmark[0] && !prevBookmark) return;
+
+    prevBookmark = bookmark[0];
 
     (async () => {
       try {
@@ -104,9 +92,13 @@ function BookmarkDropdown ({mangaId}: Props) {
               className="w-full"
               variant="bordered"
               startContent={<IoBookmarks />}
-              isLoading={loadingQuery || loadingAddBookmark || loadingDeleteBookmark}
+              isLoading={loadingAddBookmark || loadingDeleteBookmark}
           >
-            {bookmark[0] ? bookmarkDoc[bookmark[0]] : "Bookmark"}
+            {bookmark[0]
+                ? bookmarkDoc[bookmark[0]]
+                : isBookmarked
+                    ? bookmarkDoc[isBookmarked as BookmarkType]
+                    : "Bookmark"}
           </Button>
         </DropdownTrigger>
         <DropdownMenu
