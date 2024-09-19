@@ -54,7 +54,7 @@ export class MangaResolver {
   }
 
   @Query(() => [Manga])
-  async mangas(@Args() {search, types, statuses, genres, sort, languages, sortBy}: GetMangasArgs): Promise<Manga[] | []> {
+  async mangas(@Args() {search, types, statuses, genres, sort, languages, sortBy, limit}: GetMangasArgs): Promise<Manga[] | []> {
     const query: any = {
       isDeleted: false,
       isBanned: false,
@@ -69,6 +69,9 @@ export class MangaResolver {
         sortField = 'stats.rating.value';
         break;
       case 'views':
+      case 'dailyViews':
+      case 'weeklyViews':
+      case 'monthlyViews':
       case 'likes':
       case 'bookmarks':
         sortField = `stats.${sortBy}`;
@@ -120,7 +123,7 @@ export class MangaResolver {
       sortStage
     ] satisfies PipelineStage[]
 
-    return MangaModel.aggregate(aggregationPipeline).exec();
+    return MangaModel.aggregate(aggregationPipeline).limit(limit).exec();
   }
 
   @Authorized(["MODERATOR"])
@@ -215,7 +218,20 @@ export class MangaResolver {
       cookies().set(id, "1", {expires: Date.now() + EXPIRE_TIME});
 
       // Increment views for comics
-      const manga = await MangaModel.findOneAndUpdate({id, isDeleted: false, isBanned: false}, { $inc: {"stats.views": 1} }, {new: true}).lean();
+      const manga = await MangaModel.findOneAndUpdate(
+          {
+            id,
+            isDeleted: false,
+            isBanned: false
+          }, {
+            $inc: {
+              "stats.views": 1,
+              "stats.dailyViews": 1,
+              "stats.weeklyViews": 1,
+              "stats.monthlyViews": 1
+            }
+          }, {new: true})
+          .lean();
       return manga?.stats.views;
     }
   }

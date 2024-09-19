@@ -26,6 +26,7 @@ import ClearFiltersButton from "@/app/(pages)/manga/_components/ClearFiltersButt
 import SortButton from "@/app/(pages)/manga/_components/SortButton";
 import SortBySelect from "@/app/(pages)/manga/_components/SortBySelect";
 import {Divider} from "@nextui-org/divider";
+import MangaCard from "@/app/_components/MangaCard";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -69,7 +70,11 @@ export default function Page() {
          <div className="md:flex-grow">
            {loading
                ? <Spinner className="mt-4" size="lg"/>
-               : <MangaList mangas={mangas}/>}
+               : <MangaList >
+                 {mangas?.map(manga =>
+                  <MangaCard key={manga.id} manga={manga}/>
+                 )}
+               </MangaList>}
          </div>
          <Card isBlurred className="hidden sticky top-16 md:block max-w-[300px] min-w-[300px]">
            <CardBody className="gap-3">

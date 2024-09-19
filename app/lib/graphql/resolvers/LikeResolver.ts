@@ -8,9 +8,10 @@ import mongoose, {HydratedDocument} from "mongoose";
 
 @Resolver(() => Like)
 export class LikeResolver {
-  @Authorized(["USER", "MODERATOR"])
-  @Query(() => Boolean)
-  async isLiked(@Arg("objectId", () => ID) objectId: string, @Ctx() ctx: ApolloContext): Promise<boolean> {
+  @Query(() => Boolean, {nullable: true})
+  async isLiked(@Arg("objectId", () => ID) objectId: string, @Ctx() ctx: ApolloContext): Promise<boolean | null> {
+    if (!ctx.user) return null;
+
     return LikeModel.findOne({objectId, userId: ctx.user?.id}).then(res => !!res);
   }
 

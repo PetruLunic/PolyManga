@@ -495,4 +495,7 @@ export class GetMangasArgs {
 
   @Field(() => [ChapterLanguage],{nullable: true})
   languages: ChapterLanguage[];
+
+  @Field(() => Int, {nullable: true})
+  limit: number;
 }

@@ -23,7 +23,7 @@ export default async function Page({params: {id}}: Props) {
   const client = createApolloClient();
   const {data} = await client.query({
     query: GET_MANGA, variables: {id}, context: {headers: {cookie: cookies()}}
-  }).catch(() => notFound());
+  })
 
   const {manga, isBookmarked, isRated, isLiked} = data;
 

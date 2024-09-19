@@ -17,7 +17,7 @@ export default function MangaCard({manga, type, bookmarkedChapter, chapterBookma
   const imageUrl = !manga.image.startsWith("https://") ? "/manga/" + manga.image : manga.image;
 
  return (
-     <Card shadow="sm" className="w-44" isPressable isBlurred isHoverable>
+     <Card shadow="sm" className="min-w-44 max-w-44" isPressable isBlurred isHoverable>
        <Link href={`/manga/${manga.id}`} className="h-full">
          <Badge
              className="right-0 translate-x-0"

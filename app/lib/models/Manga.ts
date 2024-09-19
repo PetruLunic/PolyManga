@@ -68,7 +68,19 @@ const MangaSchema = new Schema<Manga>({
     views: {
       type: Number,
       default: 0
-    }
+    },
+    dailyViews: {
+      type: Number,
+      default: 0
+    },
+    weeklyViews: {
+      type: Number,
+      default: 0
+    },
+    monthlyViews: {
+      type: Number,
+      default: 0
+    },
   },
   genres: {
     type: [String],

@@ -128,9 +128,11 @@ export class RatingResolver {
     return rating?.id;
   }
 
-  @Authorized(["USER", "MODERATOR"])
+  // @Authorized(["USER", "MODERATOR"])
   @Query(() => Int, {nullable: true})
-  async isRated(@Arg("mangaId", () => ID) mangaId: string, @Ctx() ctx: ApolloContext): Promise<number | undefined> {
+  async isRated(@Arg("mangaId", () => ID) mangaId: string, @Ctx() ctx: ApolloContext): Promise<number | null | undefined> {
+    if (!ctx.user) return null;
+
     return RatingModel
         .findOne({mangaId, userId: ctx.user?.id})
         .lean()

@@ -9,7 +9,7 @@ import MangaModel from "@/app/lib/models/Manga";
 
 @Resolver(() => ChapterBookmark)
 export class ChapterBookmarkResolver {
-  @Authorized(["USER", "MODERATOR"])
+  // @Authorized(["USER", "MODERATOR"])
   @Query(() => ChapterBookmark, { nullable: true })
   async getBookmarkedChapter(@Arg("mangaId") mangaId: string, @Ctx() ctx: ApolloContext): Promise<ChapterBookmark | null> {
     const bookmark: ChapterBookmark | null = await ChapterBookmarkModel.findOne({userId: ctx.user?.id, mangaId}).lean();

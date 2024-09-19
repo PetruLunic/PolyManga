@@ -10,9 +10,10 @@ import {type ApolloContext} from "@/app/api/graphql/route";
 @Resolver(() => Bookmark)
 export class BookmarkResolver {
 
-  @Authorized(["USER", "MODERATOR"])
   @Query(() => String, {nullable: true})
   async isBookmarked(@Arg("mangaId", () => ID) mangaId: string, @Ctx() ctx: ApolloContext): Promise<BookmarkType | null> {
+    if (!ctx.user) return null;
+
     const bookmark: Bookmark | null = await BookmarkModel.findOne({userId: ctx.user?.id}).lean();
 
     if (!bookmark) {
