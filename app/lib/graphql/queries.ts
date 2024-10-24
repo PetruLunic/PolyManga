@@ -277,3 +277,18 @@ export const GET_MANGAS_WITH_BOOKMARKED_CHAPTERS = gql(`
     }
   }
 `)
+
+export const GET_LATEST_UPLOADED_CHAPTERS = gql(`
+  query getLatestUploadedChapters($limit: Int!) {
+    latestChapters (limit: $limit) {
+      id,
+      manga {
+        image,
+        title,
+        id
+      },
+      createdAt,
+      title
+    }
+  }
+`)

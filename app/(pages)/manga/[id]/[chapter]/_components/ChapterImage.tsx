@@ -19,7 +19,7 @@ export default function ChapterImage({image, priority}: Props) {
   const languageQuery = useSearchParams().get("language");
   const [language, setLanguage] = useState<ChapterLanguage>(Object.keys(image)[0] as ChapterLanguage);
   const [offset, setOffset] = useState<number>(0);
-  let preferredLanguage = session.data?.user.preferences.language
+  let preferredLanguage = session.data?.user?.preferences?.language
 
   useEffect(() => {
     if (!languageQuery) return;
@@ -41,6 +41,7 @@ export default function ChapterImage({image, priority}: Props) {
         alt={image[language]?.src.split("/").pop()}
         width={image[language]?.width}
         height={image[language]?.height}
+        style={{height: "auto"}}
         priority={priority}
         onClick={() => {
           if (preferredLanguage) {
@@ -74,6 +75,7 @@ export default function ChapterImage({image, priority}: Props) {
                  alt={image[language]?.src.split("/").pop()}
                  width={image[language]?.width}
                  height={image[language]?.height}
+                 style={{height: "auto"}}
                  priority={priority}
                  radius="none"
              />

@@ -38,7 +38,7 @@ export default function Page() {
   const sortBy = searchParams.get("sortBy");
   const languages = searchParams.getAll("language");
   const debouncedSearchText = useDebounce(searchText, 1000);
-  const {replaceParam, deleteParam} = useQueryParams();
+  const {replaceParam} = useQueryParams();
   const {data, loading} = useQuery(GET_MANGA_CARDS,
       {variables: {
         search: debouncedSearchText,
@@ -47,7 +47,8 @@ export default function Page() {
           genres: genres as ComicsGenre[],
           sort: sort,
           sortBy: sortBy,
-          languages: languages as ChapterLanguage[]
+          languages: languages as ChapterLanguage[],
+          limit: 20
         }});
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
@@ -59,7 +60,7 @@ export default function Page() {
   }, [debouncedSearchText]);
 
  return (
-     <div className="mx-5 flex flex-col gap-3">
+     <div className="mx-3 flex flex-col gap-3">
        <h2 className="text-xl">Catalog</h2>
        <Input
            label="Search by name"

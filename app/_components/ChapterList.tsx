@@ -3,7 +3,7 @@
 import {Button} from "@nextui-org/react";
 import Link from "next/link";
 import {Manga_ChapterQuery} from "@/app/__generated__/graphql";
-import {MouseEventHandler, useRef, useState} from "react";
+import {MouseEventHandler, useState} from "react";
 import {HiOutlineSortAscending, HiOutlineSortDescending} from "react-icons/hi";
 import { motion } from 'framer-motion';
 import {IoBookmark, IoBookmarkOutline} from "react-icons/io5";
@@ -103,7 +103,7 @@ export default function ChapterList({chapters, selectedChapter, bookmarkedChapte
                    </Button>
                    <span>{chapter.title}</span>
                  </div>
-                 <span>{new Date(parseInt(chapter.createdAt)).toLocaleDateString()}</span>
+                 <span className="tracking-wider">{new Date(parseInt(chapter.createdAt)).toLocaleDateString('en-GB')}</span>
                </Button>
            )
            : <div className="text-center text-gray-500 my-10">No chapter</div>

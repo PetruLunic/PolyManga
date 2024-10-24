@@ -499,3 +499,12 @@ export class GetMangasArgs {
   @Field(() => Int, {nullable: true})
   limit: number;
 }
+
+@ArgsType()
+export class GetChaptersArgs {
+  @Field(() => Int, {nullable: true})
+  limit: number;
+
+  @Field({nullable: true})
+  sortBy?: string;
+}

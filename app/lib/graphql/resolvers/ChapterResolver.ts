@@ -1,5 +1,5 @@
-import {Arg, FieldResolver, ID, Mutation, Query, Resolver, Root} from "type-graphql";
-import {AddChapterInput, Chapter} from "@/app/lib/graphql/schema";
+import {Arg, Args, FieldResolver, ID, Mutation, Query, Resolver, Root} from "type-graphql";
+import {AddChapterInput, Chapter, GetChaptersArgs, Manga} from "@/app/lib/graphql/schema";
 import ChapterModel from "@/app/lib/models/Chapter";
 import {GraphQLError} from "graphql/error";
 import {HydratedDocument} from "mongoose";
@@ -22,6 +22,28 @@ export class ChapterResolver {
     }
 
     return chapter;
+  }
+
+  @Query(() => [Chapter])
+  async latestChapters(@Args() {limit}: GetChaptersArgs): Promise<Chapter[]> {
+    return ChapterModel.aggregate([
+      // Step 1: Sort by mangaId and createdAt (newest first)
+      { $sort: { mangaId: 1, createdAt: -1 } },
+
+      // Step 2: Group by mangaId, keeping only the newest chapter (one per mangaId)
+      {
+        $group: {
+          _id: "$mangaId",   // Group by bookId
+          latestChapter: { $first: "$$ROOT" }  // Get the most recent chapter for each mangaId
+        }
+      },
+
+      // Step 3: Replace root to get the original document format
+      { $replaceRoot: { newRoot: "$latestChapter" } },
+
+      // Step 4: Sort the final result by createdAt in descending order
+      { $sort: { createdAt: -1 } }
+    ]).limit(limit).exec();
   }
 
   @Mutation(() => Chapter)
@@ -158,5 +180,10 @@ export class ChapterResolver {
   @FieldResolver(() => [ChapterLanguage])
   async languages(@Root() chapter: Chapter): Promise<ChapterLanguage[]> {
     return chapter.versions.map(version => version.language);
+  }
+
+  @FieldResolver(() => Manga)
+  async manga(@Root() chapter: Chapter): Promise<Manga | null> {
+    return MangaModel.findOne({id: chapter.mangaId}).lean();
   }
 }
