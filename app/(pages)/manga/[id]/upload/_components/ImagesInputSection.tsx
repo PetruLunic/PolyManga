@@ -1,11 +1,11 @@
 import {Divider} from "@nextui-org/divider";
 import ImageInput from "@/app/(pages)/manga/[id]/upload/_components/ImageInput";
 import {Button, Image, Select, SelectItem, useDisclosure} from "@nextui-org/react";
-import {ChapterLanguage} from "@/app/types";
 import {FaTrashAlt} from "react-icons/fa";
 import {Dispatch, SetStateAction} from "react";
 import {ImageInputSection, SelectItem as ISelectItem} from "@/app/(pages)/manga/[id]/upload/_components/UploadChapterForm";
 import {Modal, ModalBody, ModalContent} from "@nextui-org/react";
+import {ChapterLanguage} from "@/app/__generated__/graphql";
 
 interface Props{
   id: string,

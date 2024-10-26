@@ -6,10 +6,9 @@ import {MangaSchema} from "@/app/lib/utils/zodSchemas";
 import {nanoid} from "nanoid";
 import createApolloClient from "@/app/lib/utils/apollo-client";
 import {CREATE_MANGA} from "@/app/lib/graphql/mutations";
-import {AddMangaInput, ComicsGenre, ComicsStatus, ComicsType} from "@/app/__generated__/graphql";
+import {AddMangaInput, ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/__generated__/graphql";
 import {cookies} from "next/headers";
 import {getSignedURLs} from "@/app/lib/utils/awsUtils";
-import {ChapterLanguage} from "@/app/types";
 
 export const createManga = async (formData: FormData, mangaInput: FormType) => {
   const session = await auth();

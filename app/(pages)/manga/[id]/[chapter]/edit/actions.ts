@@ -3,13 +3,14 @@
 import {combineAndCropImagesVertically} from "@/app/lib/utils/compositeImages";
 import {nanoid} from "nanoid";
 import {AddChapterInput, ChapterLanguage} from "@/app/__generated__/graphql";
+import {ChapterLanguage as ChapterLanguageEnum} from"@/app/types";
 import {getImageURLs} from "@/app/lib/utils/getImageURL";
 import {deleteImage, getSignedURLs} from "@/app/lib/utils/awsUtils";
 import {CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT} from "@/app/lib/utils/constants";
 import {auth} from "@/auth";
 import ChapterModel from "@/app/lib/models/Chapter";
 import {HydratedDocument} from "mongoose";
-import {Chapter} from "@/app/lib/graphql/schema";
+import {Chapter, ChapterVersion} from "@/app/lib/graphql/schema";
 
 export async function editChapter(formData: FormData, languages: ChapterLanguage[]) {
   const session = await auth();
@@ -125,13 +126,13 @@ export async function editChapter(formData: FormData, languages: ChapterLanguage
   chapter.number = number;
 
   versions.forEach(version => {
-    const index = chapter.versions.findIndex(e => e.language === version.language);
+    const index = chapter.versions.findIndex(e => e.language === version.language as unknown as ChapterLanguageEnum);
 
     // If there are images for this language, then replace them, otherwise push them
     if (index === -1) {
-      chapter.versions.push(version);
+      chapter.versions.push(version as unknown as ChapterVersion);
     } else {
-      chapter.versions[index] = version;
+      chapter.versions[index] = version as unknown as ChapterVersion;
     }
   })
 

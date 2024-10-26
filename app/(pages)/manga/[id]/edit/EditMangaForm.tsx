@@ -1,6 +1,6 @@
 "use client"
 
-import {EditMangaInput, MangaEditQuery, ComicsGenre, ComicsStatus, ComicsType} from "@/app/__generated__/graphql";
+import {EditMangaInput, MangaEditQuery, ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/__generated__/graphql";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {MangaSchema} from "@/app/lib/utils/zodSchemas";
@@ -10,7 +10,6 @@ import {Input, Textarea} from "@nextui-org/input";
 import {Button, Image, Select, SelectItem} from "@nextui-org/react";
 import z from "zod";
 import {editManga} from "@/app/(pages)/manga/[id]/edit/actions";
-import {ChapterLanguage} from "@/app/types";
 
 interface Props{
   manga: Exclude<MangaEditQuery["manga"], null | undefined>;
