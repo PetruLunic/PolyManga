@@ -36,7 +36,7 @@ registerEnumType(UserProvider, {
   name: "UserProvider"
 })
 
-@ObjectType()
+@ObjectType("ComicsRating")
 export class ComicsRating {
   @Field(() => Float)
   value: number;
@@ -45,7 +45,7 @@ export class ComicsRating {
   nrVotes: number;
 }
 
-@ObjectType()
+@ObjectType("ComicsStats")
 export class ComicsStats {
   @Field(() => ComicsRating)
   rating: ComicsRating;
@@ -60,7 +60,7 @@ export class ComicsStats {
   views: number;
 }
 
-@ObjectType()
+@ObjectType("ChapterImage")
 export class ChapterImage {
   @Field()
   src: string;
@@ -72,7 +72,7 @@ export class ChapterImage {
   height: number;
 }
 
-@ObjectType()
+@ObjectType("ChapterVersion")
 export class ChapterVersion {
   @Field(() => [ChapterImage])
   images: ChapterImage[]
@@ -81,7 +81,7 @@ export class ChapterVersion {
   language: ChapterLanguage
 }
 
-@ObjectType()
+@ObjectType("Chapter")
 export class Chapter {
   @Field(() => ID)
   id: string;
@@ -120,7 +120,7 @@ export class Chapter {
   updatedAt: string;
 }
 
-@ObjectType()
+@ObjectType("Manga")
 export class Manga {
   @Field(() => ID)
   id: string;
@@ -180,13 +180,13 @@ export class Manga {
   isBanned: boolean;
 }
 
-@ObjectType()
+@ObjectType("UserPreferences")
 export class UserPreferences {
   @Field(() => ChapterLanguage, {nullable: true})
   language: ChapterLanguage | null;
 }
 
-@ObjectType()
+@ObjectType("User")
 export class User {
   @Field(() => ID)
   id: string;
@@ -231,7 +231,7 @@ export class User {
   updatedAt: string;
 }
 
-@ObjectType()
+@ObjectType("Bookmark")
 export class Bookmark {
   @Field(() => ID)
   id: string;
@@ -261,7 +261,7 @@ export class Bookmark {
   updatedAt: string;
 }
 
-@ObjectType()
+@ObjectType("Like")
 export class Like {
   @Field(() => ID)
   id: string;
@@ -276,7 +276,7 @@ export class Like {
   objectType: LikeableObject;
 }
 
-@ObjectType()
+@ObjectType("Rating")
 export class Rating {
   @Field(() => ID)
   id: string;
@@ -291,7 +291,7 @@ export class Rating {
   value: number;
 }
 
-@ObjectType()
+@ObjectType("ChapterBookmark")
 export class ChapterBookmark {
   @Field(() => ID)
   id: string;
@@ -314,7 +314,7 @@ export class ChapterBookmark {
 
 /********************  INPUTS  ********************/
 
-@InputType()
+@InputType("UserSignUp")
 export class UserSignUp implements Partial<User> {
   @Field()
   name: string;
@@ -326,7 +326,7 @@ export class UserSignUp implements Partial<User> {
   password: string;
 }
 
-@InputType()
+@InputType("UserSignIn")
 export class UserSignIn implements Partial<User> {
   @Field()
   email: string;
@@ -336,7 +336,7 @@ export class UserSignIn implements Partial<User> {
 }
 
 
-@InputType()
+@InputType("AddMangaInput")
 export class AddMangaInput implements Partial<Manga> {
   @Field()
   id: string;
@@ -372,7 +372,7 @@ export class AddMangaInput implements Partial<Manga> {
   uploadedBy: string;
 }
 
-@InputType()
+@InputType("EditMangaInput")
 export class EditMangaInput implements Partial<Manga> {
   @Field()
   id: string;
@@ -405,7 +405,7 @@ export class EditMangaInput implements Partial<Manga> {
   releaseYear: number;
 }
 
-@InputType()
+@InputType("ImageInput")
 export class ImageInput implements ChapterImage {
   @Field()
   src: string
@@ -417,7 +417,7 @@ export class ImageInput implements ChapterImage {
   height: number
 }
 
-@InputType()
+@InputType("ChapterVersionInput")
 export class ChapterVersionInput implements ChapterVersion {
   @Field(() => [ImageInput])
   images: ImageInput[]
@@ -426,7 +426,7 @@ export class ChapterVersionInput implements ChapterVersion {
   language: ChapterLanguage
 }
 
-@InputType()
+@InputType("AddChapterInput")
 export class AddChapterInput implements Partial<Chapter> {
   @Field(() => ID)
   id: string;
@@ -444,7 +444,7 @@ export class AddChapterInput implements Partial<Chapter> {
   mangaId: string;
 }
 
-@InputType()
+@InputType("AddBookmarkInput")
 export class AddBookmarkInput {
   @Field(() => ID)
   mangaId: string;
@@ -453,7 +453,7 @@ export class AddBookmarkInput {
   type: BookmarkType;
 }
 
-@InputType()
+@InputType("LikeInput")
 export class LikeInput implements Partial<Like>{
   @Field(() => ID)
   objectId: string;
@@ -462,7 +462,7 @@ export class LikeInput implements Partial<Like>{
   objectType: LikeableObject
 }
 
-@InputType()
+@InputType("RatingInput")
 export class RatingInput implements Partial<Rating> {
   @Field(() => ID)
   mangaId: string;

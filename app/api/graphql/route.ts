@@ -13,6 +13,7 @@ export type ApolloContext = {
 
 const server = new ApolloServer<ApolloContext>({
   schema,
+  introspection: true,
 });
 
 // Starting server and creating api/graphql endpoint

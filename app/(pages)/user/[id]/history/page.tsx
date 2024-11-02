@@ -16,10 +16,12 @@ export const revalidate = 60;
 export default async function Page({params: {id}}: Props) {
   const session = await auth();
   const apolloClient = createApolloClient();
-  const {data} = await apolloClient.query({
+  const {data, error} = await apolloClient.query({
     query: GET_MANGAS_WITH_BOOKMARKED_CHAPTERS,
-    context: {headers: {cookie: cookies().toString()}}
+    context: {headers: {cookie: cookies()}}
   })
+
+  if (error) console.log(error);
 
   // Forbidden is auth id is not the same as id in the url's path
   if (!session || id !== session.user.id) {

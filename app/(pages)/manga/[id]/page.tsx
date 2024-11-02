@@ -12,6 +12,7 @@ import IncrementViews from "@/app/(pages)/manga/[id]/_components/IncrementViews"
 import MangaSettingsDropdown from "@/app/(pages)/manga/[id]/_components/MangaSettingsDropdown";
 import {notFound} from "next/navigation";
 import {cookies} from "next/headers";
+import {auth} from "@/auth";
 
 interface Props{
   params: {id: string}
@@ -20,6 +21,7 @@ interface Props{
 export const revalidate = 10;
 
 export default async function Page({params: {id}}: Props) {
+  const session = await auth();
   const client = createApolloClient();
   const {data} = await client.query({
     query: GET_MANGA, variables: {id}, context: {headers: {cookie: cookies()}}

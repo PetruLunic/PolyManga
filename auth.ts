@@ -36,6 +36,7 @@ declare module 'next-auth' {
 
 export const { handlers, signIn, auth } = NextAuth({
   basePath: AUTH_PATH,
+  trustHost: true,
   pages: {
     signIn: "/unauthorized",
     signOut: "/"
