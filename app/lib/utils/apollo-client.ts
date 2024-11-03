@@ -4,6 +4,27 @@ import {
   InMemoryCache,
   SSRMultipartLink,
 } from "@apollo/experimental-nextjs-app-support";
+import {onError} from "@apollo/client/link/error";
+
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message, locations, path }) =>
+        console.error(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+    );
+  }
+
+  if (networkError) {
+    console.error(`[Network error]: ${networkError}`);
+  }
+});
+
+const loggingLink = new ApolloLink((operation, forward) => {
+  console.log(`GraphQL Request: ${operation.operationName}`);
+  return forward(operation).map((result) => {
+    console.log(`GraphQL Response:`, result);
+    return result;
+  });
+});
 
 const createApolloClient = () => {
   const isServer = typeof window === "undefined";
@@ -33,6 +54,8 @@ const createApolloClient = () => {
               new SSRMultipartLink({
                 stripDefer: true,
               }),
+              loggingLink,
+              errorLink,
               httpLink,
             ])
             : httpLink,
