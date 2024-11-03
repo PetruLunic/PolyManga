@@ -55,75 +55,80 @@ export class MangaResolver {
 
   @Query(() => [Manga])
   async mangas(@Args() {search, types, statuses, genres, sort, languages, sortBy, limit}: GetMangasArgs): Promise<Manga[] | []> {
-    const query: any = {
-      isDeleted: false,
-      isBanned: false,
-    };
+    try {
+      const query: any = {
+        isDeleted: false,
+        isBanned: false,
+      };
 
-    const sortOrderValue = sort === 'asc' ? 1 : -1;
-    let sortField = 'stats.views';
-    let sortStage = {} as PipelineStage;
+      const sortOrderValue = sort === 'asc' ? 1 : -1;
+      let sortField = 'stats.views';
+      let sortStage = {} as PipelineStage;
 
-    switch (sortBy) {
-      case 'rating':
-        sortField = 'stats.rating.value';
-        break;
-      case 'views':
-      case 'dailyViews':
-      case 'weeklyViews':
-      case 'monthlyViews':
-      case 'likes':
-      case 'bookmarks':
-        sortField = `stats.${sortBy}`;
-        break;
-      case 'createdAt':
-      case 'language':
-        sortField = sortBy;
-        break;
-      case 'chapters':
-        // Handle sorting by the length of the chapters array
-        sortStage = { $sort: { chaptersLength: sortOrderValue } };
-        break;
-      default:
-        sortField = 'stats.views';
+      switch (sortBy) {
+        case 'rating':
+          sortField = 'stats.rating.value';
+          break;
+        case 'views':
+        case 'dailyViews':
+        case 'weeklyViews':
+        case 'monthlyViews':
+        case 'likes':
+        case 'bookmarks':
+          sortField = `stats.${sortBy}`;
+          break;
+        case 'createdAt':
+        case 'language':
+          sortField = sortBy;
+          break;
+        case 'chapters':
+          // Handle sorting by the length of the chapters array
+          sortStage = { $sort: { chaptersLength: sortOrderValue } };
+          break;
+        default:
+          sortField = 'stats.views';
+      }
+
+      if (!sortStage.hasOwnProperty('$sort')) {
+        sortStage = { $sort: { [sortField]: sortOrderValue } };
+      }
+
+      if (search) {
+        query.title = { $regex: new RegExp(search, 'i') }; // Case-insensitive partial match
+      }
+
+      if (types && types.length > 0) {
+        query.type = { $in: types };
+      }
+
+      if (languages && languages.length > 0) {
+        query.languages = { $all: languages };
+      }
+
+      if (statuses && statuses.length > 0) {
+        query.status = { $in: statuses };
+      }
+
+      if (genres && genres.length > 0) {
+        query.genres = { $all: genres };
+      }
+
+      // Define the aggregation pipeline
+      const aggregationPipeline = [
+        { $match: query },
+        {
+          $addFields: {
+            chaptersLength: { $size: '$chapters' }
+          }
+        },
+        sortStage
+      ] satisfies PipelineStage[]
+
+      return MangaModel.aggregate(aggregationPipeline).limit(limit).exec();
+    } catch (e) {
+      console.error("[mangas resolver error]: ", e);
+      throw e;
     }
-
-    if (!sortStage.hasOwnProperty('$sort')) {
-      sortStage = { $sort: { [sortField]: sortOrderValue } };
-    }
-
-    if (search) {
-      query.title = { $regex: new RegExp(search, 'i') }; // Case-insensitive partial match
-    }
-
-    if (types && types.length > 0) {
-      query.type = { $in: types };
-    }
-
-    if (languages && languages.length > 0) {
-      query.languages = { $all: languages };
-    }
-
-    if (statuses && statuses.length > 0) {
-      query.status = { $in: statuses };
-    }
-
-    if (genres && genres.length > 0) {
-      query.genres = { $all: genres };
-    }
-
-    // Define the aggregation pipeline
-    const aggregationPipeline = [
-      { $match: query },
-      {
-        $addFields: {
-          chaptersLength: { $size: '$chapters' }
-        }
-      },
-      sortStage
-    ] satisfies PipelineStage[]
-
-    return MangaModel.aggregate(aggregationPipeline).limit(limit).exec();
   }
 
   @Authorized(["MODERATOR"])

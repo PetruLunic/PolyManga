@@ -18,15 +18,16 @@ const server = new ApolloServer<ApolloContext>({
 
 // Starting server and creating api/graphql endpoint
 const handler = startServerAndCreateNextHandler<NextRequest, ApolloContext>(server, {
-  context: async (req) => {
-    // Connecting to mongoDB on first graphQL request. Next requests extracting from cache
-    await dbConnect();
+  context: async ( req ) => {
+    try {
+      await dbConnect(); // Ensure DB connection is available
 
-    const session = await auth();
+      const session = await auth(); // Authentication handling
 
-    return {
-      req,
-      user: session?.user
+      return { req, user: session?.user };
+    } catch (error) {
+      console.error('Error in Apollo Server context:', error);
+      throw new Error('Failed to initialize context');
     }
   },
 });
