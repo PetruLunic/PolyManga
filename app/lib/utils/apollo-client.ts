@@ -10,9 +10,7 @@ const createApolloClient = () => {
 
   // Dynamically set the API URL based on the environment
   const uri = isServer
-      ? process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}/api/graphql`
-          : process.env.NEXT_PUBLIC_SITE_URL
+      ? process.env.NEXT_PUBLIC_SITE_URL
               ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/graphql`
               : "http://localhost:3000/api/graphql"  // Default fallback for local development
       : "/api/graphql";  // Relative URL for client-side requests
