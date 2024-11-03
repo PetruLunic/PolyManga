@@ -6,7 +6,6 @@ import {cookies} from "next/headers";
 
 export default async function Page() {
   const session = await auth();
-  console.log(session);
 
   if (!session) return <div>Unauthorized</div>
 

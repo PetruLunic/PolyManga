@@ -15,6 +15,12 @@ export const revalidate = 60;
 
 export default async function Page({params: {id}}: Props) {
   const session = await auth();
+
+  // Forbidden is auth id is not the same as id in the url's path
+  if (!session || id !== session.user.id) {
+    redirect("/forbidden");
+  }
+
   const apolloClient = createApolloClient();
   const {data, error} = await apolloClient.query({
     query: GET_MANGAS_WITH_BOOKMARKED_CHAPTERS,
@@ -22,11 +28,6 @@ export default async function Page({params: {id}}: Props) {
   })
 
   if (error) console.log(error);
-
-  // Forbidden is auth id is not the same as id in the url's path
-  if (!session || id !== session.user.id) {
-    redirect("/forbidden");
-  }
 
  return (
   <div className="flex flex-col gap-3">
