@@ -8,7 +8,12 @@ export async function getSession(req: NextRequest): Promise<UserSession | null> 
     throw new Error("Auth secret not provided in .env file.");
   }
 
-  const jwt = await getToken({req, secret: process.env.AUTH_SECRET!, salt: "authjs.session-token"});
+  let jwt = await getToken({req, secret: process.env.AUTH_SECRET!, salt: "authjs.session-token"});
+
+  // If no jwt in authjs.session-token then try to access secure auth cookie
+  if (!jwt) {
+    jwt = await getToken({req, secret: process.env.AUTH_SECRET!, salt: "__Secure-authjs.session-token"});
+  }
 
   return jwt as unknown as UserSession;
 }
