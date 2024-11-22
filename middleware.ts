@@ -32,6 +32,7 @@ export default async function middleware(req: NextRequest) {
   console.log("Middleware session log: ", session);
   console.log("Middleware session role log: ", session?.role);
   console.log("Current path: ", path);
+  console.log("Request object middleware: ", req);
 
   const isPathMatched = (regexArray: RegExp[]) => regexArray.some(regex => regex.test(path));
 
