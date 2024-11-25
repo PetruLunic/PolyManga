@@ -4,6 +4,8 @@ import {DeleteObjectCommandOutput} from "@aws-sdk/client-s3/dist-types/commands"
 import {auth} from "@/auth";
 import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
 
+export const AWS_BUCKET_URL = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/`
+
 export const deleteImage = (url: string): Promise<DeleteObjectCommandOutput> | undefined => {
   const bucketName = process.env.AWS_BUCKET_NAME;
 
@@ -74,11 +76,5 @@ export const uploadImage = async (image: File, pathname: string): Promise<Respon
 }
 
 export const getAbsoluteAwsUrl = (pathname: string): string => {
-  const awsUrl = process.env.AWS_BUCKET_URL;
-
-  if (!awsUrl) {
-    throw new Error("AWS bucket url not provided in .env file");
-  }
-
-  return awsUrl + pathname;
+  return AWS_BUCKET_URL + pathname;
 }

@@ -180,32 +180,6 @@ export class MangaResolver {
     manga.isDeleted = true;
     await manga.save();
 
-    // Fetch all chapters for the manga
-    const chapters = await ChapterModel.find({ mangaId: id }).lean();
-
-    const bucketName = process.env.AWS_BUCKET_NAME;
-
-    if (!bucketName) {
-      throw new GraphQLError("Aws bucket name (AWS_BUCKET_NAME) not provided in .env file.", {
-        extensions: {
-          code: "INTERNAL_SERVER_ERROR"
-        }
-      })
-    }
-
-    const bucketUrl = process.env.AWS_BUCKET_URL;
-
-    if (!bucketUrl) {
-      throw new GraphQLError("Aws bucket url (AWS_BUCKET_URL) not provided in .env file.", {
-        extensions: {
-          code: "INTERNAL_SERVER_ERROR"
-        }
-      })
-    }
-
-
-
-
     // Delete chapters from database
     await ChapterModel.deleteMany({ mangaId: id });
 

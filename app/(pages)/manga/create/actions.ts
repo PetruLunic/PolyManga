@@ -8,7 +8,7 @@ import createApolloClient from "@/app/lib/utils/apollo-client";
 import {CREATE_MANGA} from "@/app/lib/graphql/mutations";
 import {AddMangaInput, ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/__generated__/graphql";
 import {cookies} from "next/headers";
-import {getSignedURLs} from "@/app/lib/utils/awsUtils";
+import {AWS_BUCKET_URL, getSignedURLs} from "@/app/lib/utils/awsUtils";
 
 export const createManga = async (formData: FormData, mangaInput: FormType) => {
   const session = await auth();
@@ -38,16 +38,10 @@ export const createManga = async (formData: FormData, mangaInput: FormType) => {
     throw new Error("Unexpected error");
   }
 
-  const awsUrl = process.env.AWS_BUCKET_URL;
-
-  if (!awsUrl) {
-    throw new Error("AWS bucket url not provided in .env file");
-  }
-
   const manga: AddMangaInput = {
     ...mangaInput,
     id: mangaId,
-    image: awsUrl + imageUrl,
+    image: AWS_BUCKET_URL + imageUrl,
     uploadedBy: session.user.id,
     genres: mangaInput.genres.split(",") as ComicsGenre[],
     languages: mangaInput.languages.split(",") as ChapterLanguage[],

@@ -5,7 +5,7 @@ import {nanoid} from "nanoid";
 import {AddChapterInput, ChapterLanguage} from "@/app/__generated__/graphql";
 import {ChapterLanguage as ChapterLanguageEnum} from"@/app/types";
 import {getImageURLs} from "@/app/lib/utils/getImageURL";
-import {deleteImage, getSignedURLs} from "@/app/lib/utils/awsUtils";
+import {AWS_BUCKET_URL, deleteImage, getSignedURLs} from "@/app/lib/utils/awsUtils";
 import {CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT} from "@/app/lib/utils/constants";
 import {auth} from "@/auth";
 import ChapterModel from "@/app/lib/models/Chapter";
@@ -92,17 +92,11 @@ export async function editChapter(formData: FormData, languages: ChapterLanguage
   // Creating versions for chapter that are stored in DB
   const versions: AddChapterInput["versions"] = [];
 
-  const awsUrl = process.env.AWS_BUCKET_URL;
-
-  if (!awsUrl) {
-    throw new Error("AWS_BUCKET_URL environment variable was not provided.");
-  }
-
   languages.forEach(language => {
     versions.push({
       language: language.toLowerCase() as ChapterLanguage,
       images: imagesURLs[language].map(url => ({
-        src: awsUrl + url,
+        src: AWS_BUCKET_URL + url,
         width: CHAPTER_IMAGE_WIDTH,
         height: MAX_CHAPTER_IMAGE_HEIGHT
       }))

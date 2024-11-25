@@ -7,7 +7,7 @@ import {getImageURLs} from "@/app/lib/utils/getImageURL";
 import createApolloClient from "@/app/lib/utils/apollo-client";
 import {CREATE_CHAPTER} from "@/app/lib/graphql/mutations";
 import {isGraphQLErrors} from "@/app/lib/utils/errorsNarrowing";
-import {getSignedURLs} from "@/app/lib/utils/awsUtils";
+import {AWS_BUCKET_URL, getSignedURLs} from "@/app/lib/utils/awsUtils";
 import {CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT} from "@/app/lib/utils/constants";
 import {auth} from "@/auth";
 
@@ -80,17 +80,11 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
   // Creating versions for chapter that are stored in DB
   const versions: AddChapterInput["versions"] = [];
 
-  const awsUrl = process.env.AWS_BUCKET_URL;
-
-  if (!awsUrl) {
-    throw new Error("AWS_BUCKET_URL environment variable was not provided.");
-  }
-
   languages.forEach(language => {
     versions.push({
       language,
       images: imagesURLs[language].map(url => ({
-        src: awsUrl + url,
+        src: AWS_BUCKET_URL + url,
         width: CHAPTER_IMAGE_WIDTH,
         height: MAX_CHAPTER_IMAGE_HEIGHT
       }))
