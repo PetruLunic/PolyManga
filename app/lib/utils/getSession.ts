@@ -34,5 +34,5 @@ export async function getSession(req: NextRequest): Promise<UserSession | null> 
     salt, // Pass the detected cookie name as the salt
   });
 
-  return jwt as unknown as UserSession;
+  return jwt?.user as unknown as UserSession;
 }
