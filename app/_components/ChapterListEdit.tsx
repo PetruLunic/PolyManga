@@ -20,15 +20,17 @@ import {useMutation} from "@apollo/client";
 import {DELETE_CHAPTERS} from "@/app/lib/graphql/mutations";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
 import Link from "next/link";
+import {mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
 
 type ChapterList = Exclude<ChaptersQuery["manga"], undefined | null>["chapters"]
 
 interface Props{
   chapters?: ChapterList,
-  mangaId: string
+  mangaId: string,
+  mangaTitle?: string
 }
 
-export default function ChapterListEdit({chapters, mangaId}: Props) {
+export default function ChapterListEdit({chapters, mangaId, mangaTitle}: Props) {
   const {isOpen, onOpen, onClose, onOpenChange} = useDisclosure();
   const [currentChapters, setCurrentChapters] = useState<ChapterList | undefined>(chapters);
   const [descending, setDescending] = useState(true);
@@ -123,8 +125,9 @@ export default function ChapterListEdit({chapters, mangaId}: Props) {
                      isIconOnly
                      radius="full"
                      variant="light"
+                     className="z-10"
                      as={Link}
-                     href={`/manga/${mangaId}/${chapter.id}/edit`}
+                     href={`/manga/${mangaTitleAndIdToURL(mangaTitle ?? "", mangaId)}/${chapter.id}/edit`}
                    >
                      <FaRegEdit/>
                    </Button>

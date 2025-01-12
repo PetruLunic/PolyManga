@@ -67,6 +67,19 @@ export const GET_MANGA = gql(`
 }
 `)
 
+export const GET_MANGA_METADATA = gql(`
+  query mangaMetadata($id: ID!) {
+    manga(id: $id) {
+      id,
+      title,
+      description,
+      image,
+      type,
+      genres
+    }
+  }
+`)
+
 export const GET_CHAPTER = gql(`
   query chapter($id: ID!) {
     chapter(id: $id) {
@@ -91,6 +104,21 @@ export const GET_CHAPTER = gql(`
       prevChapter {
         id
       }
+    }
+  }
+`)
+
+export const GET_CHAPTER_METADATA = gql(`
+  query chapterMetadata($id: ID!) {
+    chapter(id: $id) {
+      id,
+      title,
+      number,
+      manga {
+        title,
+        image
+      },
+      languages
     }
   }
 `)
@@ -158,6 +186,7 @@ export const GET_MANGA_CHAPTER_UPLOAD = gql(`
 export const GET_CHAPTERS = gql(`
   query chapters($id: ID!) {
     manga(id: $id) {
+     title,
      chapters {
       id,
       title,

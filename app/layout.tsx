@@ -4,12 +4,20 @@ import "./globals.css";
 import Providers from "@/app/providers";
 import NavbarRoot from "@/app/_components/navbar/NavbarRoot";
 import {SessionProviderProps} from "next-auth/react";
+import {siteName, type} from "@/app/lib/seo/metadata";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Manga Site",
-  description: "Read manga online",
+  title: siteName,
+  description: "Read high-quality manga chapters for free in multiple languages.",
+  keywords: "manga, read manga, read manhwa, read manhua, best manga, free manga, read manga online, popular manga, multi-language manga, comics",
+
+  openGraph: {
+    title: siteName,
+    description: "Read high-quality manga chapters for free in multiple languages.",
+    type
+  }
 };
 
 interface Props {
@@ -21,7 +29,11 @@ interface Props {
 
 export default function RootLayout({children, params: {session}}: Props) {
   return (
-    <html lang="en" className="dark">
+    <html
+      lang="en"
+      className="dark"
+      style={{ colorScheme: 'dark' }}
+    >
     <body
         className={inter.className + " before:bg-[url('https://img.freepik.com/free-vector/blurred-abstract-background-design_1107-169.jpg')]" +
             " bg-black/50 min-h-screen before:bg-fixed before:bg-cover before:bg-no-repeat before:bg-center " +

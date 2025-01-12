@@ -4,6 +4,7 @@ import {GetLatestUploadedChaptersQuery} from "@/app/__generated__/graphql";
 import {Card, Image} from "@nextui-org/react";
 import Link from "next/link";
 import {timeSince} from "@/app/lib/utils/timeSince";
+import {mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
 
 
 interface Props{
@@ -14,7 +15,7 @@ export default function ChapterUpdateCard({chapter}: Props) {
 
  return (
   <Card className="max-h-28" isPressable isBlurred isHoverable fullWidth>
-   <Link className="w-full h-full" href={`/manga/${chapter.manga.id}/${chapter.id}`}>
+   <Link className="w-full h-full" href={`/manga/${mangaTitleAndIdToURL(chapter.manga.title, chapter.manga.id)}/${chapter.id}`}>
      <div className="flex gap-5 items-center w-full h-full">
        <Image
            src={chapter.manga.image}

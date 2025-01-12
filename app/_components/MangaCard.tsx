@@ -3,6 +3,7 @@ import {Badge, Card, CardBody, Image} from "@nextui-org/react";
 import { FaStar } from "react-icons/fa";
 import Link from "next/link";
 import {MangaCardFragment} from "@/app/__generated__/graphql";
+import {mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
 
 interface Props {
   manga: MangaCardFragment,
@@ -18,7 +19,7 @@ export default function MangaCard({manga, type, bookmarkedChapter, chapterBookma
 
  return (
      <Card shadow="sm" className="min-w-44 max-w-44" isPressable isBlurred isHoverable>
-       <Link href={`/manga/${manga.id}`} className="h-full">
+       <Link href={`/manga/${mangaTitleAndIdToURL(manga.title, manga.id)}`} className="h-full">
          <Badge
              className="right-0 translate-x-0"
              size="lg"

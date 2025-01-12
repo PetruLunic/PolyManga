@@ -39,7 +39,12 @@ export default function ChapterListModal({data}: Props) {
           Chapters
         </ModalHeader>
         <ModalBody>
-          <ChapterList chapters={data.manga?.chapters} selectedChapter={chapter} bookmarkedChapter={data.manga?.bookmarkedChapter?.id}/>
+          <ChapterList
+            chapters={data.manga?.chapters}
+            selectedChapter={chapter}
+            bookmarkedChapter={data.manga?.bookmarkedChapter?.id}
+            mangaTitle={data.manga?.title}
+          />
         </ModalBody>
       </ModalContent>
     </Modal>

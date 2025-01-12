@@ -12,7 +12,7 @@ export default async function Page() {
   const client = createApolloClient();
   const {data} = await client.query({
     query: GET_BOOKMARKS,
-    context: {headers: {cookie: cookies().toString()}}
+    context: {headers: {cookie: (await cookies()).toString()}}
   })
 
   return (

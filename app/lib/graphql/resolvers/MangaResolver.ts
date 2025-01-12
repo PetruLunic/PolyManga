@@ -15,6 +15,7 @@ import {type ApolloContext} from "@/app/api/graphql/route";
 import {HydratedDocument, PipelineStage} from "mongoose";
 import {cookies} from "next/headers";
 import ChapterBookmarkModel from "@/app/lib/models/ChapterBookmark";
+import {getMangaIdFromURL} from "@/app/lib/utils/URLFormating";
 
 @Resolver(of => ComicsStats)
 export class ComicsStatsResolver {
@@ -32,7 +33,7 @@ export class ComicsStatsResolver {
 export class MangaResolver {
   @Query(() => Manga, {nullable: true})
   async manga(@Arg('id', () => ID) id: string): Promise<Manga | null> {
-    const manga: Manga | null = await MangaModel.findOne({id}).lean();
+    const manga: Manga | null = await MangaModel.findOne({id: getMangaIdFromURL(id)}).lean();
 
     if (!manga) {
       throw new GraphQLError("Manga not found", {
@@ -194,7 +195,7 @@ export class MangaResolver {
 
     // If browser never visited, or visited a long ago this comics
     if (!expireDate) {
-      cookies().set(id, "1", {expires: Date.now() + EXPIRE_TIME});
+      (await cookies()).set(id, "1", {expires: Date.now() + EXPIRE_TIME});
 
       // Increment views for comics
       const manga = await MangaModel.findOneAndUpdate(

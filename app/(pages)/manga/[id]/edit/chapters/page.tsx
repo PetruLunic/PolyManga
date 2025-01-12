@@ -15,7 +15,7 @@ export default async function Page({params: {id}}: Props) {
  return (
   <div className="flex flex-col gap-4">
     <h2 className="text-lg">Edit chapters</h2>
-    <ChapterListEdit chapters={data.manga?.chapters} mangaId={id}/>
+    <ChapterListEdit chapters={data.manga?.chapters} mangaId={id} mangaTitle={data.manga?.title}/>
   </div>
  );
 };

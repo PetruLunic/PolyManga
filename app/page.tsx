@@ -4,7 +4,7 @@ import {getFragmentData} from "@/app/__generated__";
 import PopularMangaList from "@/app/_components/PopularMangaList";
 import LatestChaptersList from "@/app/_components/LatestChaptersList";
 
-export const revalidate = 60;
+export const revalidate = 300;
 
 export const dynamic = 'force-dynamic'
 

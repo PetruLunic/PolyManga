@@ -4,12 +4,11 @@ import {FaChevronRight} from "react-icons/fa";
 
 
 interface Props{
-  nextChapterId?: string,
   isLast: boolean,
-  mangaId: string
+  href: string
 }
 
-export default function NextButton({isLast, nextChapterId, mangaId}: Props) {
+export default function NextButton({isLast, href}: Props) {
 
  return (
    <Button
@@ -18,7 +17,7 @@ export default function NextButton({isLast, nextChapterId, mangaId}: Props) {
        isIconOnly
        radius="none"
        className="h-full md:w-[--navbar-height]"
-       href={`/manga/${mangaId}/${nextChapterId}`}
+       href={href}
        as={Link}
    >
      <FaChevronRight />

@@ -1,6 +1,6 @@
 import {Button, Card, CardBody, Image} from "@nextui-org/react";
 import {IoBookmarksOutline, IoEyeOutline} from "react-icons/io5";
-import {GET_MANGA} from "@/app/lib/graphql/queries";
+import {GET_MANGA, GET_MANGA_METADATA} from "@/app/lib/graphql/queries";
 import createApolloClient from "@/app/lib/utils/apollo-client";
 import {Divider} from "@nextui-org/divider";
 import Link from "next/link";
@@ -10,18 +10,50 @@ import LikeButton from "@/app/(pages)/manga/[id]/_components/LikeButton";
 import RatingButton from "@/app/(pages)/manga/[id]/_components/RatingButton";
 import IncrementViews from "@/app/(pages)/manga/[id]/_components/IncrementViews";
 import MangaSettingsDropdown from "@/app/(pages)/manga/[id]/_components/MangaSettingsDropdown";
-import {notFound} from "next/navigation";
 import {cookies} from "next/headers";
-import {auth} from "@/auth";
+import {Metadata} from "next";
+import {domain, seoMetaData, siteName, type} from "@/app/lib/seo/metadata";
+import {mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
+
+export async function generateMetadata({ params: {id} }: { params: { id: string } }): Promise<Metadata> {
+  const client = createApolloClient();
+  const {data: {manga}} = await client.query({
+    query: GET_MANGA_METADATA, variables: {id}
+  })
+
+  if (!manga) return seoMetaData.manga;
+
+  // Getting first 4 genres and formating from "martial_arts" to "martial arts"
+  const genres = manga.genres.slice(0, 4).map(genre => genre.replace("_", " "));
+
+  return {
+    title: `${manga.title} | ${siteName}`,
+    description: manga.description.substring(0, 250), // Optimal meta description length,
+    keywords: `manga, read manga, read ${manga.type}, best manga, free manga, read manga online, popular manga, ${genres.join(", ")}`,
+
+    openGraph: {
+      title: manga.title,
+      description: manga.description.substring(0, 160),
+      url: `${domain}/manga/${mangaTitleAndIdToURL(manga.title, id)}`,
+      type,
+      images: [manga.image],
+    },
+    // alternates: {
+    //   languages: Object.fromEntries(
+    //     manga.languages.map(lang => [lang, `/comics/${params.id}?lang=${lang}`])
+    //   )
+    // },
+  }
+}
 
 interface Props{
   params: {id: string}
 }
 
-export const revalidate = 10;
+// 5 minutes revalidate
+export const revalidate = 300;
 
 export default async function Page({params: {id}}: Props) {
-  const session = await auth();
   const client = createApolloClient();
   const {data} = await client.query({
     query: GET_MANGA, variables: {id}, context: {headers: {cookie: cookies()}}
@@ -47,7 +79,7 @@ export default async function Page({params: {id}}: Props) {
             />
             <Button
                 as={Link}
-                href={`/manga/${id}/${manga?.firstChapter?.id}`}
+                href={`/manga/${mangaTitleAndIdToURL(manga?.title ?? "", id)}/${manga?.firstChapter?.id}`}
                 className="w-full"
                 color="primary"
                 isDisabled={!manga?.firstChapter}
@@ -176,7 +208,7 @@ export default async function Page({params: {id}}: Props) {
       <CardBody className="p-2 md:p-4">
         <div className="flex flex-col gap-4">
           <h3 className="text-center text-lg font-bold md:text-left">Chapters list</h3>
-          <ChapterList chapters={manga?.chapters} bookmarkedChapter={manga?.bookmarkedChapter?.id}/>
+          <ChapterList chapters={manga?.chapters} bookmarkedChapter={manga?.bookmarkedChapter?.id} mangaTitle={manga?.title}/>
         </div>
       </CardBody>
     </Card>
