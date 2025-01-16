@@ -4,14 +4,15 @@ import createApolloClient from "@/app/lib/utils/apollo-client";
 import {notFound} from "next/navigation";
 
 interface Props {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export const revalidate = 10;
 
-export default async function Page({params: {id}}: Props) {
+export default async function Page({params}: Props) {
+  const {id} = await params;
   const client = createApolloClient();
   const {data} = await client.query({query: GET_MANGA_CHAPTER_UPLOAD,
     variables: {id}

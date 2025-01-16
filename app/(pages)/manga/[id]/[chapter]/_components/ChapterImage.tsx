@@ -66,7 +66,7 @@ export default function ChapterImage({image, priority}: Props) {
   // Return the default multi-language dropdown image
   return (
       <Dropdown placement="top" offset={offset} size="sm">
-         <DropdownTrigger onClick={(event) => setOffset(
+         <DropdownTrigger onPress={(event: React.MouseEvent<HTMLImageElement>) => setOffset(
                event.currentTarget.getBoundingClientRect().top - event.clientY
            )}>
              <Image

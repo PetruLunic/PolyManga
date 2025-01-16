@@ -4,13 +4,13 @@ import {notFound} from "next/navigation";
 import EditChapterForm from "@/app/(pages)/manga/[id]/[chapter]/edit/_components/EditChapterForm";
 
 interface Props{
-  params: {chapter: string}
+  params: Promise<{chapter: string}>
 }
 
-export default async function Page({params: {chapter}}: Props) {
+export default async function Page({params}: Props) {
   const client = createApolloClient();
   const {data} = await client.query({query: GET_CHAPTER_EDIT,
-    variables: {id: chapter}
+    variables: {id: (await params).chapter}
   }).catch(() => notFound())
 
  return (

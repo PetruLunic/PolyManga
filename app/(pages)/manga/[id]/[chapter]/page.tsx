@@ -11,7 +11,9 @@ import {domain, seoMetaData, siteName, type} from "@/app/lib/seo/metadata";
 import {ChapterLanguageFull} from "@/app/types";
 import {getMangaIdFromURL, mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
 
-export async function generateMetadata({ params: {id, chapter: chapterId} }: Props): Promise<Metadata> {
+export async function generateMetadata({params}: Props): Promise<Metadata> {
+  const {id, chapter: chapterId} = await params;
+
   const client = createApolloClient();
   const {data: {chapter}} = await client.query({
     query: GET_CHAPTER_METADATA, variables: {id: chapterId}
@@ -35,12 +37,13 @@ export async function generateMetadata({ params: {id, chapter: chapterId} }: Pro
 }
 
 interface Props{
-  params: {id: string, chapter: string}
+  params: Promise<{id: string, chapter: string}>
 }
 
 export const revalidate = 3600;
 
-export default async function Page({params: {chapter: chapterId, id: mangaId}}: Props) {
+export default async function Page({params}: Props) {
+  const {id: mangaId, chapter: chapterId} = await params;
   const client = createApolloClient();
   const {data, error} = await client.query({query: GET_CHAPTER, variables: {id: chapterId}});
   const {data: navbarData} = await client.query({

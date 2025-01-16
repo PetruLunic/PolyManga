@@ -8,12 +8,13 @@ import {getFragmentData} from "@/app/__generated__";
 import MangaCard from "@/app/_components/MangaCard";
 
 interface Props{
-  params: {id: string}
+  params: Promise<{id: string}>
 }
 
 export const revalidate = 60;
 
-export default async function Page({params: {id}}: Props) {
+export default async function Page({params}: Props) {
+  const {id} = await params;
   const session = await auth();
 
   // Forbidden is auth id is not the same as id in the url's path

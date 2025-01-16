@@ -5,12 +5,13 @@ import {notFound} from "next/navigation";
 import {getMangaIdFromURL} from "@/app/lib/utils/URLFormating";
 
 interface Props{
-  params: {id: string}
+  params: Promise<{id: string}>
 }
 
 export const revalidate = 10;
 
-export default async function Page({params: {id}}: Props) {
+export default async function Page({params}: Props) {
+  const {id} = await params;
   const client = createApolloClient();
   const {data} = await client.query({query: GET_MANGA_EDIT, variables: {id: getMangaIdFromURL(id)}})
       .catch(() => notFound());

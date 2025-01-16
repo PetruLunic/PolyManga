@@ -15,7 +15,8 @@ import {Metadata} from "next";
 import {domain, seoMetaData, siteName, type} from "@/app/lib/seo/metadata";
 import {mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
 
-export async function generateMetadata({ params: {id} }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params}: Props): Promise<Metadata> {
+  const {id} = await params;
   const client = createApolloClient();
   const {data: {manga}} = await client.query({
     query: GET_MANGA_METADATA, variables: {id}
@@ -47,13 +48,14 @@ export async function generateMetadata({ params: {id} }: { params: { id: string 
 }
 
 interface Props{
-  params: {id: string}
+  params: Promise<{id: string}>
 }
 
 // 5 minutes revalidate
 export const revalidate = 300;
 
-export default async function Page({params: {id}}: Props) {
+export default async function Page({params}: Props) {
+  const {id} = await params;
   const client = createApolloClient();
   const {data} = await client.query({
     query: GET_MANGA, variables: {id}, context: {headers: {cookie: cookies()}}

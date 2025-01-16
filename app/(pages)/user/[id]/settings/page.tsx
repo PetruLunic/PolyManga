@@ -3,10 +3,11 @@ import {redirect} from "next/navigation";
 import SettingsPage from "@/app/(pages)/user/[id]/settings/_components/SettingsPage";
 
 interface Props{
-  params: {id: string}
+  params: Promise<{id: string}>
 }
 
-export default async function Page({params: {id}}: Props) {
+export default async function Page({params}: Props) {
+  const {id} = await params;
   const session = await auth();
 
   // Forbidden is auth id is not the same as id in the url's path
