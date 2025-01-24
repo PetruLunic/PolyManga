@@ -135,8 +135,8 @@ export const GET_CHAPTER_EDIT = gql(`
 `)
 
 export const GET_MANGA_CARDS = gql(`
-  query mangas($search: String, $genres: [ComicsGenre!], $statuses: [ComicsStatus!], $types: [ComicsType!], $sortBy: String, $sort: String, $languages: [ChapterLanguage!], $limit: Int) {
-    mangas(search: $search, genres: $genres, statuses: $statuses, types: $types, sortBy: $sortBy, sort: $sort, languages: $languages, limit: $limit) {
+  query mangas($search: String, $genres: [ComicsGenre!], $statuses: [ComicsStatus!], $types: [ComicsType!], $sortBy: String, $sort: String, $languages: [ChapterLanguage!], $limit: Int, $offset: Int) {
+    mangas(search: $search, genres: $genres, statuses: $statuses, types: $types, sortBy: $sortBy, sort: $sort, languages: $languages, limit: $limit, offset: $offset) {
       ...MangaCard
     }
   }
@@ -308,16 +308,16 @@ export const GET_MANGAS_WITH_BOOKMARKED_CHAPTERS = gql(`
 `)
 
 export const GET_LATEST_UPLOADED_CHAPTERS = gql(`
-  query getLatestUploadedChapters($limit: Int!) {
-    latestChapters (limit: $limit) {
+  query getLatestUploadedChapters($limit: Int!, $offset: Int) {
+    latestChapters(limit: $limit, offset: $offset) {
       id,
+      title,
+      createdAt
       manga {
-        image,
+        id,
         title,
-        id
-      },
-      createdAt,
-      title
+        image
+      }
     }
   }
 `)

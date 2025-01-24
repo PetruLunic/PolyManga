@@ -18,7 +18,7 @@ export default function ImageInput({id, setImageInputSections, isInvalid}: Props
 
   useEffect(() => {
     setImageInputSections(prevState => {
-      return { ...prevState, [id]: { ...prevState[id], images: acceptedFiles } };
+      return { ...prevState, [id]: { ...prevState[id], images: acceptedFiles as File[] } };
     });
   }, [acceptedFiles]);
 

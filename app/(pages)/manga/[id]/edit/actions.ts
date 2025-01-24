@@ -58,6 +58,6 @@ export const editManga = async (manga: EditMangaInput, formData?: FormData) => {
         image: imageUrl || manga.image
       }
     },
-    context: {headers: {cookie: cookies()}}
+    context: {headers: {cookie: await cookies()}}
   })
 }

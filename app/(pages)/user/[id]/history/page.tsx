@@ -25,7 +25,7 @@ export default async function Page({params}: Props) {
   const apolloClient = createApolloClient();
   const {data, error} = await apolloClient.query({
     query: GET_MANGAS_WITH_BOOKMARKED_CHAPTERS,
-    context: {headers: {cookie: cookies()}}
+    context: {headers: {cookie: await cookies()}}
   })
 
   if (error) console.log(error);

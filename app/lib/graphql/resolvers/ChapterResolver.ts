@@ -25,7 +25,7 @@ export class ChapterResolver {
   }
 
   @Query(() => [Chapter])
-  async latestChapters(@Args() {limit}: GetChaptersArgs): Promise<Chapter[]> {
+  async latestChapters(@Args() {limit = 10, offset = 0}: GetChaptersArgs): Promise<Chapter[]> {
     return ChapterModel.aggregate([
       // Step 1: Sort by mangaId and createdAt (newest first)
       { $sort: { mangaId: 1, createdAt: -1 } },
@@ -42,8 +42,10 @@ export class ChapterResolver {
       { $replaceRoot: { newRoot: "$latestChapter" } },
 
       // Step 4: Sort the final result by createdAt in descending order
-      { $sort: { createdAt: -1 } }
-    ]).limit(limit).exec();
+      { $sort: { createdAt: -1 } },
+      { $skip: offset }, // Skip documents for pagination
+      { $limit: limit }, // Limit the number of documents returned
+    ]).exec();
   }
 
   @Mutation(() => Chapter)

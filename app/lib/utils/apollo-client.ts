@@ -47,7 +47,25 @@ const createApolloClient = () => {
   });
 
   return new ApolloClient({
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Query: {
+          fields: {
+            mangas: { // Caching mechanism for mangas pagination
+              keyArgs: ["search", "statuses", "genres", "types", "sort", "sortBy", "languages"], // Cache based on these arguments
+              merge(existing = [], incoming, { args }) {
+                const { offset = 0 } = args || {};
+                const merged = existing ? existing.slice(0) : [];
+                for (let i = 0; i < incoming.length; ++i) {
+                  merged[offset + i] = incoming[i];
+                }
+                return merged;
+              }
+            },
+          },
+        },
+      },
+    }),
     link:
         typeof window === "undefined"
             ? ApolloLink.from([

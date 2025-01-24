@@ -479,13 +479,13 @@ export class GetMangasArgs {
   search: string;
 
   @Field(() => [ComicsGenre], {nullable: true})
-  genres: ComicsGenre[];
+  genres?: ComicsGenre[];
 
   @Field(() => [ComicsStatus], {nullable: true})
-  statuses: ComicsStatus;
+  statuses?: ComicsStatus;
 
   @Field(() => [ComicsType], {nullable: true})
-  types: ComicsType;
+  types?: ComicsType;
 
   @Field({nullable: true})
   sortBy: string;
@@ -494,17 +494,23 @@ export class GetMangasArgs {
   sort: string;
 
   @Field(() => [ChapterLanguage],{nullable: true})
-  languages: ChapterLanguage[];
+  languages?: ChapterLanguage[];
 
   @Field(() => Int, {nullable: true})
-  limit: number;
+  limit?: number;
+
+  @Field(() => Int, {nullable: true})
+  offset?: number;
 }
 
 @ArgsType()
 export class GetChaptersArgs {
   @Field(() => Int, {nullable: true})
-  limit: number;
+  limit?: number;
 
   @Field({nullable: true})
   sortBy?: string;
+
+  @Field(() => Int, {nullable: true})
+  offset?: number;
 }

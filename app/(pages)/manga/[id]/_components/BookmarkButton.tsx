@@ -38,7 +38,7 @@ export default function BookmarkButton({mangaId, isBookmarked}: Props) {
                className="w-full"
                variant="bordered"
                startContent={<IoBookmarks />}
-               onClick={onOpen}
+               onPress={onOpen}
            >
              Bookmark
            </Button>

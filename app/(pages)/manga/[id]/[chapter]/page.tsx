@@ -1,6 +1,6 @@
 import {notFound} from "next/navigation";
 import createApolloClient from "@/app/lib/utils/apollo-client";
-import {GET_CHAPTER, GET_CHAPTER_METADATA, GET_MANGA_METADATA, GET_NAVBAR_CHAPTER} from "@/app/lib/graphql/queries";
+import {GET_CHAPTER, GET_CHAPTER_METADATA, GET_NAVBAR_CHAPTER} from "@/app/lib/graphql/queries";
 import ChapterImage from "@/app/(pages)/manga/[id]/[chapter]/_components/ChapterImage";
 import {transformChapter} from "@/app/(pages)/manga/[id]/[chapter]/_utils/transformChapter";
 import NavbarChapter from "@/app/_components/navbar/NavbarChapter";

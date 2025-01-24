@@ -18,7 +18,7 @@ export default function NavbarRoot() {
    <Navbar shouldHideOnScroll>
      <NavbarBrand className="flex gap-3">
        <Link href={"/"}>
-         <p className="font-bold text-inherit">MANGA</p>
+         <p className="font-bold text-inherit">{process.env.NEXT_PUBLIC_PROJECT_NAME ?? "MANGA"}</p>
        </Link>
        <Button
            className="text-xs tracking-wide font-semibold"

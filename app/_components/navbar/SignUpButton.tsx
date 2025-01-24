@@ -19,7 +19,7 @@ export default function SignUpButton() {
               isIconOnly
               variant="light"
               radius="full"
-              onClick={onOpen}
+              onPress={onOpen}
               isDisabled={session.status === "loading"}
           >
             <FaUser/>

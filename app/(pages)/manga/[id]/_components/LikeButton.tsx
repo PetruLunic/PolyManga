@@ -10,6 +10,7 @@ import {useSession} from "next-auth/react";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
 import {MangaQuery} from "@/app/__generated__/graphql";
+import {formatNumber} from "@/app/lib/utils/formatNumber";
 
 interface Props{
   mangaId: string,
@@ -29,7 +30,7 @@ export default function LikeButton({mangaId, nrLikes, isLiked}: Props) {
              size="sm"
              variant="light"
              className="px-1 text-sm gap-1"
-             onClick={onOpen}
+             onPress={onOpen}
          >
            <IoMdHeartEmpty size={22}/>
            {nrLikes}
@@ -78,13 +79,13 @@ function LikeButtonAuthenticated({mangaId, nrLikes, isLiked}: Props) {
           size="sm"
           variant="light"
           className="px-1 text-sm gap-1"
-          onClick={onClick}
+          onPress={onClick}
           disabled={loadingLike || loadingUnlike}
       >
         {isLikedState
             ? <IoMdHeart size={22}/>
             : <IoMdHeartEmpty size={22}/>}
-        {nrLikes}
+        {formatNumber(nrLikes ?? 0)}
       </Button>
   );
 }

@@ -186,7 +186,7 @@ export default function UploadChapterForm({mangaId, latestChapterNumber}: Props)
                 <Button
                     isIconOnly
                     radius="full"
-                    onClick={() =>
+                    onPress={() =>
                         setImageInputSections(prev => {
                           return {...prev, [nanoid()]: {language: languagesMap[0].key, images: []}}
                         })

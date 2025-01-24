@@ -55,7 +55,19 @@ export class MangaResolver {
   }
 
   @Query(() => [Manga])
-  async mangas(@Args() {search, types, statuses, genres, sort, languages, sortBy, limit}: GetMangasArgs): Promise<Manga[] | []> {
+  async mangas(@Args() {
+    search,
+    types,
+    statuses,
+    genres,
+    sort,
+    languages,
+    sortBy,
+    limit = 30,
+    offset = 0
+  }: GetMangasArgs):
+    Promise<Manga[] | []>
+  {
     try {
       const query: any = {
         isDeleted: false,
@@ -84,14 +96,14 @@ export class MangaResolver {
           break;
         case 'chapters':
           // Handle sorting by the length of the chapters array
-          sortStage = { $sort: { chaptersLength: sortOrderValue } };
+          sortStage = { $sort: { chaptersLength: sortOrderValue, id: 1 } };
           break;
         default:
           sortField = 'stats.views';
       }
 
       if (!sortStage.hasOwnProperty('$sort')) {
-        sortStage = { $sort: { [sortField]: sortOrderValue } };
+        sortStage = { $sort: { [sortField]: sortOrderValue, id: 1 } };
       }
 
       if (search) {
@@ -122,10 +134,12 @@ export class MangaResolver {
             chaptersLength: { $size: '$chapters' }
           }
         },
-        sortStage
+        sortStage,
+        { $skip: offset }, // Skip documents for pagination
+        { $limit: limit }, // Limit the number of documents returned
       ] satisfies PipelineStage[]
 
-      return MangaModel.aggregate(aggregationPipeline).limit(limit).exec();
+      return MangaModel.aggregate(aggregationPipeline).exec();
     } catch (e) {
       console.error("[mangas resolver error]: ", e);
       throw e;

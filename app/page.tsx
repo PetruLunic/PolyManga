@@ -50,7 +50,7 @@ export default async function Page() {
             weekly={getFragmentData(MANGA_CARD, weeklyMangaData.mangas)}
             monthly={getFragmentData(MANGA_CARD, monthlyMangaData.mangas)}
         />
-        <LatestChaptersList chapters={latestChapters.latestChapters}/>
+        <LatestChaptersList initialChapters={latestChapters.latestChapters}/>
       </div>
 
   );

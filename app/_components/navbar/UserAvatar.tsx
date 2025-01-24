@@ -51,7 +51,7 @@ export default function UserAvatar() {
                key="logout"
                color="danger"
                className="text-danger"
-               onClick={() => signOut()}
+               onPress={() => signOut()}
            >
              Log Out
            </DropdownItem>

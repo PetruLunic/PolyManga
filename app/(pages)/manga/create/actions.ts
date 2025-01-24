@@ -54,7 +54,7 @@ export const createManga = async (formData: FormData, mangaInput: FormType) => {
   await client.mutate({
     mutation: CREATE_MANGA,
     variables: {manga},
-    context: {headers: {cookie: cookies().toString()}}
+    context: {headers: {cookie: await cookies().toString()}}
   });
 
   // Fetching image to aws s3 bucket

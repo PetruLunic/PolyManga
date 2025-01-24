@@ -3,7 +3,7 @@
 import {Button} from "@nextui-org/react";
 import Link from "next/link";
 import {Manga_ChapterQuery} from "@/app/__generated__/graphql";
-import {MouseEventHandler, useState} from "react";
+import {useState} from "react";
 import {HiOutlineSortAscending, HiOutlineSortDescending} from "react-icons/hi";
 import { motion } from 'framer-motion';
 import {IoBookmark, IoBookmarkOutline} from "react-icons/io5";
@@ -32,10 +32,7 @@ export default function ChapterList({chapters, selectedChapter, bookmarkedChapte
   const [addBookmark, {loading: loadingAddBookmark}] = useMutation(ADD_CHAPTER_BOOKMARK);
   const [deleteBookmark, {loading: loadingDeleteBookmark}] = useMutation(DELETE_CHAPTER_BOOKMARK);
 
-  const onChapterBookmark: (id: string) => MouseEventHandler<HTMLButtonElement> = (id: string) => (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+  const onChapterBookmark = (id: string) => () => {
     // If user is not logged in then open signIn modal
     if (!session.data) {
       onOpen();
@@ -82,33 +79,38 @@ export default function ChapterList({chapters, selectedChapter, bookmarkedChapte
      </Button>
      <div className={`flex flex-col gap-2 ${descending && "flex-col-reverse"}`}>
        {chapters
-           ? chapters.map((chapter, index) =>
+           ? chapters.map((chapter) =>
                <Button
                    key={chapter.id}
                    variant={selectedChapter === chapter.id ? "solid" : "flat"}
-                   className="w-full justify-between"
-                   as={Link}
-                   href={`/manga/${mangaTitleAndIdToURL(mangaTitle ?? "", chapter.mangaId)}/${chapter.id}`}
+                   className="w-full justify-between px-0"
+                   as="div"
                >
-                 <div className="flex gap-2 items-center">
-                   <Button
-                     isIconOnly
-                     radius="full"
-                     isDisabled={loadingAddBookmark || loadingDeleteBookmark}
-                     variant="light"
-                     size="lg"
-                     onClick={onChapterBookmark(chapter.id)}
-                     >
-                     {chapter.id === bookmarkedChapterState
-                      ? <IoBookmark/>
-                      : <IoBookmarkOutline />}
-                   </Button>
+                 <Button
+                   isIconOnly
+                   radius="full"
+                   isDisabled={loadingAddBookmark || loadingDeleteBookmark}
+                   variant="light"
+                   size="lg"
+                   onPress={onChapterBookmark(chapter.id)}
+                   >
+                   {chapter.id === bookmarkedChapterState
+                    ? <IoBookmark/>
+                    : <IoBookmarkOutline />}
+                 </Button>
+                 <Button
+                   as={Link}
+                   className="w-full flex justify-between items-center h-full"
+                   variant={selectedChapter === chapter.id ? "solid" : "light"}
+                   href={`/manga/${mangaTitleAndIdToURL(mangaTitle ?? "", chapter.mangaId)}/${chapter.id}`}
+                 >
                    <span>{chapter.title}</span>
-                 </div>
-                 <span className="tracking-wider">{new Date(parseInt(chapter.createdAt)).toLocaleDateString('en-GB')}</span>
+                   <span
+                     className="tracking-wider">{new Date(parseInt(chapter.createdAt)).toLocaleDateString('en-GB')}</span>
+                 </Button>
                </Button>
-           )
-           : <div className="text-center text-gray-500 my-10">No chapter</div>
+         )
+         : <div className="text-center text-gray-500 my-10">No chapter</div>
        }
      </div>
    </div>

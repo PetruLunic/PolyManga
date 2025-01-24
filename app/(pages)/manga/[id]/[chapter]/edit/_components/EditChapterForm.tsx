@@ -164,7 +164,7 @@ export default function UploadChapterForm({chapter}: Props) {
                     <Button
                         isIconOnly
                         radius="full"
-                        onClick={() =>
+                        onPress={() =>
                             setImageInputSections(prev => {
                               return {...prev, [nanoid()]: {language: languagesMap[0].key, images: []}}
                             })

@@ -113,7 +113,7 @@ export default function SignUpForm({isOpen, onOpenChange, onClose}: Props) {
                    <Button
                        color="primary"
                        variant="light"
-                       onClick={() => {
+                       onPress={() => {
                          onSignInOpen();
                          onClose();
                        }}

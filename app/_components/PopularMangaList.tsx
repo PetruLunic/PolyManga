@@ -19,21 +19,21 @@ export default function PopularMangaList({daily, weekly, monthly}: Props) {
          <span className="mr-2">Popular this</span>
          <Tabs aria-label="Popular comics" defaultSelectedKey={"weekly"} variant="light" size="lg">
            <Tab key="daily" title="day">
-             <MangaList horizontal>
+             <MangaList isHorizontal>
                {daily.map(manga =>
                    <MangaCard manga={manga} key={manga.id}/>
                )}
              </MangaList>
            </Tab>
            <Tab key="weekly" title="week">
-             <MangaList horizontal>
+             <MangaList isHorizontal>
                {weekly.map(manga =>
                    <MangaCard manga={manga} key={manga.id}/>
                )}
              </MangaList>
            </Tab>
            <Tab key="montly" title="month">
-             <MangaList horizontal>
+             <MangaList isHorizontal>
                {monthly.map(manga =>
                    <MangaCard manga={manga} key={manga.id}/>
                )}

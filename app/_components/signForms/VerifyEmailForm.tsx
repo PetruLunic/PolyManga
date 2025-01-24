@@ -121,7 +121,7 @@ export default function VerifyEmailForm({isOpen, onOpenChange, prop, onClose}: P
              <Button
                  color="primary"
                 disabled={timer > 0}
-                onClick={onSendEmailClick}
+                onPress={onSendEmailClick}
              >
                Resend the email {timer > 0 && `after ${timer} seconds`}
              </Button>

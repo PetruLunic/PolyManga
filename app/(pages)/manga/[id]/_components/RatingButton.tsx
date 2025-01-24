@@ -37,7 +37,7 @@ export default function RatingButton({mangaId, rating, nrVotes, isRated}: Props)
       {session.data
         ? <RatingButtonAuthenticated mangaId={mangaId} rating={rating} nrVotes={nrVotes} isRated={isRated}/>
         : <Button
-              onClick={onOpen}
+              onPress={onOpen}
               variant="light"
               size="sm"
               className="px-1 text-sm gap-1"
@@ -96,7 +96,7 @@ export function RatingButtonAuthenticated({mangaId, rating, nrVotes, isRated}: P
  return (
   <>
     <Button
-      onClick={onOpen}
+      onPress={onOpen}
       isDisabled={loadingAdd || loadingDelete}
       variant="light"
       size="sm"

@@ -16,7 +16,6 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Spinner,
   useDisclosure
 } from "@nextui-org/react";
 import {ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/__generated__/graphql";
@@ -29,6 +28,9 @@ import {Divider} from "@nextui-org/divider";
 import MangaCard from "@/app/_components/MangaCard";
 
 export default function MangaPage() {
+  const limit = 10;
+  const [hasMore, setHasMore] = useState(true);
+  const [offset, setOffset] = useState(0); // Current offset
   const searchParams = useSearchParams();
   const [searchText, setSearchText] = useState(searchParams.get("search") as string || "");
   const sort = searchParams.get("sort");
@@ -39,7 +41,7 @@ export default function MangaPage() {
   const languages = searchParams.getAll("language");
   const debouncedSearchText = useDebounce(searchText, 1000);
   const {replaceParam} = useQueryParams();
-  const {data, loading} = useQuery(GET_MANGA_CARDS,
+  const {data, loading, fetchMore} = useQuery(GET_MANGA_CARDS,
       {variables: {
           search: debouncedSearchText,
           statuses: statuses as ComicsStatus[],
@@ -48,9 +50,37 @@ export default function MangaPage() {
           sort: sort,
           sortBy: sortBy,
           languages: languages as ChapterLanguage[],
-          limit: 20
-        }});
+          limit
+        },
+        notifyOnNetworkStatusChange: true, // Allows tracking loading states during fetchMore
+        fetchPolicy: "cache-and-network", // Fetch from cache first, then update with network result
+      });
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
+
+  // Load more data (pagination)
+  const loadMore = async () => {
+    if (loading || !hasMore) return;
+
+    const result = await fetchMore({
+      variables: {
+        offset: offset + limit,
+      },
+    });
+
+    setOffset((prevOffset) => prevOffset + limit);
+
+    // Check if there’s more data to load
+    if (result.data.mangas.length === 0 || (data && data.mangas.length % limit !== 0)) {
+      setHasMore(false);
+    }
+  };
+
+  // Reset pagination state when query parameters change
+  useEffect(() => {
+    setOffset(0);
+    setHasMore(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchText, sort, genres.join(","), languages.join(","), types.join(","), statuses.join(","), sortBy]);
 
   const mangas = getFragmentData(MANGA_CARD, data?.mangas);
 
@@ -61,7 +91,7 @@ export default function MangaPage() {
 
   return (
       <div className="mx-3 flex flex-col gap-3">
-        <h2 className="text-xl">Catalog</h2>
+        <h1 className="text-xl">Catalog</h1>
         <Input
             label="Search by name"
             value={searchText}
@@ -69,13 +99,15 @@ export default function MangaPage() {
         />
         <div className="md:flex items-start md:gap-5">
           <div className="md:flex-grow">
-            {loading
-                ? <Spinner className="mt-4" size="lg"/>
-                : <MangaList >
+            <MangaList
+                hasMore={hasMore}
+                onLoadMore={loadMore}
+                isLoading={loading}
+              >
                   {mangas?.map(manga =>
-                      <MangaCard key={manga.id} manga={manga}/>
+                      <MangaCard key={manga.id} manga={manga} isExtendable/>
                   )}
-                </MangaList>}
+            </MangaList>
           </div>
           <Card isBlurred className="hidden sticky top-16 md:block max-w-[300px] min-w-[300px]">
             <CardBody className="gap-3">

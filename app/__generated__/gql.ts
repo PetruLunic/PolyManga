@@ -34,7 +34,7 @@ const documents = {
     "\n  query chapter($id: ID!) {\n    chapter(id: $id) {\n      id,\n      title,\n      number,\n      versions {\n        language,\n        images {\n          src,\n          width,\n          height\n        },\n      }\n      mangaId,\n      isFirst,\n      isLast,\n      languages,\n      nextChapter {\n        id\n      },\n      prevChapter {\n        id\n      }\n    }\n  }\n": types.ChapterDocument,
     "\n  query chapterMetadata($id: ID!) {\n    chapter(id: $id) {\n      id,\n      title,\n      number,\n      manga {\n        title,\n        image\n      },\n      languages\n    }\n  }\n": types.ChapterMetadataDocument,
     "\n  query chapterEdit($id: ID!) {\n    chapter(id: $id) {\n      id,\n      title,\n      number,\n      mangaId\n    }\n  }\n": types.ChapterEditDocument,
-    "\n  query mangas($search: String, $genres: [ComicsGenre!], $statuses: [ComicsStatus!], $types: [ComicsType!], $sortBy: String, $sort: String, $languages: [ChapterLanguage!], $limit: Int) {\n    mangas(search: $search, genres: $genres, statuses: $statuses, types: $types, sortBy: $sortBy, sort: $sort, languages: $languages, limit: $limit) {\n      ...MangaCard\n    }\n  }\n": types.MangasDocument,
+    "\n  query mangas($search: String, $genres: [ComicsGenre!], $statuses: [ComicsStatus!], $types: [ComicsType!], $sortBy: String, $sort: String, $languages: [ChapterLanguage!], $limit: Int, $offset: Int) {\n    mangas(search: $search, genres: $genres, statuses: $statuses, types: $types, sortBy: $sortBy, sort: $sort, languages: $languages, limit: $limit, offset: $offset) {\n      ...MangaCard\n    }\n  }\n": types.MangasDocument,
     "\n  query manga_chapter($mangaId: ID!, $chapterId: ID!) {\n    manga(id: $mangaId) {\n      title,\n      chapters {\n        id,\n        mangaId,\n        createdAt,\n        title,\n        number\n      },\n\t  bookmarkedChapter {\n\t    id,\n\t    number\n      }\n    },\n    chapter(id: $chapterId) {\n      number,\n      languages,\n      isLast,\n      isFirst,\n      prevChapter {\n        id\n      },\n      nextChapter {\n        id\n      }\n    }\n  }\n": types.Manga_ChapterDocument,
     "\n  query manga_chapter_upload($id: ID!) {\n    manga(id: $id) {\n      latestChapter {\n        number\n      }\n    }\n  }\n": types.Manga_Chapter_UploadDocument,
     "\n  query chapters($id: ID!) {\n    manga(id: $id) {\n     title,\n     chapters {\n      id,\n      title,\n      mangaId,\n      createdAt,\n      number\n      }\n    }\n  }\n": types.ChaptersDocument,
@@ -47,7 +47,7 @@ const documents = {
     "\n    query userPreferences {\n      user {\n        preferences {\n          language\n        }\n      }  \n    }\n": types.UserPreferencesDocument,
     "\n  query getBookmarkedChapter($mangaId: String!) {\n    getBookmarkedChapter(mangaId: $mangaId) {\n      chapterId\n    }\n  }\n": types.GetBookmarkedChapterDocument,
     "\n  query getMangaWithBookmarkedChapters {\n    user {\n      chapterBookmarks {\n        manga {\n          ...MangaCard\n        },\n        chapter {\n          title\n        },\n        createdAt\n      }\n    }\n  }\n": types.GetMangaWithBookmarkedChaptersDocument,
-    "\n  query getLatestUploadedChapters($limit: Int!) {\n    latestChapters (limit: $limit) {\n      id,\n      manga {\n        image,\n        title,\n        id\n      },\n      createdAt,\n      title\n    }\n  }\n": types.GetLatestUploadedChaptersDocument,
+    "\n  query getLatestUploadedChapters($limit: Int!, $offset: Int) {\n    latestChapters(limit: $limit, offset: $offset) {\n      id,\n      title,\n      createdAt\n      manga {\n        id,\n        title,\n        image\n      }\n    }\n  }\n": types.GetLatestUploadedChaptersDocument,
 };
 
 /**
@@ -151,7 +151,7 @@ export function gql(source: "\n  query chapterEdit($id: ID!) {\n    chapter(id: 
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query mangas($search: String, $genres: [ComicsGenre!], $statuses: [ComicsStatus!], $types: [ComicsType!], $sortBy: String, $sort: String, $languages: [ChapterLanguage!], $limit: Int) {\n    mangas(search: $search, genres: $genres, statuses: $statuses, types: $types, sortBy: $sortBy, sort: $sort, languages: $languages, limit: $limit) {\n      ...MangaCard\n    }\n  }\n"): (typeof documents)["\n  query mangas($search: String, $genres: [ComicsGenre!], $statuses: [ComicsStatus!], $types: [ComicsType!], $sortBy: String, $sort: String, $languages: [ChapterLanguage!], $limit: Int) {\n    mangas(search: $search, genres: $genres, statuses: $statuses, types: $types, sortBy: $sortBy, sort: $sort, languages: $languages, limit: $limit) {\n      ...MangaCard\n    }\n  }\n"];
+export function gql(source: "\n  query mangas($search: String, $genres: [ComicsGenre!], $statuses: [ComicsStatus!], $types: [ComicsType!], $sortBy: String, $sort: String, $languages: [ChapterLanguage!], $limit: Int, $offset: Int) {\n    mangas(search: $search, genres: $genres, statuses: $statuses, types: $types, sortBy: $sortBy, sort: $sort, languages: $languages, limit: $limit, offset: $offset) {\n      ...MangaCard\n    }\n  }\n"): (typeof documents)["\n  query mangas($search: String, $genres: [ComicsGenre!], $statuses: [ComicsStatus!], $types: [ComicsType!], $sortBy: String, $sort: String, $languages: [ChapterLanguage!], $limit: Int, $offset: Int) {\n    mangas(search: $search, genres: $genres, statuses: $statuses, types: $types, sortBy: $sortBy, sort: $sort, languages: $languages, limit: $limit, offset: $offset) {\n      ...MangaCard\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -203,7 +203,7 @@ export function gql(source: "\n  query getMangaWithBookmarkedChapters {\n    use
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query getLatestUploadedChapters($limit: Int!) {\n    latestChapters (limit: $limit) {\n      id,\n      manga {\n        image,\n        title,\n        id\n      },\n      createdAt,\n      title\n    }\n  }\n"): (typeof documents)["\n  query getLatestUploadedChapters($limit: Int!) {\n    latestChapters (limit: $limit) {\n      id,\n      manga {\n        image,\n        title,\n        id\n      },\n      createdAt,\n      title\n    }\n  }\n"];
+export function gql(source: "\n  query getLatestUploadedChapters($limit: Int!, $offset: Int) {\n    latestChapters(limit: $limit, offset: $offset) {\n      id,\n      title,\n      createdAt\n      manga {\n        id,\n        title,\n        image\n      }\n    }\n  }\n"): (typeof documents)["\n  query getLatestUploadedChapters($limit: Int!, $offset: Int) {\n    latestChapters(limit: $limit, offset: $offset) {\n      id,\n      title,\n      createdAt\n      manga {\n        id,\n        title,\n        image\n      }\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

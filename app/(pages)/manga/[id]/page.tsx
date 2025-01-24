@@ -13,7 +13,8 @@ import MangaSettingsDropdown from "@/app/(pages)/manga/[id]/_components/MangaSet
 import {cookies} from "next/headers";
 import {Metadata} from "next";
 import {domain, seoMetaData, siteName, type} from "@/app/lib/seo/metadata";
-import {mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
+import {getMangaIdFromURL, mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
+import {formatNumber} from "@/app/lib/utils/formatNumber";
 
 export async function generateMetadata({ params}: Props): Promise<Metadata> {
   const {id} = await params;
@@ -39,11 +40,6 @@ export async function generateMetadata({ params}: Props): Promise<Metadata> {
       type,
       images: [manga.image],
     },
-    // alternates: {
-    //   languages: Object.fromEntries(
-    //     manga.languages.map(lang => [lang, `/comics/${params.id}?lang=${lang}`])
-    //   )
-    // },
   }
 }
 
@@ -58,7 +54,7 @@ export default async function Page({params}: Props) {
   const {id} = await params;
   const client = createApolloClient();
   const {data} = await client.query({
-    query: GET_MANGA, variables: {id}, context: {headers: {cookie: cookies()}}
+    query: GET_MANGA, variables: {id}, context: {headers: {cookie: await cookies()}}
   })
 
   const {manga, isBookmarked, isRated, isLiked} = data;
@@ -90,9 +86,9 @@ export default async function Page({params}: Props) {
                 ? "Continue " + manga?.bookmarkedChapter?.title
                 : "First Chapter"}
             </Button>
-            <BookmarkButton isBookmarked={isBookmarked} mangaId={id}/>
+            <BookmarkButton isBookmarked={isBookmarked} mangaId={getMangaIdFromURL(id)}/>
             <div className="flex gap-3">
-              <div className="flex gap-1">
+              <div className="flex gap-1 items-center">
                 Status
                 <Button
                     variant="flat"
@@ -104,7 +100,7 @@ export default async function Page({params}: Props) {
                   {manga?.status}
                 </Button>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-1 items-center">
                 Type
                 <Button
                     variant="flat"
@@ -126,23 +122,28 @@ export default async function Page({params}: Props) {
             </h2>
             <Divider/>
             <div className="flex justify-center md:justify-start items-center text-sm flex-wrap">
-              <RatingButton isRated={isRated} mangaId={id} rating={manga?.stats.rating.value} nrVotes={manga?.stats.rating.nrVotes}/>
+              <RatingButton
+                isRated={isRated}
+                mangaId={getMangaIdFromURL(id)}
+                rating={manga?.stats.rating.value}
+                nrVotes={manga?.stats.rating.nrVotes}
+              />
               <Button
                   size="sm"
                   variant="light"
                   className="px-1 text-sm gap-1"
               >
                 <IoEyeOutline size={22}/>
-                {manga?.stats?.views}
+                {formatNumber(manga?.stats?.views ?? 0)}
               </Button>
-              <LikeButton isLiked={isLiked} mangaId={id} nrLikes={manga?.stats.likes}/>
+              <LikeButton isLiked={isLiked} mangaId={getMangaIdFromURL(id)} nrLikes={manga?.stats.likes}/>
               <Button
                   size="sm"
                   variant="light"
                   className="px-1 text-sm gap-1"
               >
                 <IoBookmarksOutline size={22}/>
-                {manga?.stats?.bookmarks}
+                {formatNumber(manga?.stats?.bookmarks ?? 0)}
               </Button>
             </div>
             <p className="text-default-600 text-sm">

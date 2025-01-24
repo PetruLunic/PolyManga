@@ -20,27 +20,26 @@ import {useMutation} from "@apollo/client";
 import {DELETE_CHAPTERS} from "@/app/lib/graphql/mutations";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
 import Link from "next/link";
-import {mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
+import {getMangaIdFromURL} from "@/app/lib/utils/URLFormating";
 
 type ChapterList = Exclude<ChaptersQuery["manga"], undefined | null>["chapters"]
 
 interface Props{
   chapters?: ChapterList,
   mangaId: string,
-  mangaTitle?: string
 }
 
-export default function ChapterListEdit({chapters, mangaId, mangaTitle}: Props) {
+export default function ChapterListEdit({chapters, mangaId,}: Props) {
   const {isOpen, onOpen, onClose, onOpenChange} = useDisclosure();
   const [currentChapters, setCurrentChapters] = useState<ChapterList | undefined>(chapters);
   const [descending, setDescending] = useState(true);
   const [selectedChapters, setSelectedChapters] = useState<string[]>([]);
-  const [deleteChapters, {loading, error, data}] = useMutation(DELETE_CHAPTERS);
+  const [deleteChapters, {loading, data}] = useMutation(DELETE_CHAPTERS);
   const {addAlert} = useAlert()
 
   const onDeleteMany = async () => {
     try {
-      await deleteChapters({variables: {mangaId, ids: selectedChapters}});
+      await deleteChapters({variables: {mangaId: getMangaIdFromURL(mangaId), ids: selectedChapters}});
       addAlert({type: "success", message: `${selectedChapters.length} chapters deleted`});
 
       // Delete the selected chapters from the current chapters
@@ -57,7 +56,7 @@ export default function ChapterListEdit({chapters, mangaId, mangaTitle}: Props) 
 
   const onDeleteOne = (selectedChapter: ChapterList[number]) => async () => {
     try {
-      await deleteChapters({variables: {mangaId, ids: [selectedChapter.id]}});
+      await deleteChapters({variables: {mangaId: getMangaIdFromURL(mangaId), ids: [selectedChapter.id]}});
       addAlert({type: "success", message: `${selectedChapter.title} was deleted!`});
 
       // Delete the chapter from the current chapters
@@ -107,7 +106,7 @@ export default function ChapterListEdit({chapters, mangaId, mangaTitle}: Props) 
          onValueChange={setSelectedChapters}
        >
          {currentChapters
-           ? currentChapters.map((chapter, index) =>
+           ? currentChapters.map((chapter) =>
                <Button
                  key={chapter.id}
                  as={Checkbox}
@@ -127,7 +126,7 @@ export default function ChapterListEdit({chapters, mangaId, mangaTitle}: Props) 
                      variant="light"
                      className="z-10"
                      as={Link}
-                     href={`/manga/${mangaTitleAndIdToURL(mangaTitle ?? "", mangaId)}/${chapter.id}/edit`}
+                     href={`/manga/${mangaId}/${chapter.id}/edit`}
                    >
                      <FaRegEdit/>
                    </Button>

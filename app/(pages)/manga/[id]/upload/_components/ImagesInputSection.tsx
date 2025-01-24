@@ -48,7 +48,7 @@ export default function ImagesInputSection({id, setImageInputSections, imageInpu
              </Select>
              {imageInputSections[id].images.length > 0 &&
                  <Button
-                  onClick={onOpen}
+                  onPress={onOpen}
                  >
                      Preview
                  </Button>}
@@ -58,7 +58,7 @@ export default function ImagesInputSection({id, setImageInputSections, imageInpu
                      radius="full"
                      isIconOnly
                      variant="bordered"
-                     onClick={() => {
+                     onPress={() => {
                        delete imageInputSections[id];
                        setImageInputSections({...imageInputSections})
                      }}

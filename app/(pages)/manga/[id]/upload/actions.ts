@@ -10,6 +10,7 @@ import {isGraphQLErrors} from "@/app/lib/utils/errorsNarrowing";
 import {AWS_BUCKET_URL, getSignedURLs} from "@/app/lib/utils/awsUtils";
 import {CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT} from "@/app/lib/utils/constants";
 import {auth} from "@/auth";
+import sharp from "sharp";
 
 export async function createChapter(formData: FormData, languages: ChapterLanguage[]) {
   const session = await auth();
@@ -24,26 +25,38 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
   const number = Number(formData.get("number") as string);
   const title = formData.get("title") as string;
 
-  if (!mangaId || !title || !number) return;
+  console.log(mangaId);
+
+  if (!mangaId || !title || !Number.isInteger(number) || number < 0) {
+    return {success: false, message: "Wrong entry data"};
+  }
 
   const chapterId = nanoid();
 
   // Cropping images into slices of MAX_HEIGHT and WIDTH
-  const croppedImages: Record<ChapterLanguage, Buffer[]> = {} as Record<ChapterLanguage, Buffer[]>;
+  const croppedImages: Record<ChapterLanguage, {images: Buffer[], width: number}> = {} as Record<ChapterLanguage, {images: Buffer[], width: number}>;
 
   await Promise.all(languages.map(async language => {
     const images = formData.getAll(`images-${language}`) as File[];
 
     if (images.length === 0) throw new Error(`No image for ${language} language`)
 
-    croppedImages[language] = await combineAndCropImagesVertically(images, CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT) || [];
+    croppedImages[language] = {
+      width: CHAPTER_IMAGE_WIDTH,
+      images: []
+    }
+
+    // Extracting first image width
+    const firstImageWidth = await sharp(await images[0].arrayBuffer()).metadata().then(res => res.width);
+    croppedImages[language].width = firstImageWidth ?? CHAPTER_IMAGE_WIDTH;
+    croppedImages[language].images = await combineAndCropImagesVertically(images, firstImageWidth ?? CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT) || [];
   }))
 
   // Creating url for every image
   const imagesURLs: Record<ChapterLanguage, string[]> = {} as Record<ChapterLanguage, string[]>;
 
   languages.forEach(language => {
-    const imagesIds = Array.from({length: croppedImages[language].length}, () => nanoid());
+    const imagesIds = Array.from({length: croppedImages[language].images.length}, () => nanoid());
 
     imagesURLs[language] = getImageURLs(mangaId, chapterId, language, imagesIds);
   })
@@ -63,8 +76,8 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
   const fetchImagesPromises: Promise<Response>[] = [];
 
   languages.forEach((language) => {
-    croppedImages[language].forEach((image, index) => {
-      const imageFile = new File([image], 'combined-image.jpeg', { type: 'image/jpeg' });
+    croppedImages[language].images.forEach((image, index) => {
+      const imageFile = new File([image], 'combined-image.webp', { type: 'image/webp' });
 
 
       fetchImagesPromises.push(fetch(signedURLs[language][index], {
@@ -85,7 +98,7 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
       language,
       images: imagesURLs[language].map(url => ({
         src: AWS_BUCKET_URL + url,
-        width: CHAPTER_IMAGE_WIDTH,
+        width: croppedImages[language].width,
         height: MAX_CHAPTER_IMAGE_HEIGHT
       }))
     })

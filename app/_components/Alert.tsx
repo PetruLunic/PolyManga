@@ -91,7 +91,7 @@ export default function Alert({title, description, type = "info", onDismiss, isV
                    isIconOnly
                    radius="full"
                    variant="light"
-                   onClick={onDelete}
+                   onPress={onDelete}
                    className={`ms-auto -mx-1.5 -my-1.5 text-xl ${getButtonClass(type)}`}
                >
                    <IoMdClose />

@@ -65,7 +65,12 @@ export default function ChapterImage({image, priority}: Props) {
 
   // Return the default multi-language dropdown image
   return (
-      <Dropdown placement="top" offset={offset} size="sm">
+      <Dropdown
+        placement="top"
+        offset={offset}
+        size="sm"
+        isDisabled={Object.keys(image).length <= 1} // If image has only one image then disable the dropdown
+      >
          <DropdownTrigger onPress={(event: React.MouseEvent<HTMLImageElement>) => setOffset(
                event.currentTarget.getBoundingClientRect().top - event.clientY
            )}>

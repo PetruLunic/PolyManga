@@ -75,7 +75,7 @@ export default function MangaSettingsDropdown({className, mangaId}: Props) {
                className="text-danger"
                startContent={<FiTrash2 />}
                aria-label="delete"
-               onClick={onOpen}
+               onPress={onOpen}
            >
              Delete
            </DropdownItem>

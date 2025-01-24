@@ -18,7 +18,7 @@ export default function AuthButtons({className}: Props) {
            variant="light"
            radius="full"
            size="lg"
-           onClick={() => signIn("google")}
+           onPress={() => signIn("google")}
        >
          <FaGoogle className="text-xl" />
        </Button>
@@ -27,7 +27,7 @@ export default function AuthButtons({className}: Props) {
            variant="light"
            radius="full"
            size="lg"
-           onClick={() => signIn("facebook")}
+           onPress={() => signIn("facebook")}
        >
          <FaFacebookF className="text-xl"/>
        </Button>

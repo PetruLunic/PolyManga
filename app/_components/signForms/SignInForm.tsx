@@ -114,7 +114,7 @@ export default function SignInForm({isOpen, onOpenChange, onClose}: Props) {
                     <Button
                         color="primary"
                         variant="light"
-                        onClick={() => {
+                        onPress={() => {
                           onForgotPasswordOpen();
                           onClose();
                         }}

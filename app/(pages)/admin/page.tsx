@@ -7,7 +7,7 @@ export default function Page() {
 
  return (
   <div>
-   <Button onClick={() => {
+   <Button onPress={() => {
      cleanAwsBucket()
    }}>
     Clean aws bucket

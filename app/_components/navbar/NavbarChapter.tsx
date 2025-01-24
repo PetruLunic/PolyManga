@@ -9,7 +9,7 @@ import PrevButton from "@/app/_components/navbar/PrevButton";
 import ChapterListModal from "@/app/_components/ChapterListModal";
 import {Manga_ChapterQuery} from "@/app/__generated__/graphql";
 import {createPortal} from "react-dom";
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import {mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
 
 interface Props {
@@ -49,7 +49,7 @@ export default function NavbarChapter({data}: Props) {
          </NavbarContent>
          <NavbarContent justify="end" className="gap-1">
            <NavbarItem>
-             {data && <LanguageSelect languages={data.chapter.languages}/>}
+             {data && data.chapter.languages.length > 1 && <LanguageSelect languages={data.chapter.languages}/>}
            </NavbarItem>
            <NavbarItem className="h-full">
              {data && <PrevButton

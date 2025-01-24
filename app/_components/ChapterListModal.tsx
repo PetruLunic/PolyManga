@@ -12,28 +12,37 @@ interface Props{
 export default function ChapterListModal({data}: Props) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const {chapter} = useParams<{id: string, chapter: string}>();
+  const maxNumberOfMangaTitleCharacters = data.chapter.languages.length > 1 ? 10 : 20;
+
+  console.log("Is modal open: ", isOpen);
 
  return (
   <>
     <Button
         variant="flat"
         radius="none"
-        className="h-full max-w-28 px-3 flex-col justify-evenly gap-0 md:px-6 md:max-w-none"
-        onClick={onOpen}
+        className="h-full px-3 flex-col justify-evenly gap-0 md:px-6 md:max-w-none"
+        onPress={() => setTimeout(onOpen, 10)}
     >
-      <div className="md:hidden">
-        {data.manga && data.manga.title.length > 10
-          ? data.manga?.title.slice(0, 10) + "..."
+      <div className="sm:hidden">
+        {data.manga && data.manga.title.length > maxNumberOfMangaTitleCharacters
+          ? data.manga?.title.slice(0, maxNumberOfMangaTitleCharacters) + "..."
           : data.manga?.title}
       </div>
-      <div className="hidden md:block">
+      <div className="hidden sm:block">
         {data.manga?.title}
       </div>
       <div className="text-xs text-gray-200">
         Chapter {data.chapter.number}
       </div>
     </Button>
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      size="full"
+      scrollBehavior="inside"
+      isDismissable={false}
+    >
       <ModalContent>
         <ModalHeader>
           Chapters
