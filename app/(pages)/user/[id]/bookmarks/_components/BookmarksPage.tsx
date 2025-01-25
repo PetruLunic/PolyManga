@@ -36,35 +36,35 @@ export default function BookmarksPage({data}: Props) {
       <Tab key="reading" title={`Reading (${bookmarks?.reading?.length})`}>
         <MangaList>
           {getFragmentData(MANGA_CARD, bookmarks?.reading)?.map(manga =>
-            <MangaCard manga={manga} key={manga.id}/>
+            <MangaCard manga={manga} key={manga.id} isExtendable/>
           )}
         </MangaList>
       </Tab>
       <Tab key="inPlans" title={`In plans (${bookmarks?.inPlans?.length})`}>
         <MangaList>
           {getFragmentData(MANGA_CARD, bookmarks?.inPlans)?.map(manga =>
-              <MangaCard manga={manga} key={manga.id}/>
+              <MangaCard manga={manga} key={manga.id} isExtendable/>
           )}
         </MangaList>
       </Tab>
       <Tab key="finished" title={`Finished (${bookmarks?.finished?.length})`}>
         <MangaList>
           {getFragmentData(MANGA_CARD, bookmarks?.finished)?.map(manga =>
-              <MangaCard manga={manga} key={manga.id}/>
+              <MangaCard manga={manga} key={manga.id} isExtendable/>
           )}
         </MangaList>
       </Tab>
       <Tab key="dropped" title={`Dropped (${bookmarks?.dropped?.length})`}>
         <MangaList>
           {getFragmentData(MANGA_CARD, bookmarks?.dropped)?.map(manga =>
-              <MangaCard manga={manga} key={manga.id}/>
+              <MangaCard manga={manga} key={manga.id} isExtendable/>
           )}
         </MangaList>
       </Tab>
       <Tab key="favourite" title={`Favourite (${bookmarks?.favourite?.length})`}>
         <MangaList>
           {getFragmentData(MANGA_CARD, bookmarks?.favourite)?.map(manga =>
-              <MangaCard manga={manga} key={manga.id}/>
+              <MangaCard manga={manga} key={manga.id} isExtendable/>
           )}
         </MangaList>
       </Tab>

@@ -2,10 +2,9 @@
 
 import {Button} from "@nextui-org/react";
 import {IoMdHeart, IoMdHeartEmpty} from "react-icons/io";
-import {useMutation, useQuery} from "@apollo/client";
+import {useMutation} from "@apollo/client";
 import {LIKE, UNLIKE} from "@/app/lib/graphql/mutations";
-import {useEffect, useState} from "react";
-import {IS_LIKED} from "@/app/lib/graphql/queries";
+import {useState} from "react";
 import {useSession} from "next-auth/react";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
@@ -42,7 +41,7 @@ export default function LikeButton({mangaId, nrLikes, isLiked}: Props) {
 function LikeButtonAuthenticated({mangaId, nrLikes, isLiked}: Props) {
   const [like, {loading: loadingLike}] = useMutation(LIKE);
   const [unlike, {loading: loadingUnlike}] = useMutation(UNLIKE);
-  const [isLikedState, setIsLikedState] = useState(isLiked);
+  const [isLikedState, setIsLikedState] = useState(!!isLiked);
   const {addAlert} = useAlert();
 
   const onClick = async () => {
@@ -80,7 +79,7 @@ function LikeButtonAuthenticated({mangaId, nrLikes, isLiked}: Props) {
           variant="light"
           className="px-1 text-sm gap-1"
           onPress={onClick}
-          disabled={loadingLike || loadingUnlike}
+          isDisabled={loadingLike || loadingUnlike}
       >
         {isLikedState
             ? <IoMdHeart size={22}/>

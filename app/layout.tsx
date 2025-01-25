@@ -22,12 +22,12 @@ export const metadata: Metadata = {
 
 interface Props {
   children: React.ReactNode;
-  params: {
+  params: Promise<{
     session: SessionProviderProps["session"]
-  }
+  }>
 }
 
-export default function RootLayout({children, params: {session}}: Props) {
+export default async function RootLayout({children, params}: Props) {
   return (
     <html
       lang="en"
@@ -39,7 +39,7 @@ export default function RootLayout({children, params: {session}}: Props) {
             " bg-black/50 min-h-screen before:bg-fixed before:bg-cover before:bg-no-repeat before:bg-center " +
             "before:bg-black/50 before:content-[''] before:h-full before:w-full before:block before:t-0 before:l-0 before:fixed before:z-[-1]"
         }>
-    <Providers session={session}>
+    <Providers session={(await params).session}>
       <NavbarRoot/>
       <div className="z-40 w-full h-auto sticky top-0 inset-x-0" id="navbar-portal"></div>
       <main

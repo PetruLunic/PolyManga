@@ -54,7 +54,7 @@ export default async function Page({params}: Props) {
   const {id} = await params;
   const client = createApolloClient();
   const {data} = await client.query({
-    query: GET_MANGA, variables: {id}, context: {headers: {cookie: await cookies()}}
+    query: GET_MANGA, variables: {id: getMangaIdFromURL(id)}, context: {headers: {cookie: await cookies()}}
   })
 
   const {manga, isBookmarked, isRated, isLiked} = data;

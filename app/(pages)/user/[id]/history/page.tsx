@@ -31,8 +31,8 @@ export default async function Page({params}: Props) {
   if (error) console.log(error);
 
  return (
-  <div className="flex flex-col gap-3">
-    <h2 className="text-2xl mx-2">History</h2>
+  <div className="flex flex-col gap-3 mx-2">
+    <h1 className="text-2xl mx-2">History</h1>
     <MangaList>
       {data.user?.chapterBookmarks
         .toSorted((a, b) => parseInt(b.createdAt) - parseInt(a.createdAt))
@@ -45,6 +45,7 @@ export default async function Page({params}: Props) {
                 key={getFragmentData(MANGA_CARD, manga)?.id}
                 bookmarkedChapter={chapter?.title}
                 chapterBookmarkCreationDate={new Date(parseInt(createdAt))}
+                isExtendable
             />
       }
       )}
