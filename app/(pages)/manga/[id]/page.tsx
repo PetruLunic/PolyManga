@@ -47,8 +47,8 @@ interface Props{
   params: Promise<{id: string}>
 }
 
-// 5 minutes revalidate
-export const revalidate = 300;
+// 30 minutes revalidate
+export const revalidate = 1800;
 
 export default async function Page({params}: Props) {
   const {id} = await params;
@@ -66,7 +66,7 @@ export default async function Page({params}: Props) {
         <div className="flex flex-col md:flex-row gap-4">
           {/* Left column of the card*/}
           <div className="flex flex-col gap-3 w-full items-center md:w-1/3">
-            <MangaSettingsDropdown mangaId={id} className="absolute right-2 top-2"/>
+            <MangaSettingsDropdown mangaId={getMangaIdFromURL(id)} className="absolute right-2 top-2"/>
             <Image
                 className="w-[250px] h-[350px] object-cover"
                 src={manga?.image}
@@ -215,7 +215,7 @@ export default async function Page({params}: Props) {
         </div>
       </CardBody>
     </Card>
-    <IncrementViews mangaId={id}/>
+    <IncrementViews mangaId={getMangaIdFromURL(id)}/>
   </div>
  );
 };

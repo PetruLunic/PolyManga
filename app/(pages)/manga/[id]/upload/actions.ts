@@ -25,9 +25,7 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
   const number = Number(formData.get("number") as string);
   const title = formData.get("title") as string;
 
-  console.log(mangaId);
-
-  if (!mangaId || !title || !Number.isInteger(number) || number < 0) {
+  if (!mangaId || !title || number < 0) {
     return {success: false, message: "Wrong entry data"};
   }
 

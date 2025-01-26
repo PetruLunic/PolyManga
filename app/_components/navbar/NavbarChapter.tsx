@@ -10,14 +10,13 @@ import ChapterListModal from "@/app/_components/ChapterListModal";
 import {Manga_ChapterQuery} from "@/app/__generated__/graphql";
 import {createPortal} from "react-dom";
 import {useEffect, useState} from "react";
-import {mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
 
 interface Props {
   data: Manga_ChapterQuery
 }
 
 export default function NavbarChapter({data}: Props) {
- const {id, chapter} = useParams<{id: string, chapter: string}>();
+ const {id} = useParams<{id: string, chapter: string}>();
   const [portalDiv, setPortalDiv] = useState<Element | null>(null);
 
   useEffect(() => {
@@ -35,7 +34,7 @@ export default function NavbarChapter({data}: Props) {
                  radius="none"
                  variant="light"
                  as={Link}
-                 href={`/manga/${mangaTitleAndIdToURL(data.manga?.title ?? "", id)}`}
+                 href={`/manga/${id}`}
                  size="lg"
                  isIconOnly
                  className="h-full"
@@ -54,13 +53,13 @@ export default function NavbarChapter({data}: Props) {
            <NavbarItem className="h-full">
              {data && <PrevButton
                  isFirst={data.chapter.isFirst}
-                 href={`/manga/${mangaTitleAndIdToURL(data.manga?.title ?? "", id)}/${data.chapter.prevChapter?.id}`}
+                 href={`/manga/${id}/${data.chapter.prevChapter?.id}`}
              />}
            </NavbarItem>
            <NavbarItem className="h-full">
              {data && <NextButton
                  isLast={data.chapter.isLast}
-                 href={`/manga/${mangaTitleAndIdToURL(data.manga?.title ?? "", id)}/${data.chapter.nextChapter?.id}`}
+                 href={`/manga/${id}/${data.chapter.nextChapter?.id}`}
              />}
            </NavbarItem>
          </NavbarContent>

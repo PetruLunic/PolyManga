@@ -86,7 +86,7 @@ export class Chapter {
   @Field(() => ID)
   id: string;
 
-  @Field(() => Int)
+  @Field(() => Float)
   number: number;
 
   @Field(() => [ChapterVersion])
@@ -434,7 +434,7 @@ export class AddChapterInput implements Partial<Chapter> {
   @Field()
   title: string;
 
-  @Field(() => Int)
+  @Field(() => Float)
   number: number;
 
   @Field(() => [ChapterVersionInput])
