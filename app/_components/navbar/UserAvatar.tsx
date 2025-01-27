@@ -1,6 +1,6 @@
 "use client"
 
-import {Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger} from "@nextui-org/react";
+import {Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger} from "@heroui/react";
 import {signOut, useSession} from "next-auth/react";
 import {IoBookmarks, IoSettingsSharp} from "react-icons/io5";
 import {CiLogout} from "react-icons/ci";

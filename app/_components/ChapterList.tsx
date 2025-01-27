@@ -1,36 +1,44 @@
 "use client"
 
-import {Button} from "@nextui-org/react";
+import {Button} from "@heroui/react";
 import Link from "next/link";
 import {Manga_ChapterQuery} from "@/app/__generated__/graphql";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {HiOutlineSortAscending, HiOutlineSortDescending} from "react-icons/hi";
 import { motion } from 'framer-motion';
 import {IoBookmark, IoBookmarkOutline} from "react-icons/io5";
 import {ADD_CHAPTER_BOOKMARK, DELETE_CHAPTER_BOOKMARK} from "@/app/lib/graphql/mutations";
-import {useMutation} from "@apollo/client";
+import {useMutation, useQuery} from "@apollo/client";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
 import {useSession} from "next-auth/react";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
+import {GET_BOOKMARKED_CHAPTER} from "@/app/lib/graphql/queries";
 
 type ChapterList = Exclude<Manga_ChapterQuery["manga"], undefined | null>["chapters"]
 
 interface Props{
   chapters?: ChapterList,
   mangaTitle?: string,
-  selectedChapter?: string,
-  bookmarkedChapter?: string
+  selectedChapter?: string
 }
 
-export default function ChapterList({chapters, selectedChapter, bookmarkedChapter, mangaTitle}: Props) {
+export default function ChapterList({chapters, selectedChapter, mangaTitle}: Props) {
+  const mangaId = (chapters && chapters.length > 0) ? chapters[0].mangaId : null;
   const [descending, setDescending] = useState(true);
   const session = useSession();
   const {onOpen} = useModal("signIn");
   const {addAlert} = useAlert();
-  const [bookmarkedChapterState, setBookmarkedChapterState] = useState<string | undefined>(bookmarkedChapter);
+  const [bookmarkedChapterState, setBookmarkedChapterState] = useState<string | undefined>();
   const [addBookmark, {loading: loadingAddBookmark}] = useMutation(ADD_CHAPTER_BOOKMARK);
   const [deleteBookmark, {loading: loadingDeleteBookmark}] = useMutation(DELETE_CHAPTER_BOOKMARK);
+  const {data, error} = useQuery(GET_BOOKMARKED_CHAPTER, {variables: {mangaId: mangaId ?? ""}, skip: !mangaId});
+
+  useEffect(() => {
+    if (!data?.getBookmarkedChapter) return;
+
+    setBookmarkedChapterState(data.getBookmarkedChapter.chapterId);
+  }, [data]);
 
   const onChapterBookmark = (id: string) => () => {
     // If user is not logged in then open signIn modal

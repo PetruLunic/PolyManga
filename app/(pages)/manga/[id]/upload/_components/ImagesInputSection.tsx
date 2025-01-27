@@ -1,10 +1,10 @@
-import {Divider} from "@nextui-org/divider";
+import {Divider} from "@heroui/divider";
 import ImageInput from "@/app/(pages)/manga/[id]/upload/_components/ImageInput";
-import {Button, Image, Select, SelectItem, useDisclosure} from "@nextui-org/react";
+import {Button, Image, Select, SelectItem, useDisclosure} from "@heroui/react";
 import {FaTrashAlt} from "react-icons/fa";
 import {Dispatch, SetStateAction} from "react";
 import {ImageInputSection, SelectItem as ISelectItem} from "@/app/(pages)/manga/[id]/upload/_components/UploadChapterForm";
-import {Modal, ModalBody, ModalContent} from "@nextui-org/react";
+import {Modal, ModalBody, ModalContent} from "@heroui/react";
 import {ChapterLanguage} from "@/app/__generated__/graphql";
 
 interface Props{

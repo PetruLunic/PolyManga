@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import {NextUIProvider} from "@nextui-org/react";
+import {HeroUIProvider} from "@heroui/react";
 import {ThemeProvider} from "next-themes";
 import ApolloClientProvider from "@/app/_components/ApolloClientProvider";
 import {SessionProvider, SessionProviderProps} from "next-auth/react";
@@ -17,7 +17,7 @@ export default function Providers({children, session}: Props) {
  return (
    <SessionProvider session={session}>
      <ApolloClientProvider>
-       <NextUIProvider>
+       <HeroUIProvider>
          <ThemeProvider
              attribute="class"
              defaultTheme="dark"
@@ -28,7 +28,7 @@ export default function Providers({children, session}: Props) {
              </ModalsProvider>
            </AlertProvider>
          </ThemeProvider>
-       </NextUIProvider>
+       </HeroUIProvider>
      </ApolloClientProvider>
    </SessionProvider>
  );

@@ -1,6 +1,6 @@
 import MangaPage from "@/app/(pages)/manga/MangaPage";
 import {Suspense} from "react";
-import {Spinner} from "@nextui-org/react";
+import {Spinner} from "@heroui/react";
 import {Metadata} from "next";
 import {seoMetaData} from "@/app/lib/seo/metadata";
 

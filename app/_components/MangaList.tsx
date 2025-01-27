@@ -1,7 +1,7 @@
 "use client"
 
 import React, {JSX} from "react";
-import {ScrollShadow, Spinner} from "@nextui-org/react";
+import {ScrollShadow, Spinner} from "@heroui/react";
 import {useInfiniteScroll} from "@/app/lib/hooks/useInfiniteScroll";
 
 type DivProps = JSX.IntrinsicElements["div"];

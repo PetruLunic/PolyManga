@@ -6,8 +6,8 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {MangaSchema} from "@/app/lib/utils/zodSchemas";
 import {useDropzone} from "react-dropzone";
 import Alert from "@/app/_components/Alert";
-import {Input, Textarea} from "@nextui-org/input";
-import {Button, Image, Select, SelectItem} from "@nextui-org/react";
+import {Input, Textarea} from "@heroui/input";
+import {Button, Image, Select, SelectItem} from "@heroui/react";
 import z from "zod";
 import {editManga} from "@/app/(pages)/manga/[id]/edit/actions";
 

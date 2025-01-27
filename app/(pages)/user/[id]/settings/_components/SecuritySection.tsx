@@ -4,7 +4,7 @@ import InputPassword from "@/app/_components/InputPassword";
 import {useForm} from "react-hook-form";
 import {ChangePasswordSchema} from "@/app/lib/utils/zodSchemas";
 import z from "zod";
-import {Button} from "@nextui-org/react";
+import {Button} from "@heroui/react";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
 import {changePassword} from "@/app/(pages)/user/[id]/settings/actions";
 import {zodResolver} from "@hookform/resolvers/zod";

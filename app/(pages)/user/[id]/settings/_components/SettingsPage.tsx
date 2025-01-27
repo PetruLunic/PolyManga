@@ -1,6 +1,6 @@
 "use client"
 
-import {Tab, Tabs} from "@nextui-org/react";
+import {Tab, Tabs} from "@heroui/react";
 import {useQueryParams} from "@/app/lib/hooks/useQueryParams";
 import {useSearchParams} from "next/navigation";
 import {Session} from "next-auth";

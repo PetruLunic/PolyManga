@@ -1,7 +1,7 @@
 "use client";
 
 import {GetLatestUploadedChaptersQuery} from "@/app/__generated__/graphql";
-import {Card, Image} from "@nextui-org/react";
+import {Card, Image} from "@heroui/react";
 import Link from "next/link";
 import {mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
 import {timeSince} from "@/app/lib/utils/dateUtils";

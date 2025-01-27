@@ -9,7 +9,7 @@ import {
   Modal, ModalBody,
   ModalContent, ModalFooter, ModalHeader,
   useDisclosure
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {BsThreeDotsVertical} from "react-icons/bs";
 import {usePathname} from "next/navigation";
 import {useSession} from "next-auth/react";

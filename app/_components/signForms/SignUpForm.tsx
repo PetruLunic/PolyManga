@@ -8,11 +8,10 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import React from "react";
-import {Input} from "@nextui-org/input";
+import {Input} from "@heroui/input";
 import {IoIosMail} from "react-icons/io";
-import {MdOutlinePassword} from "react-icons/md";
 import {FaUser} from "react-icons/fa";
 import AuthButtons from "@/app/_components/signForms/AuthButtons";
 import {useForm} from "react-hook-form";

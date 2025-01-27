@@ -1,6 +1,6 @@
 "use client"
 
-import {Button, Link, Navbar, NavbarContent, NavbarItem} from "@nextui-org/react";
+import {Button, Link, Navbar, NavbarContent, NavbarItem} from "@heroui/react";
 import {useParams} from "next/navigation";
 import { IoArrowBackSharp } from "react-icons/io5";
 import LanguageSelect from "@/app/_components/navbar/LanguageSelect";

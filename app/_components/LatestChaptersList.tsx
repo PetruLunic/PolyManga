@@ -6,14 +6,14 @@ import React, {useState} from "react";
 import {useQuery} from "@apollo/client";
 import {GET_LATEST_UPLOADED_CHAPTERS} from "@/app/lib/graphql/queries";
 import {useInfiniteScroll} from "@/app/lib/hooks/useInfiniteScroll";
-import {Spinner} from "@nextui-org/react";
+import {Spinner} from "@heroui/react";
 
 interface Props{
  initialChapters: GetLatestUploadedChaptersQuery["latestChapters"]
 }
 
 export default function LatestChaptersList({initialChapters}: Props) {
-  const limit = 10; // Number of items per page
+  const limit = 16; // Number of items per page
   const [chapters, setChapters] = useState(initialChapters); // Combined list of chapters
   const [hasMore, setHasMore] = useState(true); // Whether there are more chapters to load
 
@@ -22,9 +22,7 @@ export default function LatestChaptersList({initialChapters}: Props) {
       limit,
       offset: initialChapters.length, // Start fetching after the initial data
     },
-    skip: true,
-    notifyOnNetworkStatusChange: true,
-    fetchPolicy: "cache-and-network",
+    skip: true
   });
 
   // Load more chapters

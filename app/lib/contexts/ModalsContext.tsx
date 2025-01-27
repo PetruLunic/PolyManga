@@ -1,7 +1,7 @@
 import {createContext, ReactNode, useContext, useState} from "react";
 import SignInForm from "@/app/_components/signForms/SignInForm";
 import SignUpForm from "@/app/_components/signForms/SignUpForm";
-import {useDisclosure} from "@nextui-org/react";
+import {useDisclosure} from "@heroui/react";
 import VerifyEmailForm from "@/app/_components/signForms/VerifyEmailForm";
 import {ModalProps} from "@/app/types";
 import ForgotPasswordModal1 from "@/app/_components/signForms/ForgotPasswordModals/ForgotPasswordModal1";

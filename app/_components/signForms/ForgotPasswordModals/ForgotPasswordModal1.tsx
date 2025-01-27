@@ -1,14 +1,13 @@
 "use client"
 
-import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure} from "@nextui-org/react";
+import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure} from "@heroui/react";
 import Alert from "@/app/_components/Alert";
-import {Input} from "@nextui-org/input";
+import {Input} from "@heroui/input";
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {ModalProps} from "@/app/types";
 import {IoIosMail} from "react-icons/io";
 import {generateAndSendEmailToken} from "@/app/userActions";
-import {getForgotPasswordEmailTemplate} from "@/app/lib/htmls/getForgotPasswordTemplate";
 import ForgotPasswordModal2 from "@/app/_components/signForms/ForgotPasswordModals/ForgotPasswordModal2";
 
 type Props = Partial<ModalProps>;

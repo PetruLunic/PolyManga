@@ -1,7 +1,7 @@
 "use client"
 
 import {BookmarksQuery} from "@/app/__generated__/graphql"
-import {Tab, Tabs} from "@nextui-org/react";
+import {Tab, Tabs} from "@heroui/react";
 import {useQueryParams} from "@/app/lib/hooks/useQueryParams";
 import {useSearchParams} from "next/navigation";
 import MangaList from "@/app/_components/MangaList";

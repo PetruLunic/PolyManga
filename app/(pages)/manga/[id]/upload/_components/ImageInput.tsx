@@ -2,7 +2,7 @@ import {useDropzone} from "react-dropzone";
 import {Dispatch, SetStateAction, useEffect} from "react";
 import {ImageInputSection} from "@/app/(pages)/manga/[id]/upload/_components/UploadChapterForm";
 import {CiImageOn} from "react-icons/ci";
-import {Image} from "@nextui-org/react";
+import {Image} from "@heroui/react";
 
 interface Props{
   id: string

@@ -9,33 +9,32 @@ import {
   ModalFooter,
   ModalHeader,
   useDisclosure
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {FaRegStar, FaStar} from "react-icons/fa";
-import {useMutation} from "@apollo/client";
+import {useMutation, useQuery} from "@apollo/client";
 import {ADD_RATING, DELETE_RATING} from "@/app/lib/graphql/mutations";
 import {useEffect, useState} from "react";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {useSession} from "next-auth/react";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
-import {MangaQuery} from "@/app/__generated__/graphql";
+import {IS_RATED} from "@/app/lib/graphql/queries";
 
 interface Props{
   mangaId: string,
-  isRated: MangaQuery["isRated"]
   rating?: number,
   nrVotes?: number
 }
 
 const ratingList = ["Terrible", "Very Bad", "Bad", "Poor", "So-So", "Fair", "Good", "Very Good", "Great", "Excellent"];
 
-export default function RatingButton({mangaId, rating, nrVotes, isRated}: Props) {
+export default function RatingButton({mangaId, rating, nrVotes}: Props) {
   const {onOpen} = useModal("signIn");
   const session = useSession();
 
   return (
     <>
       {session.data
-        ? <RatingButtonAuthenticated mangaId={mangaId} rating={rating} nrVotes={nrVotes} isRated={isRated}/>
+        ? <RatingButtonAuthenticated mangaId={mangaId} rating={rating} nrVotes={nrVotes}/>
         : <Button
               onPress={onOpen}
               variant="light"
@@ -50,13 +49,18 @@ export default function RatingButton({mangaId, rating, nrVotes, isRated}: Props)
   )
 }
 
-export function RatingButtonAuthenticated({mangaId, rating, nrVotes, isRated}: Props) {
-  const [ratedValue, setRatedValue] = useState(isRated);
+export function RatingButtonAuthenticated({mangaId, rating, nrVotes}: Props) {
+  const {data} = useQuery(IS_RATED, {variables: {mangaId: mangaId}});
+  const [ratedValue, setRatedValue] = useState<number | null | undefined>(null);
   const [addRating, {loading: loadingAdd}] = useMutation(ADD_RATING);
   const [deleteRating, {loading: loadingDelete}] = useMutation(DELETE_RATING);
   const {onOpen, onOpenChange, isOpen, onClose} = useDisclosure();
   const [selectedRating, setSelectedRating] = useState("10");
   const {addAlert} = useAlert();
+
+  useEffect(() => {
+    setRatedValue(data?.isRated)
+  }, [data]);
 
   // If user saved new rating then set the default select to this rating
   useEffect(() => {

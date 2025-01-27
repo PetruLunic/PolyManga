@@ -1,4 +1,4 @@
-import {Button} from "@nextui-org/react";
+import {Button} from "@heroui/react";
 import {IoMdClose} from "react-icons/io";
 import {useEffect, useState} from "react";
 import {AnimatePresence, motion} from "framer-motion";

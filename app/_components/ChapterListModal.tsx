@@ -1,6 +1,6 @@
 "use client"
 
-import {Button, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure} from "@nextui-org/react";
+import {Button, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure} from "@heroui/react";
 import {Manga_ChapterQuery} from "@/app/__generated__/graphql";
 import ChapterList from "@/app/_components/ChapterList";
 import {useParams} from "next/navigation";
@@ -13,8 +13,6 @@ export default function ChapterListModal({data}: Props) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const {chapter} = useParams<{id: string, chapter: string}>();
   const maxNumberOfMangaTitleCharacters = data.chapter.languages.length > 1 ? 10 : 20;
-
-  console.log("Is modal open: ", isOpen);
 
  return (
   <>
@@ -51,7 +49,6 @@ export default function ChapterListModal({data}: Props) {
           <ChapterList
             chapters={data.manga?.chapters}
             selectedChapter={chapter}
-            bookmarkedChapter={data.manga?.bookmarkedChapter?.id}
             mangaTitle={data.manga?.title}
           />
         </ModalBody>

@@ -9,7 +9,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader, Popover, PopoverContent, PopoverTrigger, useDisclosure
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {motion} from "framer-motion";
 import {HiOutlineSortAscending, HiOutlineSortDescending} from "react-icons/hi";
 import {useState} from "react";

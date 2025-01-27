@@ -1,6 +1,6 @@
 "use client"
 
-import {Input} from "@nextui-org/input";
+import {Input} from "@heroui/input";
 import MangaList from "@/app/_components/MangaList";
 import {useEffect, useState} from "react";
 import useDebounce from "@/app/lib/hooks/useDebounce";
@@ -17,14 +17,14 @@ import {
   ModalFooter,
   ModalHeader,
   useDisclosure
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/__generated__/graphql";
 import {FaFilter} from "react-icons/fa";
 import FilterInputs from "@/app/(pages)/manga/_components/FilterInputs";
 import ClearFiltersButton from "@/app/(pages)/manga/_components/ClearFiltersButton";
 import SortButton from "@/app/(pages)/manga/_components/SortButton";
 import SortBySelect from "@/app/(pages)/manga/_components/SortBySelect";
-import {Divider} from "@nextui-org/divider";
+import {Divider} from "@heroui/divider";
 import MangaCard from "@/app/_components/MangaCard";
 
 export default function MangaPage() {

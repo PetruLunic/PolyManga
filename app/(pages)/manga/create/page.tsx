@@ -1,11 +1,11 @@
 "use client"
 
 import {useForm} from "react-hook-form";
-import {Input, Textarea} from "@nextui-org/input";
+import {Input, Textarea} from "@heroui/input";
 import z from "zod";
 import {MangaSchema} from "@/app/lib/utils/zodSchemas";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Button, Image, Select, SelectItem} from "@nextui-org/react";
+import {Button, Image, Select, SelectItem} from "@heroui/react";
 import {ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/types";
 import {useDropzone} from "react-dropzone";
 import {CiImageOn} from "react-icons/ci";

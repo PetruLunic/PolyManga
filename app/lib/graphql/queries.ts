@@ -55,16 +55,18 @@ export const GET_MANGA = gql(`
         value
       },
       views,
-    },
-	bookmarkedChapter {
-	  id,
-	  title
-	 }
-  },
-  isBookmarked(mangaId: $id),
-  isRated(mangaId: $id),
-  isLiked(objectId: $id)
+    }
+  }
 }
+`)
+
+export const GET_STATIC_MANGAS = gql(`
+  query staticMangas {
+    mangas {
+      id,
+      title
+    }
+  }
 `)
 
 export const GET_MANGA_METADATA = gql(`
@@ -102,6 +104,18 @@ export const GET_CHAPTER = gql(`
         id
       },
       prevChapter {
+        id
+      }
+    }
+  }
+`)
+
+export const GET_STATIC_CHAPTERS = gql(`
+  query chaptersStatic {
+    mangas {
+      id,
+      title,
+      chapters {
         id
       }
     }
@@ -152,10 +166,6 @@ export const GET_NAVBAR_CHAPTER = gql(`
         createdAt,
         title,
         number
-      },
-	  bookmarkedChapter {
-	    id,
-	    number
       }
     },
     chapter(id: $chapterId) {
@@ -286,7 +296,11 @@ export const GET_USER_PREFERENCES = gql(`
 export const GET_BOOKMARKED_CHAPTER = gql(`
   query getBookmarkedChapter($mangaId: String!) {
     getBookmarkedChapter(mangaId: $mangaId) {
-      chapterId
+      chapterId,
+      chapter {
+        title,
+        number
+      }
     }
   }
 `)

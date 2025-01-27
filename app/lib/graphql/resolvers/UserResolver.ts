@@ -1,7 +1,6 @@
 import {Arg, Authorized, Ctx, FieldResolver, Mutation, Query, Resolver, Root} from "type-graphql";
 import {Bookmark, ChapterBookmark, Manga, User, UserSignIn, UserSignUp} from "@/app/lib/graphql/schema";
 import UserModel from "@/app/lib/models/User";
-import MangaModel from "@/app/lib/models/Manga";
 import BookmarkModel from "@/app/lib/models/Bookmark";
 import bcrypt from "bcryptjs";
 import {GraphQLError} from "graphql/error";

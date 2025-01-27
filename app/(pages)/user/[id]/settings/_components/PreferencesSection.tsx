@@ -5,7 +5,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {UserPreferencesSchema} from "@/app/lib/utils/zodSchemas";
 import z from "zod";
 import {Session} from "next-auth";
-import {Button, Select, SelectItem} from "@nextui-org/react";
+import {Button, Select, SelectItem} from "@heroui/react";
 import {ChapterLanguageFull} from "@/app/types";
 import {changeUserPreferences} from "@/app/(pages)/user/[id]/settings/actions";
 import {useAlert} from "@/app/lib/contexts/AlertContext";

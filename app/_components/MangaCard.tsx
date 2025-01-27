@@ -1,5 +1,5 @@
 import {ComicsStatusBadgeColor, ComicsTypeBadgeColor} from "@/app/types";
-import {Badge, Card, CardBody, CardProps, Image} from "@nextui-org/react";
+import {Badge, Card, CardBody, CardProps, Image} from "@heroui/react";
 import { FaStar } from "react-icons/fa";
 import Link from "next/link";
 import {MangaCardFragment} from "@/app/__generated__/graphql";

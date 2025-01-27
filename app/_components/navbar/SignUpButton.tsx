@@ -1,11 +1,10 @@
 "use client"
 
-import {Button} from "@nextui-org/react";
+import {Button} from "@heroui/react";
 import {FaUser} from "react-icons/fa";
 import {useSession} from "next-auth/react";
 import UserAvatar from "@/app/_components/navbar/UserAvatar";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
-import {useEffect} from "react";
 
 export default function SignUpButton() {
   const {onOpen} = useModal("signIn");

@@ -1,11 +1,11 @@
 "use client"
 
 import {useRef, useState} from "react";
-import {Button, SelectItem} from "@nextui-org/react";
-import {Input} from "@nextui-org/input";
+import {Button, SelectItem} from "@heroui/react";
+import {Input} from "@heroui/input";
 import {ChapterEditQuery, ChapterLanguage} from "@/app/__generated__/graphql";
 import {ChapterLanguageFull} from "@/app/types";
-import {Divider} from "@nextui-org/divider";
+import {Divider} from "@heroui/divider";
 import {nanoid} from "nanoid";
 import {HiOutlinePlus} from "react-icons/hi";
 import ImagesInputSection from "@/app/(pages)/manga/[id]/upload/_components/ImagesInputSection";

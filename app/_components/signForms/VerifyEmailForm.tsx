@@ -1,8 +1,8 @@
 "use client"
 
-import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@nextui-org/react";
+import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@heroui/react";
 import Alert from "@/app/_components/Alert";
-import {Input} from "@nextui-org/input";
+import {Input} from "@heroui/input";
 import React, {useEffect, useRef, useState} from "react";
 import {FaKey} from "react-icons/fa";
 import {useForm} from "react-hook-form";

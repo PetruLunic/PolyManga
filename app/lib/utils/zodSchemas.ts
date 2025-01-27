@@ -1,6 +1,5 @@
 import z from "zod";
 import {nanoid} from "nanoid";
-import {ChapterLanguage} from "@/app/types";
 
 export const TokenSchema = z.string().length(6, "Token must be 6 characters long!");
 

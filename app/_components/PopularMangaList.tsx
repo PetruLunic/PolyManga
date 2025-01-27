@@ -2,7 +2,7 @@
 
 import MangaCard from "@/app/_components/MangaCard";
 import MangaList from "@/app/_components/MangaList";
-import {Tab, Tabs} from "@nextui-org/react";
+import {Tab, Tabs} from "@heroui/react";
 import {MangaCardFragment} from "@/app/__generated__/graphql";
 
 interface Props{

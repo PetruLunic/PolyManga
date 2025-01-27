@@ -1,5 +1,4 @@
-import {GrFormNext} from "react-icons/gr";
-import {Button, Link} from "@nextui-org/react";
+import {Button, Link} from "@heroui/react";
 import {FaChevronRight} from "react-icons/fa";
 
 

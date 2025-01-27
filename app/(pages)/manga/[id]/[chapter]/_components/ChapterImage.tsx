@@ -1,6 +1,6 @@
 "use client"
 
-import {Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Image} from "@nextui-org/react";
+import {Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Image} from "@heroui/react";
 import {useEffect, useState} from "react";
 import {MultiLanguageImage} from "@/app/(pages)/manga/[id]/[chapter]/_utils/transformChapter";
 import {ChapterLanguage} from "@/app/__generated__/graphql";

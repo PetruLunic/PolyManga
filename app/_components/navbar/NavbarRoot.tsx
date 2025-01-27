@@ -1,9 +1,8 @@
 "use client"
 
-import {Button, Navbar, NavbarBrand, NavbarContent, NavbarItem} from "@nextui-org/react";
+import {Button, Navbar, NavbarBrand, NavbarContent, NavbarItem} from "@heroui/react";
 import Link from "next/link";
 import {useParams} from "next/navigation";
-import NavbarChapter from "@/app/_components/navbar/NavbarChapter";
 import SignUpButton from "@/app/_components/navbar/SignUpButton";
 
 

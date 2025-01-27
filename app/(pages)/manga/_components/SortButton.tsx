@@ -5,7 +5,7 @@ import {useSearchParams} from "next/navigation";
 import {useQueryParams} from "@/app/lib/hooks/useQueryParams";
 import {motion} from "framer-motion";
 import {HiOutlineSortAscending, HiOutlineSortDescending} from "react-icons/hi";
-import {Button} from "@nextui-org/react";
+import {Button} from "@heroui/react";
 
 export default function SortButton() {
   const searchParams = useSearchParams();

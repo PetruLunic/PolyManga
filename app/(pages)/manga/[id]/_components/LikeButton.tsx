@@ -1,30 +1,29 @@
 "use client"
 
-import {Button} from "@nextui-org/react";
+import {Button} from "@heroui/react";
 import {IoMdHeart, IoMdHeartEmpty} from "react-icons/io";
-import {useMutation} from "@apollo/client";
+import {useMutation, useQuery} from "@apollo/client";
 import {LIKE, UNLIKE} from "@/app/lib/graphql/mutations";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
-import {MangaQuery} from "@/app/__generated__/graphql";
 import {formatNumber} from "@/app/lib/utils/formatNumber";
+import {IS_LIKED} from "@/app/lib/graphql/queries";
 
 interface Props{
   mangaId: string,
   nrLikes?: number,
-  isLiked: MangaQuery["isLiked"]
 }
 
-export default function LikeButton({mangaId, nrLikes, isLiked}: Props) {
+export default function LikeButton({mangaId, nrLikes}: Props) {
   const session = useSession();
   const {onOpen} = useModal("signIn")
 
  return (
    <>
      {session.data
-         ? <LikeButtonAuthenticated mangaId={mangaId} nrLikes={nrLikes} isLiked={isLiked}/>
+         ? <LikeButtonAuthenticated mangaId={mangaId} nrLikes={nrLikes}/>
          : <Button
              size="sm"
              variant="light"
@@ -38,11 +37,18 @@ export default function LikeButton({mangaId, nrLikes, isLiked}: Props) {
  );
 };
 
-function LikeButtonAuthenticated({mangaId, nrLikes, isLiked}: Props) {
+function LikeButtonAuthenticated({mangaId, nrLikes}: Props) {
+  const {data} = useQuery(IS_LIKED, {variables: {objectId: mangaId}});
   const [like, {loading: loadingLike}] = useMutation(LIKE);
   const [unlike, {loading: loadingUnlike}] = useMutation(UNLIKE);
-  const [isLikedState, setIsLikedState] = useState(!!isLiked);
+  const [isLikedState, setIsLikedState] = useState(false);
   const {addAlert} = useAlert();
+
+  useEffect(() => {
+    if (!data) return;
+
+    setIsLikedState(!!data.isLiked);
+  }, [data]);
 
   const onClick = async () => {
     try {

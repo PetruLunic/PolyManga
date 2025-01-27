@@ -1,6 +1,6 @@
 "use client"
 
-import {Select, SelectItem} from "@nextui-org/react";
+import {Select, SelectItem} from "@heroui/react";
 import {useSearchParams} from "next/navigation";
 import {useQueryParams} from "@/app/lib/hooks/useQueryParams";
 import {useEffect} from "react";

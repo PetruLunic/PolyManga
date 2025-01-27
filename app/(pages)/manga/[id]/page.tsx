@@ -1,8 +1,6 @@
-import {Button, Card, CardBody, Image} from "@nextui-org/react";
+import {Button, Card, CardBody, Image, Divider} from "@heroui/react";
 import {IoBookmarksOutline, IoEyeOutline} from "react-icons/io5";
-import {GET_MANGA, GET_MANGA_METADATA} from "@/app/lib/graphql/queries";
-import createApolloClient from "@/app/lib/utils/apollo-client";
-import {Divider} from "@nextui-org/divider";
+import {GET_MANGA, GET_MANGA_METADATA, GET_STATIC_MANGAS} from "@/app/lib/graphql/queries";
 import Link from "next/link";
 import ChapterList from "@/app/_components/ChapterList";
 import BookmarkButton from "@/app/(pages)/manga/[id]/_components/BookmarkButton";
@@ -10,20 +8,21 @@ import LikeButton from "@/app/(pages)/manga/[id]/_components/LikeButton";
 import RatingButton from "@/app/(pages)/manga/[id]/_components/RatingButton";
 import IncrementViews from "@/app/(pages)/manga/[id]/_components/IncrementViews";
 import MangaSettingsDropdown from "@/app/(pages)/manga/[id]/_components/MangaSettingsDropdown";
-import {cookies} from "next/headers";
 import {Metadata} from "next";
 import {domain, seoMetaData, siteName, type} from "@/app/lib/seo/metadata";
 import {getMangaIdFromURL, mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
 import {formatNumber} from "@/app/lib/utils/formatNumber";
+import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
+import ContinueReadingButton from "@/app/_components/ContinueReadingButton";
+import {notFound} from "next/navigation";
 
 export async function generateMetadata({ params}: Props): Promise<Metadata> {
   const {id} = await params;
-  const client = createApolloClient();
-  const {data: {manga}} = await client.query({
-    query: GET_MANGA_METADATA, variables: {id}
-  })
+  const {data} = await queryGraphql(GET_MANGA_METADATA, {id});
 
-  if (!manga) return seoMetaData.manga;
+  if (!data?.manga) return seoMetaData.manga;
+
+  const {manga} = data;
 
   // Getting first 4 genres and formating from "martial_arts" to "martial arts"
   const genres = manga.genres.slice(0, 4).map(genre => genre.replace("_", " "));
@@ -43,21 +42,32 @@ export async function generateMetadata({ params}: Props): Promise<Metadata> {
   }
 }
 
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const {data} = await queryGraphql(GET_STATIC_MANGAS);
+
+  if (!data?.mangas) return [];
+
+  return data.mangas.map(manga => ({
+    id: mangaTitleAndIdToURL(manga.title, manga.id)
+  }))
+}
+
 interface Props{
   params: Promise<{id: string}>
 }
 
-// 30 minutes revalidate
-export const revalidate = 1800;
+// 2 hours revalidate
+export const revalidate = 7200;
 
 export default async function Page({params}: Props) {
   const {id} = await params;
-  const client = createApolloClient();
-  const {data} = await client.query({
-    query: GET_MANGA, variables: {id: getMangaIdFromURL(id)}, context: {headers: {cookie: await cookies()}}
-  })
+  const {data} = await queryGraphql(GET_MANGA, {id});
 
-  const {manga, isBookmarked, isRated, isLiked} = data;
+  if (!data) notFound();
+
+  const {manga} = data;
 
   return (
   <div className="md:px-4 flex flex-col gap-3">
@@ -75,18 +85,8 @@ export default async function Page({params}: Props) {
                 alt={manga?.title}
                 isBlurred
             />
-            <Button
-                as={Link}
-                href={`/manga/${mangaTitleAndIdToURL(manga?.title ?? "", id)}/${manga?.firstChapter?.id}`}
-                className="w-full"
-                color="primary"
-                isDisabled={!manga?.firstChapter}
-            >
-              {manga?.bookmarkedChapter?.title
-                ? "Continue " + manga?.bookmarkedChapter?.title
-                : "First Chapter"}
-            </Button>
-            <BookmarkButton isBookmarked={isBookmarked} mangaId={getMangaIdFromURL(id)}/>
+            <ContinueReadingButton mangaSlug={id} firstChapterId={manga?.firstChapter?.id}/>
+            <BookmarkButton mangaId={getMangaIdFromURL(id)}/>
             <div className="flex gap-3">
               <div className="flex gap-1 items-center">
                 Status
@@ -123,7 +123,6 @@ export default async function Page({params}: Props) {
             <Divider/>
             <div className="flex justify-center md:justify-start items-center text-sm flex-wrap">
               <RatingButton
-                isRated={isRated}
                 mangaId={getMangaIdFromURL(id)}
                 rating={manga?.stats.rating.value}
                 nrVotes={manga?.stats.rating.nrVotes}
@@ -136,7 +135,7 @@ export default async function Page({params}: Props) {
                 <IoEyeOutline size={22}/>
                 {formatNumber(manga?.stats?.views ?? 0)}
               </Button>
-              <LikeButton isLiked={isLiked} mangaId={getMangaIdFromURL(id)} nrLikes={manga?.stats.likes}/>
+              <LikeButton mangaId={getMangaIdFromURL(id)} nrLikes={manga?.stats.likes}/>
               <Button
                   size="sm"
                   variant="light"
@@ -211,7 +210,7 @@ export default async function Page({params}: Props) {
       <CardBody className="p-2 md:p-4">
         <div className="flex flex-col gap-4">
           <h3 className="text-center text-lg font-bold md:text-left">Chapters list</h3>
-          <ChapterList chapters={manga?.chapters} bookmarkedChapter={manga?.bookmarkedChapter?.id} mangaTitle={manga?.title}/>
+            <ChapterList chapters={JSON.parse(JSON.stringify(manga?.chapters))} mangaTitle={manga?.title}/>
         </div>
       </CardBody>
     </Card>

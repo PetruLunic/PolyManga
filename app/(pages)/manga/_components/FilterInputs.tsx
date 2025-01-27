@@ -1,6 +1,6 @@
 "use client"
 
-import {Select, SelectItem} from "@nextui-org/react";
+import {Select, SelectItem} from "@heroui/react";
 import {ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/__generated__/graphql";
 import {useSearchParams} from "next/navigation";
 import {useQueryParams} from "@/app/lib/hooks/useQueryParams";
