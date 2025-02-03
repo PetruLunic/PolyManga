@@ -4,21 +4,21 @@ import {Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Image} from "@her
 import {useEffect, useState} from "react";
 import {MultiLanguageImage} from "@/app/(pages)/manga/[id]/[chapter]/_utils/transformChapter";
 import {ChapterLanguage} from "@/app/__generated__/graphql";
-import {useSearchParams} from "next/navigation";
 import {isStringInEnum} from "@/app/lib/utils/isStringinEnum";
 import NextImage from "next/image";
 import {useSession} from "next-auth/react";
 
 interface Props{
   image: MultiLanguageImage,
+  languageQuery: string | null,
   priority?: boolean
 }
 
-export default function ChapterImage({image, priority}: Props) {
+export default function ChapterImage({image, languageQuery}: Props) {
   const session = useSession();
-  const languageQuery = useSearchParams().get("language");
   const [language, setLanguage] = useState<ChapterLanguage>(Object.keys(image)[0] as ChapterLanguage);
   const [offset, setOffset] = useState<number>(0);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   let preferredLanguage = session.data?.user?.preferences?.language
 
   useEffect(() => {
@@ -42,7 +42,8 @@ export default function ChapterImage({image, priority}: Props) {
         width={image[language]?.width}
         height={image[language]?.height}
         style={{height: "auto"}}
-        priority={priority}
+        classNames={{wrapper: 'mx-auto'}}
+        priority
         onClick={() => {
           if (preferredLanguage) {
             setLanguage(preferredLanguage[0].toUpperCase() + preferredLanguage.substring(1) as ChapterLanguage);
@@ -63,17 +64,45 @@ export default function ChapterImage({image, priority}: Props) {
     />
   }
 
+  const handleInteraction = (event: React.MouseEvent<HTMLImageElement> | React.TouchEvent<HTMLImageElement>) => {
+    if (event.type === "click") {
+      event.preventDefault();
+    }
+
+    // Get the bounding client rect of the target element
+    const rect = (event.target as HTMLImageElement).getBoundingClientRect();
+
+    let clientY: number;
+
+    // Determine if it's a mouse or touch event
+    if ("clientY" in event) {
+      // MouseEvent
+      clientY = event.clientY;
+    } else if (event.touches && event.touches.length > 0 && !isMenuOpen) {
+      // TouchEvent
+      clientY = event.touches[0].clientY;
+    } else {
+      return; // No valid clientY found
+    }
+
+    // Calculate offset
+    const calculatedOffset = rect.top - clientY;
+    setOffset(calculatedOffset);
+  };
+
   // Return the default multi-language dropdown image
   return (
       <Dropdown
         placement="top"
         offset={offset}
+        onOpenChange={isOpen => setIsMenuOpen(isOpen)}
         size="sm"
         isDisabled={Object.keys(image).length <= 1} // If image has only one image then disable the dropdown
       >
-         <DropdownTrigger onPress={(event: React.MouseEvent<HTMLImageElement>) => setOffset(
-               event.currentTarget.getBoundingClientRect().top - event.clientY
-           )}>
+         <DropdownTrigger
+           onClick={handleInteraction}
+           onTouchStart={handleInteraction}
+         >
              <Image
                  as={NextImage}
                  src={image[language]?.src}
@@ -81,7 +110,8 @@ export default function ChapterImage({image, priority}: Props) {
                  width={image[language]?.width}
                  height={image[language]?.height}
                  style={{height: "auto"}}
-                 priority={priority}
+                 classNames={{wrapper: 'mx-auto'}}
+                 priority
                  radius="none"
              />
          </DropdownTrigger>

@@ -11,6 +11,7 @@ import {ChapterLanguageFull} from "@/app/types";
 import {getMangaIdFromURL, mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
 import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
 import {Suspense} from "react";
+import ChapterImagesList from "@/app/_components/ChapterImagesList";
 
 export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {id, chapter: chapterId} = await params;
@@ -75,14 +76,8 @@ export default async function Page({params}: Props) {
   return (
       <div>
         <NavbarChapter data={JSON.parse(JSON.stringify(navbarData))}/>
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col items-center">
-            {chapter.images.map((img, index) =>
-              <Suspense key={index}>
-                <ChapterImage image={JSON.parse(JSON.stringify(img))} priority={index <= 1}/>
-              </Suspense>
-            )}
-          </div>
+        <div className="flex flex-col gap-3 min-h-screen">
+          <ChapterImagesList images={JSON.parse(JSON.stringify(chapter.images))} />
         </div>
         <ChapterBookmarkFetch chapterId={chapter.id} chapterNumber={chapter.number}/>
       </div>
