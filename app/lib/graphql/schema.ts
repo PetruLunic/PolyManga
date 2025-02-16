@@ -120,16 +120,37 @@ export class Chapter {
   updatedAt: string;
 }
 
+@ObjectType("MangaTitle")
+export class MangaTitle {
+  @Field(() => ChapterLanguage)
+  language: string;
+
+  @Field()
+  value: string
+}
+
+@ObjectType("MangaDescription")
+export class MangaDescription {
+  @Field(() => ChapterLanguage)
+  language: string;
+
+  @Field()
+  value: string
+}
+
 @ObjectType("Manga")
 export class Manga {
   @Field(() => ID)
   id: string;
 
-  @Field()
-  title: string;
+  @Field(() => [MangaTitle])
+  title: MangaTitle[];
 
   @Field()
-  description: string;
+  slug: string;
+
+  @Field(() => [MangaDescription])
+  description: MangaDescription[];
 
   @Field()
   author: string;
@@ -215,12 +236,6 @@ export class User {
   @Field()
   emailVerified: boolean;
 
-  @Field(() => String, {nullable: true})
-  emailToken: string;
-
-  @Field(() => String, {nullable: true})
-  emailTokenExpiry: string;
-
   @Field(() => UserPreferences)
   preferences: UserPreferences;
 
@@ -270,10 +285,7 @@ export class Like {
   userId: string;
 
   @Field(() => ID)
-  objectId: string;
-
-  @Field(() => String)
-  objectType: LikeableObject;
+  mangaId: string;
 }
 
 @ObjectType("Rating")
@@ -335,17 +347,37 @@ export class UserSignIn implements Partial<User> {
   password: string;
 }
 
+@InputType("MangaTitleInput")
+export class MangaTitleInput implements MangaTitle {
+  @Field(() => ChapterLanguage)
+  language: string;
+
+  @Field()
+  value: string
+}
+
+@InputType("MangaDescriptionInput")
+export class MangaDescriptionInput implements MangaDescription {
+  @Field(() => ChapterLanguage)
+  language: string;
+
+  @Field()
+  value: string
+}
 
 @InputType("AddMangaInput")
 export class AddMangaInput implements Partial<Manga> {
   @Field()
   id: string;
 
-  @Field()
-  title: string;
+  @Field(() => [MangaTitleInput])
+  title: MangaTitleInput[];
 
   @Field()
-  description: string;
+  slug: string;
+
+  @Field(() => [MangaDescriptionInput])
+  description: MangaDescriptionInput[];
 
   @Field()
   author: string;
@@ -377,11 +409,11 @@ export class EditMangaInput implements Partial<Manga> {
   @Field()
   id: string;
 
-  @Field()
-  title: string;
+  @Field(() => [MangaTitleInput])
+  title: MangaTitleInput[];
 
-  @Field()
-  description: string;
+  @Field(() => [MangaDescriptionInput])
+  description: MangaDescriptionInput[];
 
   @Field()
   author: string;
@@ -447,25 +479,16 @@ export class AddChapterInput implements Partial<Chapter> {
 @InputType("AddBookmarkInput")
 export class AddBookmarkInput {
   @Field(() => ID)
-  mangaId: string;
+  slug: string;
 
   @Field(() => String)
   type: BookmarkType;
 }
 
-@InputType("LikeInput")
-export class LikeInput implements Partial<Like>{
-  @Field(() => ID)
-  objectId: string;
-
-  @Field(() => String)
-  objectType: LikeableObject
-}
-
 @InputType("RatingInput")
 export class RatingInput implements Partial<Rating> {
   @Field(() => ID)
-  mangaId: string;
+  slug: string;
 
   @Field(() => Int)
   value: number;

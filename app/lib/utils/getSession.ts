@@ -19,7 +19,6 @@ export async function getSession(req: NextRequest): Promise<UserSession | null> 
   // Find the cookie that exists in the request
   const cookieName = possibleCookieNames.find((name) => cookies.get(name));
   if (!cookieName) {
-    console.warn("No valid session cookie found.");
     return null; // No session cookie found
   }
 

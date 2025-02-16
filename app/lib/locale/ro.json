@@ -1,0 +1,286 @@
+{
+  "common": {
+    "manga": {
+      "status": {
+        "ONGOING": "Ongoing",
+        "FINISHED": "Finalizat",
+        "PAUSED": "Întrerupt",
+        "DROPPED": "Abandonat"
+      },
+      "type": {
+        "manga": "Manga",
+        "manhwa": "Manhwa",
+        "manhua": "Manhua"
+      },
+      "genres": {
+        "action": "acțiune",
+        "fantasy": "fantasy",
+        "drama": "dramă",
+        "harem": "harem",
+        "martial_arts": "arte marțiale",
+        "apocalypse": "apocalipsă",
+        "cultivation": "cultivare",
+        "game": "joc",
+        "hero": "erou",
+        "mature": "matur",
+        "comedy": "comedie",
+        "genius_mc": "geniu mc",
+        "historical": "istoric",
+        "loli": "loli",
+        "mecha": "mecha",
+        "adventure": "aventură",
+        "isekai": "isekai",
+        "magic": "magie",
+        "romance": "romantic",
+        "noble": "nobil",
+        "time_travel": "călătorie în timp",
+        "murim": "murim",
+        "rebirth": "reîncarnare",
+        "school_life": "viață școlară",
+        "system": "sistem",
+        "tower": "turn",
+        "virtual_reality": "realitate virtuală",
+        "regression": "regresie",
+        "sci_fi": "științifico-fantastic",
+        "thriller": "thriller",
+        "tragedy": "tragedie",
+        "villain": "ticălos",
+        "necromancer": "necromant",
+        "post_apocalyptic": "post-apocaliptic",
+        "reincarnation": "reîncarnare",
+        "revenge": "răzbunare",
+        "sport": "sport"
+      },
+      "chapter": "Capitol",
+      "noChapter": "Fără capitole"
+    },
+    "ui": {
+      "navigation": {
+        "catalog": "Catalog",
+        "home": "Acasă"
+      },
+      "timeSince": {
+        "second": "{count, plural, =1 {o secundă} other {# secunde}} în urmă",
+        "minute": "{count, plural, =1 {o minută} other {# minute}} în urmă",
+        "hour": "{count, plural, =1 {o oră} other {# ore}} în urmă",
+        "day": "{count, plural, =1 {o zi} other {# zile}} în urmă",
+        "week": "{count, plural, =1 {o săptămână} other {# săptămâni}} în urmă",
+        "month": "{count, plural, =1 {o lună} other {# luni}} în urmă",
+        "year": "{count, plural, =1 {un an} other {# ani}} în urmă"
+      }
+    }
+  },
+  "pages": {
+    "home": {
+      "popular": "Popular această",
+      "latestChapter": "Ultimele încărcări ale capitolelor",
+      "day": "zi",
+      "week": "săptămână",
+      "month": "lună"
+    },
+    "mangaDetails": {
+      "metadata": {
+        "keywords": "manga, citește manga, citește {type}, cea mai bună manga, gratis manga, citește manga online, manga populară, {genres}"
+      },
+      "status": "Stare",
+      "bookmark": "Salvează",
+      "type": "Tip",
+      "author": "Autor",
+      "releasedOn": "Lansat în",
+      "genres": "Genuri",
+      "languages": "Limbi",
+      "chaptersList": "Lista de Capitole"
+    },
+    "manga": {
+      "catalog": "Catalog",
+      "sort": "Sortare",
+      "filters": "Filtre",
+      "filter": "Filtru",
+      "descending": "Descrescător",
+      "ascending": "Crescător",
+      "clear": "Șterge",
+      "close": "Închide",
+      "sortByOptions": {
+        "views": "Vizualizări",
+        "likes": "Aprecieri",
+        "rating": "Evaluare",
+        "bookmarks": "Salvări",
+        "chapters": "Capitole",
+        "createdAt": "Timpul de creare"
+      },
+      "placeholders": {
+        "sortBy": "Sortare după",
+        "search": "Caută după nume",
+        "genres": "Genuri",
+        "status": "Stare",
+        "type": "Tip",
+        "language": "Limbă"
+      }
+    },
+    "verifyEmail": {
+      "unexpectedError": "Eroare neașteptată!",
+      "successfulVerification": "Email-ul dvs. a fost verificat cu succes.",
+      "invalidLink": "Linkul de verificare este invalid.",
+      "loadingVerification": "Se verifică email-ul dvs. ..."
+    },
+    "resetPassword": {
+      "title": "Resetează parola",
+      "submit": "Trimite",
+      "unexpectedError": "Eroare neașteptată!",
+      "successfulReset": "Parola a fost schimbată cu succes!",
+      "newPassword": "Parola nouă",
+      "invalidLink": "Linkul de verificare este invalid.",
+      "newPasswordPlaceholder": "Introdu parola nouă"
+    },
+    "user": {
+      "history": {
+        "history": "Istoric"
+      }
+    }
+  },
+  "components": {
+    "navbar": {
+      "catalog": "Catalog",
+      "userDropdown": {
+        "bookmarks": "Salvări",
+        "history": "Istoric citire",
+        "settings": "Setări",
+        "logOut": "Log Out"
+      }
+    },
+    "chaptersList": {
+      "ascending": "Crescător",
+      "descending": "Descrescător",
+      "noChapter": "Nici un capitol"
+    },
+    "buttons": {
+      "bookmark": {
+        "default": "Salvează",
+        "reading": "În lectură",
+        "inPlans": "În planuri",
+        "favourite": "Favorit",
+        "finished": "Finalizat",
+        "dropped": "Abandonat",
+        "delete": "Șterge din salvări",
+        "alerts": {
+          "error": "Eroare de salvare!"
+        }
+      },
+      "continueReading": {
+        "continue": "Continuă",
+        "firstChapter": "Primul Capitol"
+      },
+      "rating": {
+        "rate": "Evaluează",
+        "close": "Închide",
+        "save": "Salvează",
+        "delete": "Șterge",
+        "yourRating": "Evaluarea ta",
+        "ratings": {
+          "terrible": "Teribil",
+          "veryBad": "Foarte Rău",
+          "bad": "Rău",
+          "poor": "Slab",
+          "soSo": "Așa și așa",
+          "fair": "Acceptabil",
+          "good": "Bun",
+          "veryGood": "Foarte Bun",
+          "great": "Grozav",
+          "excellent": "Excelent"
+        },
+        "alerts": {
+          "success": "Evaluat cu succes!",
+          "delete": "S-a șters cu succes!",
+          "error": "Eroare la evaluare!"
+        }
+      },
+      "like": {
+        "alerts": {
+          "error": "Eroare la like!"
+        }
+      }
+    },
+    "modals": {
+      "signInOut": {
+        "signIn": "Autentificare",
+        "signUp": "Înregistrare",
+        "or": "Sau",
+        "username": "Nume de utilizator",
+        "email": "Email",
+        "password": "Parolă",
+        "forgotPassword": "Ai uitat parola?",
+        "close": "Închide",
+        "errors": {
+          "unexpected": "Eroare neașteptată!",
+          "submit": "Eroare la trimitere"
+        },
+        "placeholders": {
+          "username": "Introdu numele tău de utilizator",
+          "email": "Introdu email-ul tău",
+          "password": "Introdu parola ta"
+        }
+      },
+      "forgotPassword": {
+        "forgotPassword": "Parolă uitată",
+        "verifyEmail": "Verifică Email-ul",
+        "tokenSent": "Token-ul a fost trimis pe email-ul tău",
+        "email": "Email",
+        "errors": {
+          "unexpected": "Eroare neașteptată!",
+          "submit": "Eroare la trimitere"
+        },
+        "placeholders": {
+          "email": "Introdu email-ul tău",
+          "token": "Introdu token-ul tău",
+          "newPassword": "Parolă nouă"
+        },
+        "close": "Închide",
+        "submit": "Trimite"
+      },
+      "verifyEmail": {
+        "header": "Verifică Email-ul",
+        "message": "Pe email-ul tău <email></email> a fost trimis un mesaj cu un link. Te rugăm să accesezi acel link.",
+        "close": "Închide",
+        "resendButton": "Retrimite email-ul{seconds, plural, =0 {} other { după # secunde}}"
+      }
+    }
+  },
+  "server": {
+    "user": {
+      "unexpectedError": "Eroare neașteptată!",
+      "wrongPasswordOrEmail": "Email-ul sau parola sunt incorecte!",
+      "existingEmail": "Un utilizator cu acest email există deja",
+      "existingName": "Un utilizator cu acest nume există deja",
+      "incorrectToken": "Acest token este incorect sau expirat!",
+      "userNotFound": "Utilizatorul nu a fost găsit!",
+      "expiredEmailToken": "Token-ul de email a expirat!"
+    }
+  },
+  "htmlTemplates": {
+    "emailVerification": {
+      "title": "Verifică Adresa de Email",
+      "greeting": "Salut",
+      "instructions": "Te rugăm să confirmi că vrei să folosești această adresă de email pentru contul tău {brandName}.",
+      "cta": "Verifică Email-ul",
+      "note": "Dacă nu ai creat acest cont, poți ignora acest email."
+    },
+    "passwordReset": {
+      "title": "Cerere de resetare parolă",
+      "tokenSentIfExists": "Dacă adresa de email există, un token a fost trimis.",
+      "greeting": "Bună ziua",
+      "instructions": "Am primit o cerere de resetare a parolei pentru {brandName}. Faceți clic pe butonul de mai jos pentru a seta o parolă nouă:",
+      "cta": "Resetează parola",
+      "note": "Acest link va expira în 15 minute. Dacă nu ați solicitat resetarea parolei, puteți ignora acest e-mail."
+    }
+  },
+  "form": {
+    "name": "Numele de utilizator",
+    "password": "Parola",
+    "email": "Email",
+    "newPassword": "Parola nouă",
+    "oldPassword": "Parola veche",
+    "customErrors": {
+      "passwordRegex": "{path, select, missingTranslation {String} other {{path}}} trebuie să conțină cel puțin o literă mare, o literă mică, o cifră și un caracter special"
+    }
+  }
+}

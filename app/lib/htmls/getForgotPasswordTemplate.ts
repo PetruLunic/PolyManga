@@ -1,72 +1,84 @@
-export const getForgotPasswordEmailTemplate = (token: string) => `
-<!DOCTYPE html>
-<html lang="en">
+import {getLocale, getTranslations} from "next-intl/server";
+
+export async function getPasswordResetTemplate(token: string, username: string) {
+  const locale = await getLocale();
+  const domain = process.env.NEXT_PUBLIC_SITE_URL;
+  const siteName = process.env.NEXT_PUBLIC_PROJECT_NAME;
+  const t = await getTranslations({namespace: "htmlTemplates.passwordReset", locale})
+
+  if (!domain) {
+    throw new Error("NEXT_PUBLIC_SITE_URL env variable not found.")
+  }
+
+  if (!siteName) {
+    throw new Error("NEXT_PUBLIC_PROJECT_NAME env variable not found.")
+  }
+
+  const link = `${domain}/${locale}/auth/reset-password?token=${token}`;
+
+  return `
+  <!DOCTYPE html>
+<html lang="${locale}" xmlns:v="urn:schemas-microsoft-com:vml">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Forgot Password</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      color: #333;
-      padding: 20px;
-      margin: 0;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    .header {
-      text-align: center;
-      padding-bottom: 20px;
-    }
-    .header img {
-      width: 100px;
-    }
-    .content {
-      line-height: 1.6;
-    }
-    .token {
-      display: block;
-      margin: 20px 0;
-      padding: 10px;
-      background-color: #e7f3fe;
-      border: 1px solid #b3d4fc;
-      border-radius: 4px;
-      font-family: monospace;
-      text-align: center;
-      font-size: 18px;
-      color: #333;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 20px;
-      color: #888;
-      font-size: 12px;
-    }
-  </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>${t('title')}</title>
+    <!--[if gte mso 9]>
+    <xml>
+        <o:OfficeDocumentSettings>
+        <o:AllowPNG/>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+    </xml>
+    <![endif]-->
 </head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>Reset Your Password</h1>
-    </div>
-    <div class="content">
-      <p>Hi there,</p>
-      <p>You requested to reset your password. Please use the following token to reset your password:</p>
-      <span class="token">${token}</span>
-      <p>If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
-      <p>Thank you!</p>
-    </div>
-    <div class="footer">
-      <p>&copy; ${new Date().getFullYear()} Your Company. All rights reserved.</p>
-    </div>
-  </div>
+<body style="margin:0;padding:0;background-color:#f6f7fb;font-family:Arial,sans-serif;">
+    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td align="center" style="padding:20px 0;">
+                <!--[if (gte mso 9)|(IE)]>
+                <table align="center" role="presentation">
+                <tr>
+                <td width="600">
+                <![endif]-->
+                <table role="presentation" width="100%" style="max-width:600px;background:#ffffff;border-radius:8px;border:1px solid #e5e7eb;" cellpadding="24">
+                    <tr>
+                      <td style="padding:24px;">
+                        <h1 style="color:#1f2937;font-size:24px;margin:0 0 16px;text-align:center;">
+                          ${t('title')}
+                        </h1>
+                        <p style="color:#4b5563;font-size:16px;line-height:24px;margin:0 0 24px;text-align:center;">
+                          ${t('greeting')} <b>${username}</b>,
+                          <br>
+                          ${t('instructions', { brandName: siteName })}
+                        </p>
+                        
+                        <div style="text-align:center;margin:32px 0;">
+                          <a href="${link}" 
+                             style="background-color:#3b82f6;color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:6px;font-weight:bold;display:inline-block;">
+                            ${t('cta')}
+                          </a>
+                        </div>
+                        
+                        <p style="color:#6b7280;font-size:14px;line-height:20px;text-align:center;margin:0;">
+                          ${t('note')}
+                        </p>
+                      </td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="padding:24px;background:#f3f4f6;border-radius:0 0 8px 8px;">
+                            <p style="color:#6b7280;font-size:12px;line-height:18px;text-align:center;margin:0;">
+                                © ${new Date().getFullYear()} ${siteName}<br>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
-`;
+  `;
+}

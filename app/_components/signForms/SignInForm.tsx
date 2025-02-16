@@ -14,15 +14,19 @@ import {IoIosMail} from "react-icons/io";
 import AuthButtons from "@/app/_components/signForms/AuthButtons";
 import {useForm} from "react-hook-form";
 import {UserSignIn} from "@/app/lib/graphql/schema";
-import {signIn} from "@/app/userActions";
+import {generateAndSendEmailToken, signIn} from "@/app/lib/userActions";
 import Alert from "@/app/_components/Alert";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {ModalProps} from "@/app/types";
 import InputPassword from "@/app/_components/InputPassword";
+import {useTranslations} from "next-intl";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {UserSignInSchema} from "@/app/lib/utils/zodSchemas";
 
 type Props = Partial<ModalProps>;
 
 export default function SignInForm({isOpen, onOpenChange, onClose}: Props) {
+  const t = useTranslations("components.modals.signInOut");
   const {onOpen: onSignUpOpen} = useModal("signUp");
   const {onOpen: onVerifyEmailOpen, prop: [_, setEmail]} = useModal("verifyEmail");
   const {onOpen: onForgotPasswordOpen} = useModal("forgotPassword");
@@ -34,7 +38,9 @@ export default function SignInForm({isOpen, onOpenChange, onClose}: Props) {
       errors ,
       isSubmitting,
     }
-  } = useForm<UserSignIn>();
+  } = useForm<UserSignIn>({
+    resolver: zodResolver(UserSignInSchema)
+  });
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -45,6 +51,7 @@ export default function SignInForm({isOpen, onOpenChange, onClose}: Props) {
         if (response.message === "Unverified email") {
           setEmail(data.email);
           onClose && onClose();
+          generateAndSendEmailToken(data.email, "verifyEmail");
           onVerifyEmailOpen();
         }
 
@@ -57,7 +64,7 @@ export default function SignInForm({isOpen, onOpenChange, onClose}: Props) {
       }
     } catch(e) {
       console.error(e);
-      setError("root", {type: "custom", message: "Unexpected error!"})
+      setError("root", {type: "custom", message: t("errors.unexpected")})
     }
   })
 
@@ -69,20 +76,19 @@ export default function SignInForm({isOpen, onOpenChange, onClose}: Props) {
         <ModalContent>
           {(onClose) => (
               <form onSubmit={onSubmit}>
-                <ModalHeader className="flex flex-col gap-1">Sign In</ModalHeader>
+                <ModalHeader className="flex flex-col gap-1">{t("signIn")}</ModalHeader>
                 <ModalBody>
                   <AuthButtons/>
                   <div className="text-center mb-4 text-gray-300 text-sm">
-                    or
+                    {t("or")}
                   </div>
-                  <Alert title="Submit error" description={errors.root?.message} isVisible={!!errors.root} type="danger"/>
+                  <Alert title={t("errors.submit")} description={errors.root?.message} isVisible={!!errors.root} type="danger"/>
                   <Input
-                      autoFocus
                       endContent={
                         <IoIosMail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                       }
-                      label="Email"
-                      placeholder="Enter your email"
+                      label={t("email")}
+                      placeholder={t("placeholders.email")}
                       errorMessage={errors.email?.message}
                       isInvalid={!!errors.email}
                       variant="bordered"
@@ -90,11 +96,8 @@ export default function SignInForm({isOpen, onOpenChange, onClose}: Props) {
                       {...register("email")}
                   />
                   <InputPassword
-                      // endContent={
-                      //   <MdOutlinePassword  className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                      // }
-                      label="Password"
-                      placeholder="Enter your password"
+                      label={t("password")}
+                      placeholder={t("placeholders.password")}
                       errorMessage={errors.password?.message}
                       isInvalid={!!errors.password}
                       variant="bordered"
@@ -104,12 +107,12 @@ export default function SignInForm({isOpen, onOpenChange, onClose}: Props) {
                     <Button
                         color="primary"
                         variant="light"
-                        onClick={() => {
+                        onPress={() => setTimeout(() => {
                           onSignUpOpen();
                           onClose();
-                        }}
+                        }, 0)}
                     >
-                      Sign Up
+                      {t("signUp")}
                     </Button>
                     <Button
                         color="primary"
@@ -119,16 +122,16 @@ export default function SignInForm({isOpen, onOpenChange, onClose}: Props) {
                           onClose();
                         }}
                     >
-                      Forgot password?
+                      {t("forgotPassword")}
                     </Button>
                   </div>
                 </ModalBody>
                 <ModalFooter>
                   <Button color="danger" variant="flat" onPress={onClose}>
-                    Close
+                    {t("close")}
                   </Button>
                   <Button color="primary" type="submit" isLoading={isSubmitting}>
-                    Sign up
+                    {t("signIn")}
                   </Button>
                 </ModalFooter>
               </form>

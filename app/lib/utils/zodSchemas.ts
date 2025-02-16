@@ -1,18 +1,13 @@
 import z from "zod";
 import {nanoid} from "nanoid";
 
-export const TokenSchema = z.string().length(6, "Token must be 6 characters long!");
+
 
 export const PasswordSchema =  z.string()
-        .min(8, { message: "Password must be at least 8 characters long" })
-        .max(64, { message: "Password must be 64 characters or less" })
-        .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&_])[A-Za-z\d@$!%*?&_]{8,}$/,
-            { message: "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character" })
-
-export const ResetPasswordSchema = z.object({
-  newPassword: PasswordSchema,
-  token: TokenSchema
-})
+        .min(8)
+        .max(64)
+        .refine((value) => /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&_])[A-Za-z\d@$!%*?&_]{8,}$/.test(value),
+          {params: {i18n: "passwordRegex"}})
 
 export const ChangePasswordSchema = z.object({
   oldPassword: PasswordSchema,
@@ -21,14 +16,16 @@ export const ChangePasswordSchema = z.object({
 
 export const UserSchema = z.object({
   name: z.string()
-      .min(3, { message: "Name must be at least 3 characters long" })
-      .max(50, { message: "Name must be 50 characters or less" }),
+      .min(3)
+      .max(50),
   email: z.string()
-      .min(1, { message: "Email is required" })
-      .max(100, { message: "Email must be 100 characters or less" })
-      .email({ message: "Invalid email address" }),
+      .min(1)
+      .max(100)
+      .email(),
   password: PasswordSchema
 });
+
+export const UserSignInSchema = UserSchema.pick({email: true, password: true});
 
 // Getting only the fields that can be modified from user schema
 export const UserInfoSchema = UserSchema.pick({name: true});
@@ -78,12 +75,17 @@ export const ComicsStatsSchema = z.object({
 })
 
 export const MangaSchema = z.object({
-  title: z.string().min(1).max(50),
-  description: z.string().min(1).max(2000),
+  title: z.array(z.object({
+      value: z.string().min(1).max(50),
+      language: z.string()
+  })),
+  description: z.array(z.object({
+    value: z.string().min(1).max(2000),
+    language: z.string()
+  })),
   status: ComicsStatusSchema,
   author: z.string().min(1).max(50),
   type: ComicsTypeSchema,
   genres: z.string(),
-  releaseYear: z.number().positive().int(),
-  languages: z.string()
+  releaseYear: z.number().positive().int()
 })

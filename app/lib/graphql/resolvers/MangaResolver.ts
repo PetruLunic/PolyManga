@@ -33,7 +33,7 @@ export class ComicsStatsResolver {
 export class MangaResolver {
   @Query(() => Manga, {nullable: true})
   async manga(@Arg('id', () => ID) id: string): Promise<Manga | null> {
-    const manga: Manga | null = await MangaModel.findOne({id: getMangaIdFromURL(id)}).lean();
+    const manga: Manga | null = await MangaModel.findOne({slug: id}).lean();
 
     if (!manga) {
       throw new GraphQLError("Manga not found", {
@@ -149,19 +149,20 @@ export class MangaResolver {
   @Authorized(["MODERATOR"])
   @Mutation(() => Manga)
   async addManga(@Arg("manga") mangaInput: AddMangaInput) {
-    // If exists manga with the same title
-    if (await MangaModel.findOne({title: mangaInput.title})) {
-      throw new GraphQLError("Title for manga must be unique", {
-        extensions: {
-          code: "BAD_USER_INPUT"
-        }
-      })
+    try {
+      const manga = new MangaModel(mangaInput);
+      await manga.save();
+      return manga.toObject();
+    } catch (error) {
+      if (error && typeof error === "object" && 'code' in error && error.code === 11000) { // MongoDB duplicate key error code
+        throw new GraphQLError("Title for this language already exists", {
+          extensions: {
+            code: "BAD_USER_INPUT"
+          }
+        });
+      }
+      throw error;
     }
-
-    const manga = new MangaModel(mangaInput);
-    await manga.save();
-
-    return manga.toObject();
   }
 
   @Authorized(["MODERATOR"])

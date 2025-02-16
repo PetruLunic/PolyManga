@@ -11,7 +11,7 @@ import {type ApolloContext} from "@/app/api/graphql/route";
 export class BookmarkResolver {
 
   @Query(() => String, {nullable: true})
-  async isBookmarked(@Arg("mangaId", () => ID) mangaId: string, @Ctx() ctx: ApolloContext): Promise<BookmarkType | null> {
+  async isBookmarked(@Arg("slug", () => ID) slug: string, @Ctx() ctx: ApolloContext): Promise<BookmarkType | null> {
     if (!ctx.user) return null;
 
     const bookmark: Bookmark | null = await BookmarkModel.findOne({userId: ctx.user?.id}).lean();
@@ -25,10 +25,19 @@ export class BookmarkResolver {
     }
 
     let bookmarkType: BookmarkType | null = null;
+    const manga = await MangaModel.findOne({slug}).lean();
+
+    if (!manga) {
+      throw new GraphQLError("Manga not found", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
 
     // Iterate through every bookmark and check if there is mangaId
     bookmarkTypes.forEach(type => {
-      if (bookmark[type].includes(mangaId)) {
+      if (bookmark[type].includes(manga.id)) {
         bookmarkType = type;
       }
     })
@@ -38,7 +47,7 @@ export class BookmarkResolver {
 
   @Authorized(["USER", "MODERATOR"])
   @Mutation(() => Bookmark, {nullable: true})
-  async addBookmark(@Arg("input") {type, mangaId}: AddBookmarkInput, @Ctx() ctx: ApolloContext): Promise<Bookmark | null> {
+  async addBookmark(@Arg("input") {type, slug}: AddBookmarkInput, @Ctx() ctx: ApolloContext): Promise<Bookmark | null> {
     // If passed type of bookmark does not exist
     if (!bookmarkTypes.includes(type)) {
       throw new GraphQLError("This type of bookmark does not exist", {
@@ -58,7 +67,7 @@ export class BookmarkResolver {
       })
     }
 
-    const manga = await MangaModel.findOne({id: mangaId});
+    const manga = await MangaModel.findOne({slug});
 
     if (!manga) {
       throw new GraphQLError("Manga not found", {
@@ -79,14 +88,14 @@ export class BookmarkResolver {
     let isNew = true;
 
     // If there is already manga in this type of bookmark then do nothing
-    if (bookmark[type].find(id => id === mangaId)) {
+    if (bookmark[type].find(id => id === manga.id)) {
       return bookmark.toObject();
     }
 
     // Deleting manga from every bookmark
     bookmarkTypes.forEach(type => {
       bookmark[type] = bookmark[type].filter(id => {
-        if (id === mangaId) {
+        if (id === manga.id) {
           isNew = false;
           return false;
         }
@@ -95,7 +104,7 @@ export class BookmarkResolver {
     })
 
     // Adding manga id to the bookmarks
-    bookmark[type].push(mangaId);
+    bookmark[type].push(manga.id);
     await bookmark.save();
 
     // Incrementing the number of the bookmarks if it's new bookmark
@@ -109,7 +118,7 @@ export class BookmarkResolver {
 
   @Authorized(["USER", "MODERATOR"])
   @Mutation(() => String, {nullable: true})
-  async deleteBookmark(@Arg("mangaId") mangaId: string, @Ctx() ctx: ApolloContext): Promise<string | null> {
+  async deleteBookmark(@Arg("slug") slug: string, @Ctx() ctx: ApolloContext): Promise<string | null> {
     const bookmark: HydratedDocument<Bookmark> | null = await BookmarkModel.findOne({userId: ctx.user?.id});
 
     if (!bookmark) {
@@ -120,7 +129,7 @@ export class BookmarkResolver {
       })
     }
 
-    const manga = await MangaModel.findOne({id: mangaId});
+    const manga = await MangaModel.findOne({slug});
 
     if (!manga) {
       throw new GraphQLError("Manga not found", {
@@ -135,7 +144,7 @@ export class BookmarkResolver {
     // Deleting manga id from bookmarks
     bookmarkTypes.forEach(type => {
       bookmark[type] = bookmark[type].filter(id => {
-        if (id === mangaId) {
+        if (id === manga.id) {
           wasBookmark = true;
           return false;
         }

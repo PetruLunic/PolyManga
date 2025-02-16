@@ -17,7 +17,8 @@ export class UserResolver {
     if (!user) {
       throw new GraphQLError("Email or password are incorrect", {
         extensions: {
-          code: "BAD_USER_INPUT"
+          code: "BAD_USER_INPUT",
+          localeKey: "wrongPasswordOrEmail"
         }
       })
     }
@@ -25,7 +26,8 @@ export class UserResolver {
     if (user.provider !== "CREDENTIALS") {
       throw new GraphQLError("Email or password are incorrect", {
         extensions: {
-          code: "BAD_USER_INPUT"
+          code: "BAD_USER_INPUT",
+          localeKey: "wrongPasswordOrEmail"
         }
       })
     }
@@ -33,7 +35,8 @@ export class UserResolver {
     if (!bcrypt.compareSync(userInput.password, user.password)) {
       throw new GraphQLError("Email or password are incorrect", {
         extensions: {
-          code: "BAD_USER_INPUT"
+          code: "BAD_USER_INPUT",
+          localeKey: "wrongPasswordOrEmail"
         }
       })
     }
@@ -48,7 +51,8 @@ export class UserResolver {
     if (emailUser) {
       throw new GraphQLError("User with this email already exists", {
         extensions: {
-          code: "BAD_USER_INPUT"
+          code: "BAD_USER_INPUT",
+          localeKey: "existingEmail"
         }
       })
     }
@@ -58,7 +62,8 @@ export class UserResolver {
     if (nameUser) {
       throw new GraphQLError("User with this name already exists", {
         extensions: {
-          code: "BAD_USER_INPUT"
+          code: "BAD_USER_INPUT",
+          localeKey: "existingName"
         }
       })
     }

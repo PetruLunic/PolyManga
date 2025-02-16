@@ -9,7 +9,7 @@ import {type ApolloContext} from "@/app/api/graphql/route";
 export class RatingResolver {
   @Authorized(["USER", "MODERATOR"])
   @Mutation(() => Float, {nullable: true})
-  async addRating(@Arg("input") {mangaId, value}: RatingInput, @Ctx() ctx: ApolloContext): Promise<number | undefined> {
+  async addRating(@Arg("input") {slug, value}: RatingInput, @Ctx() ctx: ApolloContext): Promise<number | undefined> {
     if (value > 10 || value < 1) {
       throw new GraphQLError("Rating must be between 1 and 10", {
         extensions: {
@@ -26,7 +26,7 @@ export class RatingResolver {
       })
     }
 
-    const manga = await MangaModel.findOne({id: mangaId});
+    const manga = await MangaModel.findOne({slug});
 
     if (!manga) {
       throw new GraphQLError("Manga not found", {
@@ -44,7 +44,7 @@ export class RatingResolver {
       })
     }
 
-    const rating = await RatingModel.findOne({mangaId, userId: ctx.user?.id});
+    const rating = await RatingModel.findOne({mangaId: manga.id, userId: ctx.user?.id});
 
     const {value: mangaRating, nrVotes} = manga.stats.rating;
 
@@ -72,7 +72,7 @@ export class RatingResolver {
     } else {
       // Creating new Rating document
       const newRating = new RatingModel({
-        mangaId,
+        mangaId: manga.id,
         userId: ctx.user?.id,
         value
       });
@@ -90,21 +90,21 @@ export class RatingResolver {
 
   @Authorized(["USER", "MODERATOR"])
   @Mutation(() => String, {nullable: true})
-  async deleteRating(@Arg("mangaId") mangaId: string, @Ctx() ctx: ApolloContext): Promise<string | undefined> {
-    const rating = await RatingModel.findOneAndDelete({mangaId, userId: ctx.user?.id}).lean();
+  async deleteRating(@Arg("slug") slug: string, @Ctx() ctx: ApolloContext): Promise<string | undefined> {
+    const manga = await MangaModel.findOne({slug});
 
-    if (!rating) {
-      throw new GraphQLError("This rating does not exist", {
+    if (!manga) {
+      throw new GraphQLError("Manga not found", {
         extensions: {
           code: "BAD_USER_INPUT"
         }
       })
     }
 
-    const manga = await MangaModel.findOne({id: mangaId});
+    const rating = await RatingModel.findOneAndDelete({mangaId: manga.id, userId: ctx.user?.id}).lean();
 
-    if (!manga) {
-      throw new GraphQLError("Manga not found", {
+    if (!rating) {
+      throw new GraphQLError("This rating does not exist", {
         extensions: {
           code: "BAD_USER_INPUT"
         }
@@ -130,11 +130,20 @@ export class RatingResolver {
 
   // @Authorized(["USER", "MODERATOR"])
   @Query(() => Int, {nullable: true})
-  async isRated(@Arg("mangaId", () => ID) mangaId: string, @Ctx() ctx: ApolloContext): Promise<number | null | undefined> {
+  async isRated(@Arg("slug", () => ID) slug: string, @Ctx() ctx: ApolloContext): Promise<number | null | undefined> {
     if (!ctx.user) return null;
+    const manga = await MangaModel.findOne({slug}).lean();
+
+    if (!manga) {
+      throw new GraphQLError("Manga not found", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
 
     return RatingModel
-        .findOne({mangaId, userId: ctx.user?.id})
+        .findOne({mangaId: manga.id, userId: ctx.user?.id})
         .lean()
         .then(res => res?.value);
   }

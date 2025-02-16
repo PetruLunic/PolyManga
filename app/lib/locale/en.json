@@ -1,0 +1,281 @@
+{
+  "common": {
+    "manga": {
+      "status": {
+        "ONGOING": "Ongoing",
+        "FINISHED": "Finished",
+        "PAUSED": "Paused",
+        "DROPPED": "Dropped"
+      },
+      "type": {
+        "manga": "Manga",
+        "manhwa": "Manhwa",
+        "manhua": "Manhua"
+      },
+      "genres": {
+        "action": "action",
+        "fantasy": "fantasy",
+        "drama": "drama",
+        "harem": "harem",
+        "martial_arts": "martial arts",
+        "apocalypse": "apocalypse",
+        "cultivation": "cultivation",
+        "game": "game",
+        "hero": "hero",
+        "mature": "mature",
+        "comedy": "comedy",
+        "genius_mc": "genius mc",
+        "historical": "historical",
+        "loli": "loli",
+        "mecha": "mecha",
+        "adventure": "adventure",
+        "isekai": "isekai",
+        "magic": "magic",
+        "romance": "romance",
+        "noble": "noble",
+        "time_travel": "time travel",
+        "murim": "murim",
+        "rebirth": "rebirth",
+        "school_life": "school life",
+        "system": "system",
+        "tower": "tower",
+        "virtual_reality": "virtual reality",
+        "regression": "regression",
+        "sci_fi": "sci-fi",
+        "thriller": "thriller",
+        "tragedy": "tragedy",
+        "villain": "villain",
+        "necromancer": "necromancer",
+        "post_apocalyptic": "post-apocalyptic",
+        "reincarnation": "reincarnation",
+        "revenge": "revenge",
+        "sport": "sport"
+      },
+      "chapter": "Chapter",
+      "noChapter": "No chapter"
+    },
+    "ui": {
+      "timeSince": {
+        "second": "{count, plural, =1 {one second} other {# seconds}} ago",
+        "minute": "{count, plural, =1 {one minute} other {# minutes}} ago",
+        "hour": "{count, plural, =1 {one hour} other {# hours}} ago",
+        "day": "{count, plural, =1 {one day} other {# days}} ago",
+        "week": "{count, plural, =1 {one week} other {# weeks}} ago",
+        "month": "{count, plural, =1 {one month} other {# months}} ago",
+        "year": "{count, plural, =1 {one year} other {# years}} ago"
+      }
+    }
+  },
+  "pages": {
+    "home": {
+      "popular": "Popular this",
+      "latestChapter": "Latest chapter uploads",
+      "day": "day",
+      "week": "week",
+      "month": "month"
+    },
+    "mangaDetails": {
+      "metadata": {
+        "keywords": "manga, read manga, read {type}, best manga, free manga, read manga online, popular manga, {genres}"
+      },
+      "status": "Status",
+      "type": "Type",
+      "author": "Author",
+      "releasedOn": "Released on",
+      "genres": "Genres",
+      "languages": "Languages",
+      "chaptersList": "Chapters List"
+    },
+    "manga": {
+      "catalog": "Catalog",
+      "sort": "Sort",
+      "filters": "Filters",
+      "filter": "Filter",
+      "descending": "Descending",
+      "ascending": "Ascending",
+      "clear": "Clear",
+      "close": "Close",
+      "sortByOptions": {
+        "views": "Views",
+        "likes": "Likes",
+        "rating": "Rating",
+        "bookmarks": "Bookmarks",
+        "chapters": "Chapters",
+        "createdAt": "Created at"
+      },
+      "placeholders": {
+        "sortBy": "Sort By",
+        "search": "Search by name",
+        "genres": "Genres",
+        "status": "Status",
+        "type": "Type",
+        "language": "Language"
+      }
+    },
+    "verifyEmail": {
+      "unexpectedError": "Unexpected error!",
+      "successfulVerification": "Your email was successfully verified.",
+      "invalidLink": "The verification link is invalid",
+      "loadingVerification": "Your email is being verified..."
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "submit": "Submit",
+      "successfulReset": "Password was changed successfully",
+      "unexpectedError": "Unexpected error!",
+      "newPassword": "New password",
+      "invalidLink": "The verification link is invalid",
+      "newPasswordPlaceholder": "Enter your new password"
+    },
+    "user": {
+      "history": {
+        "history": "History"
+      }
+    }
+  },
+  "components": {
+    "navbar": {
+      "catalog": "Catalog",
+      "userDropdown": {
+        "bookmarks": "Bookmarks",
+        "history": "History",
+        "settings": "Settings",
+        "logOut": "Log Out"
+      }
+    },
+    "chaptersList": {
+      "ascending": "Ascending",
+      "descending": "Descending",
+      "noChapter": "No chapter"
+    },
+    "buttons": {
+      "bookmark": {
+        "default": "Bookmark",
+        "reading": "Reading",
+        "inPlans": "In plans",
+        "favourite": "Favourite",
+        "finished": "Finished",
+        "dropped": "Dropped",
+        "delete": "Delete bookmark",
+        "alerts": {
+          "error": "Bookmark error!"
+        }
+      },
+      "continueReading": {
+        "continue": "Continue",
+        "firstChapter": "First Chapter"
+      },
+      "rating": {
+        "rate": "Rate",
+        "close": "Close",
+        "save": "Save",
+        "delete": "Delete",
+        "yourRating": "Your rating",
+        "ratings": {
+          "terrible": "Terrible",
+          "veryBad": "Very Bad",
+          "bad": "Bad",
+          "poor": "Poor",
+          "soSo": "So-So",
+          "fair": "Fair",
+          "good": "Good",
+          "veryGood": "Very Good",
+          "great": "Great",
+          "excellent": "Excellent"
+        },
+        "alerts": {
+          "success": "Rated successfully!",
+          "delete": "Deleted successfully!",
+          "error": "Rate error!"
+        }
+      },
+      "like": {
+        "alerts": {
+          "error": "Like error!"
+        }
+      }
+    },
+    "modals": {
+      "signInOut": {
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "or": "Or",
+        "username": "User name",
+        "email": "Email",
+        "password": "Password",
+        "forgotPassword": "Forgot password?",
+        "close": "Close",
+        "errors": {
+          "unexpected": "Unexpected error!",
+          "submit": "Submit error"
+        },
+        "placeholders": {
+          "username": "Enter your user name",
+          "email": "Enter your email",
+          "password": "Enter your password"
+        }
+      },
+      "forgotPassword": {
+        "forgotPassword": "Forgot Password",
+        "verifyEmail": "Verify Email",
+        "tokenSent": "Token was sent to your email",
+        "email": "Email",
+        "errors": {
+          "unexpected": "Unexpected error!",
+          "submit": "Submit error"
+        },
+        "placeholders": {
+          "email": "Enter your email",
+          "token": "Enter your token",
+          "newPassword": "New password"
+        },
+        "close": "Close",
+        "submit": "Submit"
+      },
+      "verifyEmail": {
+        "header": "Verify Email",
+        "message": "On your <email></email> email was sent a message with a link. Please access that link.",
+        "close": "Close",
+        "resendButton": "Resend the email{seconds, plural, =0 {} other { after # seconds}}"
+      }
+    }
+  },
+  "server": {
+    "user": {
+      "unexpectedError": "Unexpected error!",
+      "tokenSentIfExists": "If the email exists, a token has been sent.",
+      "wrongPasswordOrEmail": "Email or password are incorrect!",
+      "existingEmail": "User with this email already exists",
+      "existingName": "User with this name already exists",
+      "incorrectToken": "This token is invalid or expired!",
+      "userNotFound": "User not found!",
+      "expiredEmailToken": "Email token has expired!"
+    }
+  },
+  "htmlTemplates": {
+    "emailVerification": {
+      "title": "Verify Your Email Address",
+      "greeting": "Hello",
+      "instructions": "Please confirm that you want to use this email address for your {brandName} account.",
+      "cta": "Verify Email Address",
+      "note": "If you didn't create this account, you can safely ignore this email."
+    },
+    "passwordReset": {
+      "title": "Password Reset Request",
+      "greeting": "Hello",
+      "instructions": "We received a request to reset your password for {brandName}. Click the button below to choose a new password:",
+      "cta": "Reset Password",
+      "note": "This link will expire in 15 minutes. If you didn't request a password reset, you can safely ignore this email."
+    }
+  },
+  "form": {
+    "name": "Username",
+    "password": "Password",
+    "email": "Email",
+    "newPassword": "New password",
+    "oldPassword": "Old password",
+    "customErrors": {
+      "passwordRegex": "{path, select, missingTranslation {String} other {{path}}} must contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
+    }
+  }
+}

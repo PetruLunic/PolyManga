@@ -3,7 +3,11 @@ import {gql} from "@/app/__generated__";
 export const MANGA_CARD = gql(`
   fragment MangaCard on Manga {
     id,
-    title,
+    title {
+      value,
+      language
+    },
+    slug,
     image,
     type,
     status,
@@ -23,15 +27,21 @@ export const GET_MANGA = gql(`
   query manga($id: ID!) {
   manga(id: $id) {
     id,
-    title,
-    description,
+    title {
+      value,
+      language
+    },
+    description {
+        value,
+        language
+    },
     author,
     image,
     chapters {
       id,
       mangaId,
       createdAt,
-	  title,
+	    title,
       number
     },
     status,
@@ -64,7 +74,7 @@ export const GET_STATIC_MANGAS = gql(`
   query staticMangas {
     mangas {
       id,
-      title
+      slug
     }
   }
 `)
@@ -73,8 +83,14 @@ export const GET_MANGA_METADATA = gql(`
   query mangaMetadata($id: ID!) {
     manga(id: $id) {
       id,
-      title,
-      description,
+      title {
+        value,
+        language
+      },
+      description {
+        value,
+        language
+      },
       image,
       type,
       genres
@@ -114,7 +130,10 @@ export const GET_STATIC_CHAPTERS = gql(`
   query chaptersStatic {
     mangas {
       id,
-      title,
+      title {
+        value,
+        language
+      },
       chapters {
         id
       }
@@ -129,7 +148,10 @@ export const GET_CHAPTER_METADATA = gql(`
       title,
       number,
       manga {
-        title,
+        title {
+          value,
+          language
+        },
         image
       },
       languages
@@ -159,7 +181,10 @@ export const GET_MANGA_CARDS = gql(`
 export const GET_NAVBAR_CHAPTER = gql(`
   query manga_chapter($mangaId: ID!, $chapterId: ID!) {
     manga(id: $mangaId) {
-      title,
+      title {
+        value,
+        language
+      },
       chapters {
         id,
         mangaId,
@@ -196,7 +221,10 @@ export const GET_MANGA_CHAPTER_UPLOAD = gql(`
 export const GET_CHAPTERS = gql(`
   query chapters($id: ID!) {
     manga(id: $id) {
-     title,
+     title {
+        value,
+        language
+     },
      chapters {
       id,
       title,
@@ -249,20 +277,20 @@ export const GET_BOOKMARKS = gql(`
 `)
 
 export const IS_BOOKMARKED = gql(`
-  query isBookmarked($mangaId: ID!) {
-    isBookmarked(mangaId: $mangaId)
+  query isBookmarked($slug: ID!) {
+    isBookmarked(slug: $slug)
   }
 `)
 
 export const IS_LIKED = gql(`
-  query isLiked($objectId: ID!) {
-    isLiked(objectId: $objectId)
+  query isLiked($slug: ID!) {
+    isLiked(slug: $slug)
   }
 `)
 
 export const IS_RATED = gql(`
-  query isRated($mangaId: ID!) {
-    isRated(mangaId: $mangaId)
+  query isRated($slug: ID!) {
+    isRated(slug: $slug)
   }
 `)
 
@@ -270,12 +298,18 @@ export const GET_MANGA_EDIT = gql(`
   query mangaEdit($id: ID!) {
     manga(id: $id) {
       id,
-      title,
+      title {
+        value,
+        language
+      },
       author,
       status,
       type,
       genres,
-      description,
+      description {
+        value,
+        language
+      },
       releaseYear,
       image,
       languages
@@ -294,8 +328,8 @@ export const GET_USER_PREFERENCES = gql(`
 `)
 
 export const GET_BOOKMARKED_CHAPTER = gql(`
-  query getBookmarkedChapter($mangaId: String!) {
-    getBookmarkedChapter(mangaId: $mangaId) {
+  query getBookmarkedChapter($slug: String!) {
+    getBookmarkedChapter(slug: $slug) {
       chapterId,
       chapter {
         title,
@@ -329,7 +363,11 @@ export const GET_LATEST_UPLOADED_CHAPTERS = gql(`
       createdAt
       manga {
         id,
-        title,
+        title {
+          value,
+          language
+        },
+        slug,
         image
       }
     }

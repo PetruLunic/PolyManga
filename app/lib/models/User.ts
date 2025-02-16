@@ -57,14 +57,6 @@ const UserSchema = new Schema<User>({
     type: Boolean,
     default: false
   },
-  emailToken: {
-    type: String,
-    default: () => nanoid(6)
-  },
-  emailTokenExpiry: {
-    type: String,
-    default: () => new Date().toISOString()
-  },
   preferences: {
     language: {
       type: String,

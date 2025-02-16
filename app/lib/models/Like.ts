@@ -15,18 +15,13 @@ const LikeSchema = new Schema<Like>({
     type: String,
     required: [true, "Like must have an user id"]
   },
-  objectId: {
+  mangaId: {
     type: String,
     required: [true, "Object must have an id"]
-  },
-  objectType: {
-    type: String,
-    required: true,
-    enum: likeableObjects
   }
 });
 
 // Define a compound index on userId and objectId
-LikeSchema.index({ userId: 1, objectId: 1 }, { unique: true });
+LikeSchema.index({ userId: 1, mangaId: 1 }, { unique: true });
 
 export default mongoose.models["Like"] as LikeModel || model<Like, LikeModel>("Like", LikeSchema);

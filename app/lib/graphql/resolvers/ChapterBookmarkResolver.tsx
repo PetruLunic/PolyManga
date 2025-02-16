@@ -11,8 +11,18 @@ import MangaModel from "@/app/lib/models/Manga";
 export class ChapterBookmarkResolver {
   // @Authorized(["USER", "MODERATOR"])
   @Query(() => ChapterBookmark, { nullable: true })
-  async getBookmarkedChapter(@Arg("mangaId") mangaId: string, @Ctx() ctx: ApolloContext): Promise<ChapterBookmark | null> {
-    const bookmark: ChapterBookmark | null = await ChapterBookmarkModel.findOne({userId: ctx.user?.id, mangaId}).lean();
+  async getBookmarkedChapter(@Arg("slug") slug: string, @Ctx() ctx: ApolloContext): Promise<ChapterBookmark | null> {
+    const manga = await MangaModel.findOne({slug}).lean();
+
+    if (!manga) {
+      throw new GraphQLError("Manga not found", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
+    const bookmark: ChapterBookmark | null = await ChapterBookmarkModel.findOne({userId: ctx.user?.id, mangaId: manga.id}).lean();
 
     if (!bookmark) {
       throw new GraphQLError("Bookmark not found", {

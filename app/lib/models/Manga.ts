@@ -1,8 +1,9 @@
 import mongoose, {Model, model, Schema} from "mongoose";
-import {ChapterLanguage, ComicsStatus, ComicsType} from "@/app/types";
+import {ComicsStatus, ComicsType} from "@/app/types";
 import {ComicsGenreSchema} from "@/app/lib/utils/zodSchemas";
 import {nanoid} from "nanoid";
 import {Manga} from "@/app/lib/graphql/schema";
+import {ChapterLanguage} from "@/app/__generated__/graphql";
 
 interface MangaModel extends Model<Manga> {}
 
@@ -12,21 +13,40 @@ const MangaSchema = new Schema<Manga>({
     default: () => nanoid(),
     unique: true
   },
-  title: {
+  slug: {
     type: String,
-    required: [true, "Manga must have a title"],
-    maxlength: [50, "Title cannot be more than 50 characters"],
-    unique: true
+    required: true,
+    unique: true,
+    index: true // for faster lookups
   },
+  title: [{
+    language: {
+      type: String,
+      required: true,
+      enum: ChapterLanguage
+    },
+    value: {
+      type: String,
+      required: true,
+      maxlength: [50, "Title cannot be more than 50 characters"]
+    }
+  }],
+  description: [{
+    language: {
+      type: String,
+      required: true,
+      enum: ChapterLanguage
+    },
+    value: {
+      type: String,
+      required: true,
+      maxlength: [2000, "Description cannot be more than 2000 characters"]
+    }
+  }],
   author: {
     type: String,
     required: [true, "Manga must have an author"],
     maxlength: [50, "Author name cannot be more than 40 characters"],
-  },
-  description: {
-    type: String,
-    required: [true, "Manga must have a description"],
-    maxlength: [2000, "Description cannot be more than 1000 characters"],
   },
   status: {
     type: String,
@@ -115,5 +135,7 @@ const MangaSchema = new Schema<Manga>({
       },
       timestamps: true
     })
+
+MangaSchema.index({ 'title.language': 1, 'title.value': 1 });
 
 export default mongoose.models["Manga"] as MangaModel || model<Manga, MangaModel>("Manga", MangaSchema);

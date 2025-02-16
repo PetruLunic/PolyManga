@@ -4,10 +4,12 @@ import {Button, Navbar, NavbarBrand, NavbarContent, NavbarItem} from "@heroui/re
 import Link from "next/link";
 import {useParams} from "next/navigation";
 import SignUpButton from "@/app/_components/navbar/SignUpButton";
+import {useTranslations} from "next-intl";
 
 
 export default function NavbarRoot() {
   const params = useParams<{id: string, chapter: string}>();
+  const t = useTranslations("components.navbar");
 
   // No client side navbar on chapter page
   if (params.chapter)
@@ -26,7 +28,7 @@ export default function NavbarRoot() {
            href="/manga"
         variant="light"
        >
-         CATALOG
+         {t("catalog").toUpperCase()}
        </Button>
      </NavbarBrand>
      <NavbarContent justify="end" className="items-center">

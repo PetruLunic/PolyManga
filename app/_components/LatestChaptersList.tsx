@@ -7,12 +7,14 @@ import {useQuery} from "@apollo/client";
 import {GET_LATEST_UPLOADED_CHAPTERS} from "@/app/lib/graphql/queries";
 import {useInfiniteScroll} from "@/app/lib/hooks/useInfiniteScroll";
 import {Spinner} from "@heroui/react";
+import {useTranslations} from "next-intl";
 
 interface Props{
  initialChapters: GetLatestUploadedChaptersQuery["latestChapters"]
 }
 
 export default function LatestChaptersList({initialChapters}: Props) {
+  const t = useTranslations("pages.home");
   const limit = 16; // Number of items per page
   const [chapters, setChapters] = useState(initialChapters); // Combined list of chapters
   const [hasMore, setHasMore] = useState(true); // Whether there are more chapters to load
@@ -50,7 +52,7 @@ export default function LatestChaptersList({initialChapters}: Props) {
     return (
     <div className="flex flex-col gap-3">
      <h3 className="text-xl">
-      Latest chapter uploads
+       {t("latestChapter")}
      </h3>
      <div className="flex flex-col gap-1 md:grid md:grid-cols-2">
       {chapters.map(chapter =>

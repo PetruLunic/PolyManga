@@ -1,9 +1,9 @@
 "use client"
 
-import ChapterImage from "@/app/(pages)/manga/[id]/[chapter]/_components/ChapterImage";
+import ChapterImage from "@/app/(pages)/[locale]/manga/[id]/[chapter]/_components/ChapterImage";
 import {ChapterLanguage} from "@/app/__generated__/graphql";
 import {useSearchParams} from "next/navigation";
-import {MultiLanguageImage} from "@/app/(pages)/manga/[id]/[chapter]/_utils/transformChapter";
+import {MultiLanguageImage} from "@/app/(pages)/[locale]/manga/[id]/[chapter]/_utils/transformChapter";
 
 interface Props {
   images: MultiLanguageImage[];
@@ -15,7 +15,7 @@ export default function ChapterImagesList({ images }: Props) {
   return (
     <div className="flex flex-col items-center">
       {images.map((img, index) =>
-        <ChapterImage key={index} image={img} languageQuery={languageQuery} />
+        <ChapterImage key={index} image={img} languageQuery={languageQuery} priority={index <= 2} />
       )}
     </div>
   );

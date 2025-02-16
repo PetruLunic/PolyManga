@@ -14,16 +14,18 @@ import {useSession} from "next-auth/react";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {mangaTitleAndIdToURL} from "@/app/lib/utils/URLFormating";
 import {GET_BOOKMARKED_CHAPTER} from "@/app/lib/graphql/queries";
+import {useTranslations} from "next-intl";
 
 type ChapterList = Exclude<Manga_ChapterQuery["manga"], undefined | null>["chapters"]
 
 interface Props{
   chapters?: ChapterList,
-  mangaTitle?: string,
+  mangaSlug: string,
   selectedChapter?: string
 }
 
-export default function ChapterList({chapters, selectedChapter, mangaTitle}: Props) {
+export default function ChapterList({chapters, selectedChapter, mangaSlug}: Props) {
+  const t = useTranslations("components.chaptersList");
   const mangaId = (chapters && chapters.length > 0) ? chapters[0].mangaId : null;
   const [descending, setDescending] = useState(true);
   const session = useSession();
@@ -32,7 +34,7 @@ export default function ChapterList({chapters, selectedChapter, mangaTitle}: Pro
   const [bookmarkedChapterState, setBookmarkedChapterState] = useState<string | undefined>();
   const [addBookmark, {loading: loadingAddBookmark}] = useMutation(ADD_CHAPTER_BOOKMARK);
   const [deleteBookmark, {loading: loadingDeleteBookmark}] = useMutation(DELETE_CHAPTER_BOOKMARK);
-  const {data, error} = useQuery(GET_BOOKMARKED_CHAPTER, {variables: {mangaId: mangaId ?? ""}, skip: !mangaId});
+  const {data, error} = useQuery(GET_BOOKMARKED_CHAPTER, {variables: {slug: mangaSlug}});
 
   useEffect(() => {
     if (!data?.getBookmarkedChapter) return;
@@ -74,7 +76,7 @@ export default function ChapterList({chapters, selectedChapter, mangaTitle}: Pro
        className="self-end"
        onPress={() => setDescending(prev => !prev)}
        >
-       {descending ? "Descending" : "Ascending"}
+       {descending ? t("descending") : t("ascending")}
        <motion.div
            initial={{ opacity: 0, rotate: 0 }}
            animate={{ opacity: 1, rotate: descending ? 0 : 360 }}
@@ -110,7 +112,7 @@ export default function ChapterList({chapters, selectedChapter, mangaTitle}: Pro
                    as={Link}
                    className="w-full flex justify-between items-center h-full"
                    variant={selectedChapter === chapter.id ? "solid" : "light"}
-                   href={`/manga/${mangaTitleAndIdToURL(mangaTitle ?? "", chapter.mangaId)}/${chapter.id}`}
+                   href={`/manga/${mangaSlug}/${chapter.id}`}
                  >
                    <span>{chapter.title}</span>
                    <span
@@ -118,7 +120,7 @@ export default function ChapterList({chapters, selectedChapter, mangaTitle}: Pro
                  </Button>
                </Button>
          )
-         : <div className="text-center text-gray-500 my-10">No chapter</div>
+         : <div className="text-center text-gray-500 my-10">{t("noChapter")}</div>
        }
      </div>
    </div>

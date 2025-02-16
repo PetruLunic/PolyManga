@@ -18,7 +18,7 @@ export default function SignUpButton() {
               isIconOnly
               variant="light"
               radius="full"
-              onPress={onOpen}
+              onPress={() => setTimeout(() => onOpen(), 0)}
               isDisabled={session.status === "loading"}
           >
             <FaUser/>

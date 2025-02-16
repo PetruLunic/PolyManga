@@ -1,4 +1,4 @@
-import NextAuth, {DefaultSession, Session} from "next-auth"
+import NextAuth, {DefaultSession} from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import FacebookProvider from "next-auth/providers/facebook"
 import Credentials from "next-auth/providers/credentials"
@@ -175,13 +175,20 @@ export const { handlers, signIn, auth } = NextAuth({
 
       return token;
     },
-    async session({ session, token, trigger }) {
+    async session({ session, token }) {
       // console.log('Session Callback - Trigger:', trigger, 'Token:', token, 'Session:', session);
       if (token) {
         session.user = token.user as (UserSession & AdapterUser)
       }
 
       return session;
+    },
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
     }
   }
 });

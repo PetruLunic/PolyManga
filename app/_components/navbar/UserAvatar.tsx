@@ -5,9 +5,11 @@ import {signOut, useSession} from "next-auth/react";
 import {IoBookmarks, IoSettingsSharp} from "react-icons/io5";
 import {CiLogout} from "react-icons/ci";
 import {MdHistory} from "react-icons/md";
+import {useTranslations} from "next-intl";
 
 export default function UserAvatar() {
   const session = useSession();
+  const t = useTranslations("components.navbar.userDropdown");
 
   if (session.status !== "authenticated") return;
 
@@ -29,21 +31,21 @@ export default function UserAvatar() {
              key="bookmarks"
              href={`/user/${session.data.user.id}/bookmarks`}
          >
-           Bookmarks
+           {t("bookmarks")}
          </DropdownItem>
          <DropdownItem
              startContent={<MdHistory />}
              key="history"
              href={`/user/${session.data.user.id}/history`}
          >
-           History
+           {t("history")}
          </DropdownItem>
          <DropdownItem
              startContent={<IoSettingsSharp />}
              key="settings"
              href={`/user/${session.data.user.id}/settings`}
          >
-           Settings
+           {t("settings")}
          </DropdownItem>
          <DropdownSection>
            <DropdownItem
@@ -53,7 +55,7 @@ export default function UserAvatar() {
                className="text-danger"
                onPress={() => signOut()}
            >
-             Log Out
+             {t("logOut")}
            </DropdownItem>
          </DropdownSection>
        </DropdownMenu>

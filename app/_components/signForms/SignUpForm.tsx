@@ -18,17 +18,19 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {UserSchema} from "@/app/lib/utils/zodSchemas";
 import {UserSignUp} from "@/app/lib/graphql/schema";
-import {signUp} from "@/app/userActions";
+import {signUp} from "@/app/lib/userActions";
 import Alert from "@/app/_components/Alert";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {ModalProps} from "@/app/types";
 import InputPassword from "@/app/_components/InputPassword";
+import {useTranslations} from "next-intl";
 
 type Props = Partial<ModalProps>;
 
 export default function SignUpForm({isOpen, onOpenChange, onClose}: Props) {
+  const t = useTranslations("components.modals.signInOut");
   const {onOpen: onSignInOpen} = useModal("signIn");
-  const {onOpen: onVerifyEmailOpen, prop: [_, setEmail]} = useModal("verifyEmail");
+  const {onOpen: onVerifyEmailOpen, prop: [_, setProp]} = useModal("verifyEmail");
   const {
     handleSubmit,
     register,
@@ -50,13 +52,13 @@ export default function SignUpForm({isOpen, onOpenChange, onClose}: Props) {
         return;
       } else {
         // If is successful close the modal and open verifyEmail modal
-        setEmail(data.email);
+        setProp(JSON.stringify({email: data.email, type: "verifyEmail"}));
         onClose && onClose();
         onVerifyEmailOpen();
       }
     } catch(e) {
         console.error(e);
-        setError("root", {type: "custom", message: "Unexpected error!"})
+        setError("root", {type: "custom", message: t("errors.unexpected")})
     }
   })
 
@@ -68,20 +70,19 @@ export default function SignUpForm({isOpen, onOpenChange, onClose}: Props) {
        <ModalContent>
          {(onClose) => (
              <form onSubmit={onSubmit}>
-               <ModalHeader className="flex flex-col gap-1">Sign Up</ModalHeader>
+               <ModalHeader className="flex flex-col gap-1">{t("signUp")}</ModalHeader>
                <ModalBody>
                  <AuthButtons/>
                  <div className="text-center mb-4 text-gray-300 text-sm">
-                   or
+                   {t("or")}
                  </div>
-                 <Alert title="Submit error" description={errors.root?.message} isVisible={!!errors.root} type="danger"/>
+                 <Alert title={t("errors.submit")} description={errors.root?.message} isVisible={!!errors.root} type="danger"/>
                  <Input
-                     autoFocus
                      endContent={
                        <FaUser className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
                      }
-                     label="User name"
-                     placeholder="Enter your user name"
+                     label={t("username")}
+                     placeholder={t("placeholders.username")}
                      errorMessage={errors.name?.message}
                      isInvalid={!!errors.name}
                      variant="bordered"
@@ -92,8 +93,8 @@ export default function SignUpForm({isOpen, onOpenChange, onClose}: Props) {
                      endContent={
                        <IoIosMail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                      }
-                     label="Email"
-                     placeholder="Enter your email"
+                     label={t("email")}
+                     placeholder={t("placeholders.email")}
                      errorMessage={errors.email?.message}
                      isInvalid={!!errors.email}
                      variant="bordered"
@@ -101,8 +102,8 @@ export default function SignUpForm({isOpen, onOpenChange, onClose}: Props) {
                      {...register("email")}
                  />
                  <InputPassword
-                     label="Password"
-                     placeholder="Enter your password"
+                     label={t("password")}
+                     placeholder={t("placeholders.password")}
                      errorMessage={errors.password?.message}
                      isInvalid={!!errors.password}
                      variant="bordered"
@@ -117,16 +118,16 @@ export default function SignUpForm({isOpen, onOpenChange, onClose}: Props) {
                          onClose();
                        }}
                    >
-                     Sign In
+                     {t("signIn")}
                    </Button>
                  </div>
                </ModalBody>
                <ModalFooter>
                  <Button color="danger" variant="flat" onPress={onClose}>
-                   Close
+                   {t("close")}
                  </Button>
                  <Button color="primary" type="submit" isLoading={isSubmitting}>
-                   Sign up
+                   {t("signUp")}
                  </Button>
                </ModalFooter>
              </form>

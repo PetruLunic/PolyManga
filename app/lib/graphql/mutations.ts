@@ -37,20 +37,20 @@ export const ADD_BOOKMARK = gql(`
 `)
 
 export const DELETE_BOOKMARK = gql(`
-  mutation DeleteBookmark($mangaId: String!) {
-    deleteBookmark(mangaId: $mangaId)
+  mutation DeleteBookmark($slug: String!) {
+    deleteBookmark(slug: $slug)
   }
 `)
 
 export const LIKE = gql(`
-  mutation like($input: LikeInput!) {
-    like(input: $input)
+  mutation like($slug: ID!) {
+    like(slug: $slug)
   }
 `)
 
 export const UNLIKE = gql(`
-  mutation unlike($objectId: String!) {
-    unlike(objectId: $objectId)
+  mutation unlike($slug: ID!) {
+    unlike(slug: $slug)
   }
 `)
 
@@ -61,8 +61,8 @@ export const ADD_RATING = gql(`
 `)
 
 export const DELETE_RATING = gql(`
-  mutation deleteRating($mangaId: String!) {
-    deleteRating(mangaId: $mangaId)
+  mutation deleteRating($slug: String!) {
+    deleteRating(slug: $slug)
   }
 `)
 

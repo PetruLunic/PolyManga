@@ -1,0 +1,132 @@
+{
+  "zod": {
+    "errors": {
+      "invalid_type": "Se aștepta {expected}, s-a primit {received}",
+      "invalid_type_received_undefined": "Obligatoriu",
+      "invalid_literal": "Valoare literală invalidă, se aștepta {expected}",
+      "unrecognized_keys": "Chei nerecunoscute în obiect: {keys}",
+      "invalid_union": "Intrare invalidă",
+      "invalid_union_discriminator": "Valoare discriminator invalidă. Se aștepta {options}",
+      "invalid_enum_value": "Valoare enum invalidă. Se aștepta {options}, s-a primit {received}",
+      "invalid_arguments": "Argumente de funcție invalide",
+      "invalid_return_type": "Tip de returnare invalid pentru funcție",
+      "invalid_date": "Dată invalidă",
+      "custom": "Intrare invalidă",
+      "invalid_intersection_types": "Rezultatele intersecției nu au putut fi combinate",
+      "not_multiple_of": "Numărul trebuie să fie multiplu al lui {multipleOf}",
+      "not_finite": "Numărul trebuie să fie finit",
+      "invalid_string": {
+        "email": "{validation} invalid",
+        "emoji": "{validation} invalid",
+        "url": "{validation} invalid",
+        "uuid": "{validation} invalid",
+        "ulid": "{validation} invalid",
+        "ip": "{validation} invalid",
+        "cuid": "{validation} invalid",
+        "cuid2": "{validation} invalid",
+        "regex": "Invalid",
+        "datetime": "{validation} invalid",
+        "startsWith": "Intrare invalidă: trebuie să înceapă cu \"{startsWith}\"",
+        "endsWith": "Intrare invalidă: trebuie să se termine cu \"{endsWith}\""
+      },
+      "too_small": {
+        "array": {
+          "exact": "{path, select, missingTranslation {Array} other {{path}}} trebuie să conțină exact {minimum} element(e)",
+          "inclusive": "{path, select, missingTranslation {Array} other {{path}}} trebuie să conțină cel puțin {minimum} element(e)",
+          "not_inclusive": "{path, select, missingTranslation {Array} other {{path}}} trebuie să conțină mai mult de {minimum} element(e)"
+        },
+        "string": {
+          "exact": "{path, select, missingTranslation {String} other {{path}}} trebuie să conțină exact {minimum} caracter(e)",
+          "inclusive": "{path, select, missingTranslation {String} other {{path}}} trebuie să conțină cel puțin {minimum} caracter(e)",
+          "not_inclusive": "{path, select, missingTranslation {String} other {{path}}} trebuie să conțină peste {minimum} caracter(e)"
+        },
+        "number": {
+          "exact": "{path, select, missingTranslation {Number} other {{path}}} trebuie să fie exact {minimum}",
+          "inclusive": "{path, select, missingTranslation {Number} other {{path}}} trebuie să fie mai mare sau egal cu {minimum}",
+          "not_inclusive": "{path, select, missingTranslation {Number} other {{path}}} trebuie să fie mai mare decât {minimum}"
+        },
+        "bigint": {
+          "exact": "{path, select, missingTranslation {Number} other {{path}}} trebuie să fie exact {minimum}",
+          "inclusive": "{path, select, missingTranslation {Number} other {{path}}} trebuie să fie mai mare sau egal cu {minimum}",
+          "not_inclusive": "{path, select, missingTranslation {Number} other {{path}}} trebuie să fie mai mare decât {minimum}"
+        },
+        "set": {
+          "exact": "Intrare invalidă",
+          "inclusive": "Intrare invalidă",
+          "not_inclusive": "Intrare invalidă"
+        },
+        "date": {
+          "exact": "Data trebuie să fie exact {minimum, date, short}",
+          "inclusive": "Data trebuie să fie mai mare sau egală cu {minimum, date, short}",
+          "not_inclusive": "Data trebuie să fie mai mare decât {minimum, date, short}"
+        }
+      },
+      "too_big": {
+        "array": {
+          "exact": "{path, select, missingTranslation {Array} other {{path}}} trebuie să conțină exact {maximum} element(e)",
+          "inclusive": "{path, select, missingTranslation {Array} other {{path}}} trebuie să conțină cel mult {maximum} element(e)",
+          "not_inclusive": "{path, select, missingTranslation {Array} other {{path}}} trebuie să conțină mai puțin de {maximum} element(e)"
+        },
+        "string": {
+          "exact": "{path, select, missingTranslation {String} other {{path}}} trebuie să conțină exact {maximum} caracter(e)",
+          "inclusive": "{path, select, missingTranslation {String} other {{path}}} trebuie să conțină cel mult {maximum} caracter(e)",
+          "not_inclusive": "{path, select, missingTranslation {String} other {{path}}} trebuie să conțină sub {maximum} caracter(e)"
+        },
+        "number": {
+          "exact": "{path, select, missingTranslation {Number} other {{path}}} trebuie să fie exact {maximum}",
+          "inclusive": "{path, select, missingTranslation {Number} other {{path}}} trebuie să fie mai mic sau egal cu {maximum}",
+          "not_inclusive": "{path, select, missingTranslation {Number} other {{path}}} trebuie să fie mai mic decât {maximum}"
+        },
+        "bigint": {
+          "exact": "{path, select, missingTranslation {Number} other {{path}}} trebuie să fie exact {maximum}",
+          "inclusive": "{path, select, missingTranslation {Number} other {{path}}} trebuie să fie mai mic sau egal cu {maximum}",
+          "not_inclusive": "{path, select, missingTranslation {Number} other {{path}}} trebuie să fie mai mic decât {maximum}"
+        },
+        "set": {
+          "exact": "Intrare invalidă",
+          "inclusive": "Intrare invalidă",
+          "not_inclusive": "Intrare invalidă"
+        },
+        "date": {
+          "exact": "Data trebuie să fie exact {maximum, date, short}",
+          "inclusive": "Data trebuie să fie mai mică sau egală cu {maximum, date, short}",
+          "not_inclusive": "Data trebuie să fie mai mică decât {maximum, date, short}"
+        }
+      }
+    },
+    "validations": {
+      "email": "email",
+      "emoji": "emoji",
+      "url": "URL",
+      "uuid": "UUID",
+      "ulid": "ULID",
+      "ip": "IP",
+      "cuid": "CUID",
+      "cuid2": "CUID2",
+      "regex": "regex",
+      "datetime": "dată/ora"
+    },
+    "types": {
+      "function": "funcție",
+      "number": "număr",
+      "string": "șir de caractere",
+      "nan": "NaN",
+      "integer": "întreg",
+      "float": "număr zecimal",
+      "boolean": "boolean",
+      "date": "dată",
+      "bigint": "număr mare",
+      "undefined": "nedefinit",
+      "symbol": "simbol",
+      "null": "nul",
+      "array": "array",
+      "object": "obiect",
+      "unknown": "necunoscut",
+      "promise": "promisiune",
+      "void": "void",
+      "never": "niciodată",
+      "map": "mapă",
+      "set": "set"
+    }
+  }
+}

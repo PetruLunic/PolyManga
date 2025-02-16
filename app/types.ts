@@ -1,6 +1,7 @@
 import {useDisclosure} from "@heroui/react";
 import {useState} from "react";
 import {UserPreferences} from "@/app/lib/graphql/schema";
+import {locales} from "@/i18n/routing";
 
 export interface UserSession {
   id: string,
@@ -10,19 +11,6 @@ export interface UserSession {
   role: UserRole,
   userId?: string,
   preferences: UserPreferences
-}
-
-export enum ComicsStatusBadgeColor {
-  "ONGOING" = "primary",
-  "FINISHED" = "success",
-  "PAUSED" = "warning",
-  "DROPPED" = "danger"
-}
-
-export enum ComicsTypeBadgeColor {
-  "manhwa" = "danger",
-  "manga" = "default",
-  "manhua" = "secondary"
 }
 
 export enum ComicsType {
@@ -39,11 +27,13 @@ export enum ComicsStatus {
 }
 
 export enum ChapterLanguage {
-  En = "en",
-  Ru = "ru",
-  Ro = "ro",
-  Fr = "fr"
+  En = "En",
+  Ru = "Ru",
+  Ro = "Ro",
+  Fr = "Fr"
 }
+
+export type LocaleType = typeof locales[number]
 
 export enum ChapterLanguageFull {
   En = "English",
@@ -64,7 +54,7 @@ export enum ComicsGenre {
     hero = 'hero',
     mature = 'mature',
     comedy = 'comedy',
-    genius_MC = 'genius_MC',
+    genius_mc = 'genius_MC',
     historical = 'historical',
     loli = 'loli',
     mecha = 'mecha',
