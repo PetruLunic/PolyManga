@@ -37,8 +37,8 @@ export type LocaleType = typeof locales[number]
 
 export enum ChapterLanguageFull {
   En = "English",
-  Ru = "Russian",
-  Ro = "Romanian",
+  Ru = "Русский",
+  Ro = "Română",
   Fr = "French"
 }
 

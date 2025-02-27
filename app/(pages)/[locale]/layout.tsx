@@ -4,25 +4,19 @@ import "../../globals.css";
 import Providers from "@/app/providers";
 import NavbarRoot from "@/app/_components/navbar/NavbarRoot";
 import {SessionProviderProps} from "next-auth/react";
-import {siteName, type} from "@/app/lib/seo/metadata";
+import {seoMetaData, siteName, type} from "@/app/lib/seo/metadata";
 import {NextIntlClientProvider} from "next-intl";
 import {getMessages} from "next-intl/server";
 import RefreshCheck from "@/app/_components/RefreshCheck";
 import {setZodErrorMap} from "@/app/lib/utils/zodErrorMap";
+import {notFound} from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: siteName,
-  description: "Read high-quality manga chapters for free in multiple languages.",
-  keywords: "manga, read manga, read manhwa, read manhua, best manga, free manga, read manga online, popular manga, multi-language manga, comics",
-
-  openGraph: {
-    title: siteName,
-    description: "Read high-quality manga chapters for free in multiple languages.",
-    type
-  }
-};
+export async function generateMetadata({params}: Props): Promise<Metadata>  {
+  const {locale} = await params;
+  return await seoMetaData.default(locale);
+}
 
 interface Props {
   children: React.ReactNode;
@@ -36,7 +30,6 @@ export default async function RootLayout({children, params}: Props) {
   const {session, locale} = await params;
   await setZodErrorMap(locale);
   const messages = await getMessages();
-
   return (
     <html
       lang={locale}

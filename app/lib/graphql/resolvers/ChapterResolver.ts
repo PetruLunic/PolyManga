@@ -1,4 +1,4 @@
-import {Arg, Args, FieldResolver, ID, Mutation, Query, Resolver, Root} from "type-graphql";
+import {Arg, Args, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
 import {AddChapterInput, Chapter, GetChaptersArgs, Manga} from "@/app/lib/graphql/schema";
 import ChapterModel from "@/app/lib/models/Chapter";
 import {GraphQLError} from "graphql/error";
@@ -10,8 +10,21 @@ import {deleteImage} from "@/app/lib/utils/awsUtils";
 @Resolver(Chapter)
 export class ChapterResolver {
   @Query(() => Chapter)
-  async chapter(@Arg("id", () => ID) id: string): Promise<Chapter> {
-    const chapter: Chapter | null = await ChapterModel.findOne({id}).lean();
+  async chapter(
+    @Arg("number") number: number,
+    @Arg("slug") slug: string,
+  ): Promise<Chapter> {
+    const manga = await MangaModel.findOne({slug});
+
+    if (!manga) {
+      throw new GraphQLError("Manga not found", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
+    const chapter: Chapter | null = await ChapterModel.findOne({number, mangaId: manga.id}).lean();
 
     if (!chapter) {
       throw new GraphQLError("Chapter not found", {
@@ -91,12 +104,22 @@ export class ChapterResolver {
 
   @Mutation(() => String)
   async deleteChapters(
-      @Arg("mangaId", () => ID) mangaId: string,
+      @Arg("slug") slug: string,
       @Arg("ids", () => [ID]) ids: string[]): Promise<string> {
     const chapters: HydratedDocument<Chapter>[] = await ChapterModel.find({id: {$in: ids}});
 
     if (!chapters.length) {
       throw new GraphQLError("Chapters not found", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
+    const manga = await MangaModel.findOne({slug})
+
+    if (!manga) {
+      throw new GraphQLError("Manga not found", {
         extensions: {
           code: "BAD_USER_INPUT"
         }
@@ -126,21 +149,11 @@ export class ChapterResolver {
       await chapter.deleteOne();
     }
 
-    const manga = await MangaModel.findOne({id: mangaId})
-
-    if (!manga) {
-      throw new GraphQLError("Manga not found", {
-        extensions: {
-          code: "BAD_USER_INPUT"
-        }
-      })
-    }
-
     // Delete chapters id from manga
     manga.chapters = manga.chapters.filter(id => !ids.includes(id))
     await manga.save();
 
-    return mangaId;
+    return manga.id;
   }
 
   // Check if the chapter is the first

@@ -21,7 +21,7 @@ export function useTimeSince(pastTime: Date): string {
   } else if (weeks > 0) {
     return t("week", {count: weeks})
   } else if (days > 0) {
-    return t("days", {count: days})
+    return t("day", {count: days})
   } else if (hours > 0) {
     return t("hour", {count: hours})
   } else if (minutes > 0) {

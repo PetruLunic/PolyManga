@@ -7,6 +7,7 @@ import {useQueryParams} from "@/app/lib/hooks/useQueryParams";
 import {useEffect} from "react";
 import {isStringInEnum} from "@/app/lib/utils/isStringinEnum";
 import {ChapterLanguage} from "@/app/__generated__/graphql";
+import {useLocale, useTranslations} from "next-intl";
 
 interface Props{
   languages: ChapterLanguage[]
@@ -18,10 +19,15 @@ interface SelectItem {
 }
 
 export default function LanguageSelect({languages}: Props) {
+  const t = useTranslations("components.languageSelect");
+  const locale = useLocale();
   const queryParams = useSearchParams();
   const writableParams = useQueryParams();
-  const language = queryParams.get("language") || languages[0];
   const languagesMap: SelectItem[] = languages.map(language => ({key: language, value: ChapterLanguageFull[language]}));
+  const language = queryParams.get("language")
+    ?? (languagesMap.find(({key}) => key.toLowerCase() === locale)
+        ? locale[0].toUpperCase() + locale.slice(1) // set locale language if available in chapter
+        : languages[0]) // else set the first available language
 
   // Check if changed query language is in ChapterLanguage enum
   useEffect(() => {
@@ -33,10 +39,13 @@ export default function LanguageSelect({languages}: Props) {
  return (
    <Select
     items={languagesMap}
-    placeholder="Select a language"
-    label="Language"
+    placeholder={t("placeholder")}
+    label={t("label")}
     size="sm"
     className="w-24 md:w-36 max-w-xs"
+    classNames={{
+      trigger: "bg-transparent"
+    }}
     selectedKeys={[language]}
     disallowEmptySelection
     onSelectionChange={value => {

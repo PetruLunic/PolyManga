@@ -11,6 +11,8 @@ import {AWS_BUCKET_URL, getSignedURLs} from "@/app/lib/utils/awsUtils";
 import {CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT} from "@/app/lib/utils/constants";
 import {auth} from "@/auth";
 import sharp from "sharp";
+import dbConnect from "@/app/lib/utils/dbConnect";
+import Manga from "@/app/lib/models/Manga";
 
 export async function createChapter(formData: FormData, languages: ChapterLanguage[]) {
   const session = await auth();
@@ -21,12 +23,25 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
 
   const client = createApolloClient();
 
-  const mangaId = formData.get("mangaId") as string;
+  const slug = formData.get("slug") as string;
   const number = Number(formData.get("number") as string);
-  const title = formData.get("title") as string;
 
-  if (!mangaId || !title || number < 0) {
+  // Extracting titles
+  const titles: Record<ChapterLanguage, string> = languages.reduce((acc, lang) => {
+    const title = formData.get(`title-${lang}`) as string;
+    if (!title) throw new Error(`No title for ${lang} language provided`);
+    return {...acc, [lang]: title};
+  }, {} as Record<ChapterLanguage, string>)
+
+  if (!slug || number < 0) {
     return {success: false, message: "Wrong entry data"};
+  }
+
+  await dbConnect();
+  const manga = await Manga.findOne({slug}).lean();
+
+  if (!manga) {
+    return {success: false, message: "Manga not found"};
   }
 
   const chapterId = nanoid();
@@ -56,7 +71,7 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
   languages.forEach(language => {
     const imagesIds = Array.from({length: croppedImages[language].images.length}, () => nanoid());
 
-    imagesURLs[language] = getImageURLs(mangaId, chapterId, language, imagesIds);
+    imagesURLs[language] = getImageURLs(manga.id, chapterId, language, imagesIds);
   })
 
   // Generating signed urls for images
@@ -94,6 +109,7 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
   languages.forEach(language => {
     versions.push({
       language,
+      title: titles[language],
       images: imagesURLs[language].map(url => ({
         src: AWS_BUCKET_URL + url,
         width: croppedImages[language].width,
@@ -105,9 +121,8 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
   // Creating chapter
   const chapter: AddChapterInput = {
     id: chapterId,
-    title,
     number,
-    mangaId,
+    mangaId: manga.id,
     versions
   }
 

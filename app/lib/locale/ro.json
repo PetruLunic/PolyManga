@@ -1,5 +1,19 @@
 {
   "common": {
+    "badges": {
+      "languageAvailability": {
+        "available": "Disponibil",
+        "unavailable": "Indisponibil",
+        "items": {
+          "chapter": "capitol",
+          "manga": "mangă"
+        },
+        "tooltips": {
+          "available": "Acest {item} este disponibil în limba ta",
+          "unavailable": "Acest {item} nu este disponibil în limba ta"
+        }
+      }
+    },
     "manga": {
       "status": {
         "ONGOING": "Ongoing",
@@ -52,12 +66,15 @@
         "sport": "sport"
       },
       "chapter": "Capitol",
+      "chapters": "Capitole",
       "noChapter": "Fără capitole"
     },
     "ui": {
-      "navigation": {
-        "catalog": "Catalog",
-        "home": "Acasă"
+      "buttons": {
+        "save": "Salvează",
+        "close": "Închide",
+        "submit": "Trimite",
+        "delete": "Șterge"
       },
       "timeSince": {
         "second": "{count, plural, =1 {o secundă} other {# secunde}} în urmă",
@@ -115,6 +132,15 @@
         "status": "Stare",
         "type": "Tip",
         "language": "Limbă"
+      },
+      "metadata": {
+        "title": "Citește manga gratuit în mai multe limbi | {siteName}",
+        "description": "Citește capitole manga de înaltă calitate gratuit în mai multe limbi.",
+        "keywords": "manga, citeste manga, citeste manhwa, citeste manhua, cele mai bune manga, manga gratuit, citeste manga online, manga populare",
+        "openGraph": {
+          "title": "Citește manga gratuit în mai multe limbi",
+          "description": "Citește capitole manga de înaltă calitate gratuit în mai multe limbi."
+        }
       }
     },
     "verifyEmail": {
@@ -135,7 +161,52 @@
     "user": {
       "history": {
         "history": "Istoric"
+      },
+      "bookmarks": {
+        "bookmarks": "Salvări"
+      },
+      "settings": {
+        "settings": "Setări",
+        "information": "Informație",
+        "security": "Securitate",
+        "preferences": "Preferințe",
+        "alerts": {
+          "unexpectedError": "Eroare neașteptată!",
+          "userInfoUpdated": "Informația utilizatorului actualizată",
+          "passwordChanged": "Parola a fost modificată",
+          "preferencesChanged": "Preferințele au fost modificate"
+        }
       }
+    },
+    "chapter": {
+      "metadata": {
+        "title": "Citește {chapter} din {manga} | {siteName}",
+        "description": "{manga} citește {chapter} gratuit în {languages}",
+        "keywords": "{manga}, {number}, {chapter}, citește manga în {languages}, cele mai bune manga, manga gratuit, citeste manga online, manga populare",
+        "openGraph": {
+          "title": "Citește {chapter} din {manga} | {siteName}",
+          "description": "{manga} citește {chapter} gratuit"
+        }
+      }
+    },
+    "forbidden": {
+      "title": "Acces Interzis",
+      "description": "Nu aveți permisiunea de a vizualiza această pagină",
+      "returnHome": "Întoarce-te la pagina principală"
+    },
+    "unauthorized": {
+      "title": "Neautorizat",
+      "description": "Tu nu ești autorizat pentru a accesa această pagină",
+      "signIn": "Autentifică-te",
+      "returnHome": "Întoarce-te la pagina principală"
+    },
+    "notfound": {
+      "messages": {
+        "default": "Pagina pe care o cauți nu există",
+        "manga": "Comics-ul pe care îl cauți nu există",
+        "chapter": "Capitolul pe care îl cauți nu există"
+      },
+      "returnHome": "Întoarce-te la pagina principală"
     }
   },
   "components": {
@@ -151,7 +222,9 @@
     "chaptersList": {
       "ascending": "Crescător",
       "descending": "Descrescător",
-      "noChapter": "Nici un capitol"
+      "noChapter": "Nici un capitol",
+      "languageFilter": "Filtru de limbă",
+      "all": "Toate"
     },
     "buttons": {
       "bookmark": {
@@ -199,6 +272,10 @@
           "error": "Eroare la like!"
         }
       }
+    },
+    "languageSelect": {
+      "label": "Limba",
+      "placeholder": "Selectează limba capitolului"
     },
     "modals": {
       "signInOut": {
@@ -253,7 +330,8 @@
       "existingName": "Un utilizator cu acest nume există deja",
       "incorrectToken": "Acest token este incorect sau expirat!",
       "userNotFound": "Utilizatorul nu a fost găsit!",
-      "expiredEmailToken": "Token-ul de email a expirat!"
+      "expiredEmailToken": "Token-ul de email a expirat!",
+      "incorrectPassword": "Parolă incorectă!"
     }
   },
   "htmlTemplates": {
@@ -274,11 +352,28 @@
     }
   },
   "form": {
-    "name": "Numele de utilizator",
-    "password": "Parola",
+    "name": "Nume utilizator",
+    "password": "Parolă",
     "email": "Email",
-    "newPassword": "Parola nouă",
-    "oldPassword": "Parola veche",
+    "newPassword": "Parolă nouă",
+    "oldPassword": "Parolă veche",
+    "profileImage": "Imagine profil",
+    "language": "Limbă",
+    "preferredLanguage": "Limba preferată",
+    "placeholders": {
+      "email": "Introduceți adresa de email",
+      "name": "Introduceți numele de utilizator",
+      "password": "Introduceți parola",
+      "newPassword": "Introduceți noua parolă",
+      "oldPassword": "Introduceți vechea parolă",
+      "profileImage": {
+        "fileTypes": "(Doar imagini *.jpeg, *.jpg și *.png sunt acceptate)",
+        "maxSize": "Mărime maximă 1 MB"
+      }
+    },
+    "descriptions": {
+      "preferredLanguage": "Schimbarea rapidă, cu un singur clic, în limba preferată"
+    },
     "customErrors": {
       "passwordRegex": "{path, select, missingTranslation {String} other {{path}}} trebuie să conțină cel puțin o literă mare, o literă mică, o cifră și un caracter special"
     }

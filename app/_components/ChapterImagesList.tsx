@@ -1,9 +1,9 @@
 "use client"
 
-import ChapterImage from "@/app/(pages)/[locale]/manga/[id]/[chapter]/_components/ChapterImage";
+import ChapterImage from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/ChapterImage";
 import {ChapterLanguage} from "@/app/__generated__/graphql";
 import {useSearchParams} from "next/navigation";
-import {MultiLanguageImage} from "@/app/(pages)/[locale]/manga/[id]/[chapter]/_utils/transformChapter";
+import {MultiLanguageImage} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_utils/transformChapter";
 
 interface Props {
   images: MultiLanguageImage[];

@@ -74,8 +74,6 @@ export const makeZodI18nMap: MakeZodI18nMap = (option) => (issue, ctx) => {
     ? { path: tForm(issue.path.join('.') as any) }
     : {};
 
-  console.log("Zod map: ", issue);
-
   switch (issue.code) {
     case ZodIssueCode.invalid_type:
       if (issue.received === ZodParsedType.undefined) {
@@ -201,7 +199,6 @@ export const makeZodI18nMap: MakeZodI18nMap = (option) => (issue, ctx) => {
       break;
     }
     case ZodIssueCode.custom: {
-      console.log("Custom case, ", issue);
       const { key, values } = getKeyAndValues(
         issue.params?.i18n,
         'errors.custom',

@@ -1,16 +1,20 @@
 import createApolloClient from "@/app/lib/utils/apollo-client";
 import {GET_CHAPTER_EDIT} from "@/app/lib/graphql/queries";
 import {notFound} from "next/navigation";
-import EditChapterForm from "@/app/(pages)/[locale]/manga/[id]/[chapter]/edit/_components/EditChapterForm";
+import EditChapterForm from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/_components/EditChapterForm";
 
 interface Props{
-  params: Promise<{chapter: string}>
+  params: Promise<{number: string, id: string}>
 }
 
 export default async function Page({params}: Props) {
+  const {id: slug, number: numberStr} = await params;
+  const number = Number.parseFloat(numberStr);
+  if (Number.isNaN(number)) notFound();
+
   const client = createApolloClient();
   const {data} = await client.query({query: GET_CHAPTER_EDIT,
-    variables: {id: (await params).chapter}
+    variables: {slug, number}
   }).catch(() => notFound())
 
  return (

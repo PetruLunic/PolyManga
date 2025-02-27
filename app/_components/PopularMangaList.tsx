@@ -18,10 +18,17 @@ export default function PopularMangaList({daily, weekly, monthly, locale}: Props
   const t = useTranslations("pages.home");
 
  return (
-     <div className="flex flex-col gap-3">
-       <h3 className="text-xl">
-         <span className="mr-2">{t("popular")}</span>
-         <Tabs aria-label="Popular comics" defaultSelectedKey={"weekly"} variant="light" size="lg">
+     <div className="flex flex-col gap-1 sm:gap-3">
+       <h2 className="text-base sm:text-xl">
+         <span className="">{t("popular")}</span>
+         <Tabs
+           aria-label="Popular comics"
+           defaultSelectedKey={"weekly"}
+           variant="light"
+           classNames={{
+             tabContent: "text-sm sm:text-base"
+           }}
+         >
            <Tab key="daily" title={t("day")}>
              <MangaList isHorizontal>
                {daily.map(manga =>
@@ -44,9 +51,7 @@ export default function PopularMangaList({daily, weekly, monthly, locale}: Props
              </MangaList>
            </Tab>
          </Tabs>
-       </h3>
-
+       </h2>
      </div>
-
  );
 };

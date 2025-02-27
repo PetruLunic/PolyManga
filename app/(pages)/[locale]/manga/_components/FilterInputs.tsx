@@ -6,7 +6,7 @@ import {useQueryParams} from "@/app/lib/hooks/useQueryParams";
 import {useEffect} from "react";
 import {isStringInEnum} from "@/app/lib/utils/isStringinEnum";
 import {useTranslations} from "next-intl";
-import {ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/types";
+import {ChapterLanguage, ChapterLanguageFull, ComicsGenre, ComicsStatus, ComicsType} from "@/app/types";
 
 interface Props{
 
@@ -118,7 +118,7 @@ export default function FilterInputs({}: Props) {
     >
       {Object.values(ChapterLanguage).map(language =>
           <SelectItem key={language}>
-            {language[0] + language.substring(1).toLowerCase()}
+            {ChapterLanguageFull[language]}
           </SelectItem>
       )}
     </Select>

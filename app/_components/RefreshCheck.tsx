@@ -15,7 +15,7 @@ export default function RefreshCheck() {
       writeParams.deleteParam("refresh");
       setTimeout(() => {
         location.reload();
-      }, 1000)
+      }, 2000)
     }
   }, [refresh]);
 

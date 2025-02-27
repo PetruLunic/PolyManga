@@ -32,7 +32,7 @@ export class ComicsStatsResolver {
 @Resolver(() => Manga)
 export class MangaResolver {
   @Query(() => Manga, {nullable: true})
-  async manga(@Arg('id', () => ID) id: string): Promise<Manga | null> {
+  async manga(@Arg('id') id: string): Promise<Manga | null> {
     const manga: Manga | null = await MangaModel.findOne({slug: id}).lean();
 
     if (!manga) {
@@ -107,7 +107,7 @@ export class MangaResolver {
       }
 
       if (search) {
-        query.title = { $regex: new RegExp(search, 'i') }; // Case-insensitive partial match
+        query["title.value"] = { $regex: new RegExp(search, 'i') }; // Case-insensitive partial match
       }
 
       if (types && types.length > 0) {

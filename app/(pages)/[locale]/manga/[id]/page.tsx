@@ -16,6 +16,8 @@ import ContinueReadingButton from "@/app/_components/ContinueReadingButton";
 import {notFound} from "next/navigation";
 import {getTranslations} from "next-intl/server";
 import {Link, routing} from "@/i18n/routing";
+import {extractMangaTitle} from "@/app/lib/utils/extractionUtils";
+import {LocaleType} from "@/app/types";
 
 export async function generateMetadata({ params}: Props): Promise<Metadata> {
   const {id, locale} = await params;
@@ -23,10 +25,10 @@ export async function generateMetadata({ params}: Props): Promise<Metadata> {
   const mangaT = await getTranslations({locale, namespace: "common.manga"});
   const metadataT = await getTranslations({locale, namespace: "pages.mangaDetails.metadata"});
 
-  if (!data?.manga) return seoMetaData.manga;
+  if (!data?.manga) return await seoMetaData.manga(locale);
 
   const {manga} = data;
-  const title = manga.title.find(({language}) => locale === language.toLowerCase())?.value ?? manga.title[0].value;
+  const title = extractMangaTitle(manga?.title, locale as LocaleType);
   const description = manga.description.find(({language}) => locale === language.toLowerCase())?.value ?? manga.description[0].value;
 
   const genres = manga.genres.slice(0, 4).map(genre => mangaT(`genres.${genre}`)).join(", ");
@@ -81,6 +83,8 @@ export default async function Page({params}: Props) {
 
   const {manga} = data;
 
+  if (!manga) notFound();
+
   const title = manga?.title.find(({language}) => locale === language.toLowerCase())?.value ?? manga?.title[0].value;
   const description = manga?.description.find(({language}) => locale === language.toLowerCase())?.value ?? manga?.description[0].value;
 
@@ -100,7 +104,7 @@ export default async function Page({params}: Props) {
                 alt={title}
                 isBlurred
             />
-            <ContinueReadingButton mangaSlug={id} firstChapterId={manga?.firstChapter?.id}/>
+            <ContinueReadingButton mangaSlug={id} firstChapterNumber={manga?.firstChapter?.number}/>
             <BookmarkButton slug={id}/>
             <div className="flex gap-3">
               <div className="flex gap-1 items-center">
@@ -234,7 +238,7 @@ export default async function Page({params}: Props) {
       <CardBody className="p-2 md:p-4">
         <div className="flex flex-col gap-4">
           <h3 className="text-center text-lg font-bold md:text-left">{pageT("chaptersList")}</h3>
-            <ChapterList chapters={JSON.parse(JSON.stringify(manga?.chapters))} mangaSlug={id}/>
+            <ChapterList chapters={JSON.parse(JSON.stringify(manga?.chapters))} mangaSlug={id} languages={manga.languages}/>
         </div>
       </CardBody>
     </Card>

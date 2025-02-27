@@ -6,31 +6,18 @@ import {cookies} from "next/headers";
 import MangaList from "@/app/_components/MangaList";
 import {getFragmentData} from "@/app/__generated__";
 import MangaCard from "@/app/_components/MangaCard";
-import {getTranslations} from "next-intl/server";
+import {getLocale, getTranslations} from "next-intl/server";
+import {extractChapterTitle} from "@/app/lib/utils/extractionUtils";
+import {LocaleType} from "@/app/types";
 
-interface Props{
-  params: Promise<{id: string}>
-}
-
-export const revalidate = 60;
-
-export default async function Page({params}: Props) {
-  const {id} = await params;
+export default async function Page() {
+  const locale = await getLocale();
   const t = await getTranslations("pages.user.history");
-  const session = await auth();
-
-  // Forbidden is auth id is not the same as id in the url's path
-  if (!session || id !== session.user.id) {
-    redirect("/forbidden");
-  }
-
   const apolloClient = createApolloClient();
-  const {data, error} = await apolloClient.query({
+  const {data} = await apolloClient.query({
     query: GET_MANGAS_WITH_BOOKMARKED_CHAPTERS,
     context: {headers: {cookie: await cookies()}}
   })
-
-  if (error) console.log(error);
 
  return (
   <div className="flex flex-col gap-3 mx-2">
@@ -40,14 +27,16 @@ export default async function Page({params}: Props) {
         .toSorted((a, b) => parseInt(b.createdAt) - parseInt(a.createdAt))
         .map(({manga, chapter, createdAt}) => {
         if (!manga) return;
+        const chapterTitle = extractChapterTitle(chapter?.versions, locale as LocaleType) ?? undefined;
 
         return <MangaCard
             type="history"
-                manga={JSON.parse(JSON.stringify(getFragmentData(MANGA_CARD, manga)))}
-                key={getFragmentData(MANGA_CARD, manga)?.id}
-                bookmarkedChapter={chapter?.title}
-                chapterBookmarkCreationDate={new Date(parseInt(createdAt))}
-                isExtendable
+            manga={JSON.parse(JSON.stringify(getFragmentData(MANGA_CARD, manga)))}
+            key={getFragmentData(MANGA_CARD, manga)?.id}
+            bookmarkedChapter={chapterTitle}
+            chapterBookmarkCreationDate={new Date(parseInt(createdAt))}
+            locale={locale as LocaleType}
+            isExtendable
             />
       }
       )}

@@ -1,18 +1,19 @@
 "use client"
 
 import {Button, Navbar, NavbarBrand, NavbarContent, NavbarItem} from "@heroui/react";
-import Link from "next/link";
 import {useParams} from "next/navigation";
 import SignUpButton from "@/app/_components/navbar/SignUpButton";
 import {useTranslations} from "next-intl";
+import LocaleSelect from "@/app/_components/LocaleSelect";
+import { Link } from "@/i18n/routing";
 
 
 export default function NavbarRoot() {
-  const params = useParams<{id: string, chapter: string}>();
+  const params = useParams<{id: string, number: string}>();
   const t = useTranslations("components.navbar");
 
   // No client side navbar on chapter page
-  if (params.chapter)
+  if (params.number)
     return <></>;
 
  return (
@@ -32,6 +33,9 @@ export default function NavbarRoot() {
        </Button>
      </NavbarBrand>
      <NavbarContent justify="end" className="items-center">
+       <NavbarItem>
+         <LocaleSelect />
+       </NavbarItem>
        <NavbarItem>
         <SignUpButton/>
        </NavbarItem>

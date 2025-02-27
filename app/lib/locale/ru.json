@@ -1,217 +1,380 @@
 {
   "common": {
+    "badges": {
+      "languageAvailability": {
+        "available": "Доступно",
+        "unavailable": "Недоступно",
+        "items": {
+          "chapter": "глава",
+          "manga": "манга"
+        },
+        "tooltips": {
+          "available": "Эта {item} доступна на вашем языке",
+          "unavailable": "Эта {item} недоступна на вашем языке"
+        }
+      }
+    },
     "manga": {
       "status": {
-        "ONGOING": "Ongoing",
-        "FINISHED": "Finished",
-        "PAUSED": "Paused",
-        "DROPPED": "Dropped"
+        "ONGOING": "Продолжается",
+        "FINISHED": "Завершено",
+        "PAUSED": "Приостановлено",
+        "DROPPED": "Прервано"
       },
       "type": {
-        "manga": "Manga",
-        "manhwa": "Manhwa",
-        "manhua": "Manhua"
+        "manga": "Манга",
+        "manhwa": "Манхва",
+        "manhua": "Маньхуа"
       },
       "genres": {
-        "action": "action",
-        "fantasy": "fantasy",
-        "drama": "drama",
-        "harem": "harem",
-        "martial_arts": "martial arts",
-        "apocalypse": "apocalypse",
-        "cultivation": "cultivation",
-        "game": "game",
-        "hero": "hero",
-        "mature": "mature",
-        "comedy": "comedy",
-        "genius_mc": "genius mc",
-        "historical": "historical",
-        "loli": "loli",
-        "mecha": "mecha",
-        "adventure": "adventure",
-        "isekai": "isekai",
-        "magic": "magic",
-        "romance": "romance",
-        "noble": "noble",
-        "time_travel": "time travel",
-        "murim": "murim",
-        "rebirth": "rebirth",
-        "school_life": "school life",
-        "system": "system",
-        "tower": "tower",
-        "virtual_reality": "virtual reality",
-        "regression": "regression",
-        "sci_fi": "sci-fi",
-        "thriller": "thriller",
-        "tragedy": "tragedy",
-        "villain": "villain",
-        "necromancer": "necromancer",
-        "post_apocalyptic": "post-apocalyptic",
-        "reincarnation": "reincarnation",
-        "revenge": "revenge",
-        "sport": "sport"
+        "action": "экшен",
+        "fantasy": "фэнтези",
+        "drama": "драма",
+        "harem": "гарем",
+        "martial_arts": "боевые искусства",
+        "apocalypse": "апокалипсис",
+        "cultivation": "культивация",
+        "game": "игра",
+        "hero": "герой",
+        "mature": "18+",
+        "comedy": "комедия",
+        "genius_mc": "гениальный ГГ",
+        "historical": "историческое",
+        "loli": "лоли",
+        "mecha": "меха",
+        "adventure": "приключения",
+        "isekai": "исэкай",
+        "magic": "магия",
+        "romance": "романтика",
+        "noble": "аристократия",
+        "time_travel": "путешествия во времени",
+        "murim": "мурим",
+        "rebirth": "перерождение",
+        "school_life": "школьная жизнь",
+        "system": "система",
+        "tower": "башня",
+        "virtual_reality": "виртуальная реальность",
+        "regression": "регрессия",
+        "sci_fi": "научная фантастика",
+        "thriller": "триллер",
+        "tragedy": "трагедия",
+        "villain": "злодей",
+        "necromancer": "некромант",
+        "post_apocalyptic": "постапокалипсис",
+        "reincarnation": "реинкарнация",
+        "revenge": "месть",
+        "sport": "спорт"
       },
-      "chapter": "Chapter",
-      "noChapter": "No chapter"
+      "chapter": "Глава",
+      "chapters": "Главы",
+      "noChapter": "Нет глав"
     },
     "ui": {
+      "buttons": {
+        "save": "Сохранить",
+        "close": "Закрыть",
+        "submit": "Отправить",
+        "delete": "Удалить"
+      },
       "timeSince": {
-        "second": "{count, plural, =1 {one second} other {# seconds}} ago",
-        "minute": "{count, plural, =1 {one minute} other {# minutes}} ago",
-        "hour": "{count, plural, =1 {one hour} other {# hours}} ago",
-        "day": "{count, plural, =1 {one day} other {# days}} ago",
-        "week": "{count, plural, =1 {one week} other {# weeks}} ago",
-        "month": "{count, plural, =1 {one month} other {# months}} ago",
-        "year": "{count, plural, =1 {one year} other {# years}} ago"
+        "second": "{count, plural, =1 {одна секунда} other {# секунд}} назад",
+        "minute": "{count, plural, =1 {одна минута} other {# минут}} назад",
+        "hour": "{count, plural, =1 {один час} other {# часов}} назад",
+        "day": "{count, plural, =1 {один день} other {# дней}} назад",
+        "week": "{count, plural, =1 {одна неделя} other {# недель}} назад",
+        "month": "{count, plural, =1 {один месяц} other {# месяцев}} назад",
+        "year": "{count, plural, =1 {один год} other {# лет}} назад"
       }
     }
   },
   "pages": {
     "home": {
-      "popular": "Popular this",
-      "latestChapter": "Latest chapter uploads",
-      "day": "day",
-      "week": "week",
-      "month": "month"
+      "popular": "Популярное за",
+      "latestChapter": "Последние загруженные главы",
+      "day": "день",
+      "week": "неделю",
+      "month": "месяц"
     },
     "mangaDetails": {
       "metadata": {
-        "keywords": "manga, read manga, read {type}, best manga, free manga, read manga online, popular manga, {genres}"
+        "keywords": "манга, читать мангу, читать {type}, лучшая манга, манга бесплатно, читать мангу онлайн, популярная манга, {genres}"
       },
-      "status": "Status",
-      "type": "Type",
-      "author": "Author",
-      "releasedOn": "Released on",
-      "genres": "Genres",
-      "languages": "Languages",
-      "chaptersList": "Chapters List"
+      "status": "Статус",
+      "type": "Тип",
+      "author": "Автор",
+      "releasedOn": "Дата выхода",
+      "genres": "Жанры",
+      "languages": "Языки",
+      "chaptersList": "Список глав"
     },
     "manga": {
-      "catalog": "Catalog",
-      "sort": "Sort",
-      "filters": "Filters",
-      "filter": "Filter",
-      "descending": "Descending",
-      "ascending": "Ascending",
-      "clear": "Clear",
-      "close": "Close",
+      "catalog": "Каталог",
+      "sort": "Сортировка",
+      "filters": "Фильтры",
+      "filter": "Фильтр",
+      "descending": "По убыванию",
+      "ascending": "По возрастанию",
+      "clear": "Очистить",
+      "close": "Закрыть",
       "sortByOptions": {
-        "views": "Views",
-        "likes": "Likes",
-        "rating": "Rating",
-        "bookmarks": "Bookmarks",
-        "chapters": "Chapters",
-        "createdAt": "Created at"
+        "views": "Просмотрам",
+        "likes": "Лайкам",
+        "rating": "Рейтингу",
+        "bookmarks": "Закладкам",
+        "chapters": "Главам",
+        "createdAt": "Дате создания"
       },
       "placeholders": {
-        "sortBy": "Sort By",
-        "search": "Search by name",
-        "genres": "Genres",
-        "status": "Status",
-        "type": "Type",
-        "language": "Language"
+        "sortBy": "Сортировать по",
+        "search": "Поиск по названию",
+        "genres": "Жанры",
+        "status": "Статус",
+        "type": "Тип",
+        "language": "Язык"
+      },
+      "metadata": {
+        "title": "Читайте мангу на разных языках бесплатно | {siteName}",
+        "description": "Читайте главы манги высокого качества бесплатно на нескольких языках.",
+        "keywords": "манга, читать мангу, читать манхву, читать маньхуа, лучшая манга, манга бесплатно, читать мангу онлайн, популярная манга",
+        "openGraph": {
+          "title": "Читайте мангу на разных языках бесплатно",
+          "description": "Читайте главы манги высокого качества бесплатно на нескольких языках."
+        }
       }
+    },
+    "verifyEmail": {
+      "unexpectedError": "Неожиданная ошибка!",
+      "successfulVerification": "Ваш email был успешно подтверждён.",
+      "invalidLink": "Неверная ссылка подтверждения",
+      "loadingVerification": "Идёт подтверждение email..."
+    },
+    "resetPassword": {
+      "title": "Сброс пароля",
+      "submit": "Подтвердить",
+      "successfulReset": "Пароль успешно изменён",
+      "unexpectedError": "Неожиданная ошибка!",
+      "newPassword": "Новый пароль",
+      "invalidLink": "Неверная ссылка",
+      "newPasswordPlaceholder": "Введите новый пароль"
+    },
+    "user": {
+      "history": {
+        "history": "История"
+      },
+      "bookmarks": {
+        "bookmarks": "Закладки"
+      },
+      "settings": {
+        "settings": "Настройки",
+        "information": "Информация",
+        "security": "Безопасность",
+        "preferences": "Предпочтения",
+        "alerts": {
+          "unexpectedError": "Неожиданная ошибка!",
+          "userInfoUpdated": "Данные пользователя обновлены",
+          "passwordChanged": "Пароль изменён",
+          "preferencesChanged": "Предпочтения сохранены"
+        }
+      }
+    },
+    "chapter": {
+      "metadata": {
+        "title": "{manga} читать {chapter} | {siteName}",
+        "description": "{manga} читать {chapter} бесплатно на {languages}",
+        "keywords": "{manga}, {number}, {chapter}, читать мангу на {languages}, лучшая манга, манга бесплатно, читать мангу онлайн, популярная манга",
+        "openGraph": {
+          "title": "{manga} читать {chapter} | {siteName}",
+          "description": "{manga} читать {chapter} бесплатно"
+        }
+      }
+    },
+    "forbidden": {
+      "title": "Доступ запрещён",
+      "description": "У вас нет прав для просмотра этой страницы",
+      "returnHome": "Вернуться на главную"
+    },
+    "unauthorized": {
+      "title": "Не авторизован",
+      "description": "У вас нет доступа к этой странице",
+      "signIn": "Войти",
+      "returnHome": "Вернуться на главную"
+    },
+    "notfound": {
+      "messages": {
+        "default": "Запрашиваемая страница не существует",
+        "manga": "Этот комикс не существует",
+        "chapter": "Этой главы не существует"
+      },
+      "returnHome": "Вернуться на главную"
     }
   },
   "components": {
     "navbar": {
-      "catalog": "Catalog",
+      "catalog": "Каталог",
       "userDropdown": {
-        "bookmarks": "Bookmarks",
-        "history": "History",
-        "settings": "Settings",
-        "logOut": "Log Out"
+        "bookmarks": "Закладки",
+        "history": "История",
+        "settings": "Настройки",
+        "logOut": "Выйти"
       }
     },
     "chaptersList": {
-      "ascending": "Ascending",
-      "descending": "Descending",
-      "noChapter": "No chapter"
+      "ascending": "По возрастанию",
+      "descending": "По убыванию",
+      "noChapter": "Нет глав",
+      "languageFilter": "Фильтр по языку",
+      "all": "Все"
     },
     "buttons": {
       "bookmark": {
-        "default": "Bookmark",
-        "reading": "Reading",
-        "inPlans": "In plans",
-        "favourite": "Favourite",
-        "finished": "Finished",
-        "dropped": "Dropped",
-        "delete": "Delete bookmark",
+        "default": "Закладка",
+        "reading": "Читаю",
+        "inPlans": "В планах",
+        "favourite": "Избранное",
+        "finished": "Завершено",
+        "dropped": "Брошено",
+        "delete": "Удалить закладку",
         "alerts": {
-          "error": "Bookmark error!"
+          "error": "Ошибка закладки!"
         }
       },
       "continueReading": {
-        "continue": "Continue",
-        "firstChapter": "First Chapter"
+        "continue": "Продолжить",
+        "firstChapter": "Первая глава"
       },
       "rating": {
-        "rate": "Rate",
-        "close": "Close",
-        "save": "Save",
-        "delete": "Delete",
-        "yourRating": "Your rating",
+        "rate": "Оценить",
+        "close": "Закрыть",
+        "save": "Сохранить",
+        "delete": "Удалить",
+        "yourRating": "Ваша оценка",
         "ratings": {
-          "terrible": "Terrible",
-          "veryBad": "Very Bad",
-          "bad": "Bad",
-          "poor": "Poor",
-          "soSo": "So-So",
-          "fair": "Fair",
-          "good": "Good",
-          "veryGood": "Very Good",
-          "great": "Great",
-          "excellent": "Excellent"
+          "terrible": "Ужасно",
+          "veryBad": "Очень плохо",
+          "bad": "Плохо",
+          "poor": "Слабо",
+          "soSo": "Так себе",
+          "fair": "Нормально",
+          "good": "Хорошо",
+          "veryGood": "Очень хорошо",
+          "great": "Отлично",
+          "excellent": "Превосходно"
         },
         "alerts": {
-          "success": "Rated successfully!",
-          "delete": "Deleted successfully!",
-          "error": "Rate error!"
+          "success": "Оценено успешно!",
+          "delete": "Удалено успешно!",
+          "error": "Ошибка оценки!"
         }
       },
       "like": {
         "alerts": {
-          "error": "Like error!"
+          "error": "Ошибка лайка!"
         }
       }
     },
+    "languageSelect": {
+      "label": "Язык",
+      "placeholder": "Выберите язык главы"
+    },
     "modals": {
       "signInOut": {
-        "signIn": "Sign In",
-        "signUp": "Sign Up",
-        "or": "Or",
-        "username": "User name",
+        "signIn": "Войти",
+        "signUp": "Зарегистрироваться",
+        "or": "Или",
+        "username": "Имя пользователя",
         "email": "Email",
-        "password": "Password",
-        "forgotPassword": "Forgot password?",
-        "close": "Close",
+        "password": "Пароль",
+        "forgotPassword": "Забыли пароль?",
+        "close": "Закрыть",
         "errors": {
-          "unexpected": "Unexpected error!",
-          "submit": "Submit error"
+          "unexpected": "Неожиданная ошибка!",
+          "submit": "Ошибка отправки"
         },
         "placeholders": {
-          "username": "Enter your user name",
-          "email": "Enter your email",
-          "password": "Enter your password"
+          "username": "Введите имя пользователя",
+          "email": "Введите email",
+          "password": "Введите пароль"
         }
       },
       "forgotPassword": {
-        "forgotPassword": "Forgot Password",
-        "verifyEmail": "Verify Email",
-        "tokenSent": "Token was sent to your email",
-        "placeholders": {
-          "token": "Enter your token",
-          "newPassword": "New password"
+        "forgotPassword": "Восстановление пароля",
+        "verifyEmail": "Подтверждение email",
+        "tokenSent": "Код отправлен на ваш email",
+        "email": "Email",
+        "errors": {
+          "unexpected": "Неожиданная ошибка!",
+          "submit": "Ошибка отправки"
         },
-        "close": "Close",
-        "submit": "Submit"
+        "placeholders": {
+          "email": "Введите email",
+          "token": "Введите код",
+          "newPassword": "Новый пароль"
+        },
+        "close": "Закрыть",
+        "submit": "Подтвердить"
+      },
+      "verifyEmail": {
+        "header": "Подтверждение email",
+        "message": "На ваш <email></email> было отправлено письмо с ссылкой. Перейдите по ней.",
+        "close": "Закрыть",
+        "resendButton": "Отправить письмо повторно{seconds, plural, =0 {} other { через # секунд}}"
       }
     }
   },
   "server": {
     "user": {
-      "unexpectedError": "Unexpected error!",
-      "wrongPasswordOrEmail": "Email or password are incorrect!"
+      "unexpectedError": "Неожиданная ошибка!",
+      "tokenSentIfExists": "Если email существует, код был отправлен.",
+      "wrongPasswordOrEmail": "Неверный email или пароль!",
+      "existingEmail": "Пользователь с таким email уже существует",
+      "existingName": "Пользователь с таким именем уже существует",
+      "incorrectToken": "Неверный или просроченный код!",
+      "userNotFound": "Пользователь не найден!",
+      "expiredEmailToken": "Срок действия кода истёк!",
+      "incorrectPassword": "Неверный пароль!"
+    }
+  },
+  "htmlTemplates": {
+    "emailVerification": {
+      "title": "Подтвердите ваш email",
+      "greeting": "Здравствуйте",
+      "instructions": "Пожалуйста, подтвердите использование этого email для вашего аккаунта {brandName}.",
+      "cta": "Подтвердить email",
+      "note": "Если вы не создавали этот аккаунт, проигнорируйте это письмо."
+    },
+    "passwordReset": {
+      "title": "Сброс пароля",
+      "greeting": "Здравствуйте",
+      "instructions": "Мы получили запрос на сброс пароля для {brandName}. Нажмите кнопку ниже, чтобы установить новый пароль:",
+      "cta": "Сбросить пароль",
+      "note": "Ссылка действительна 15 минут. Если вы не запрашивали сброс, проигнорируйте это письмо."
+    }
+  },
+  "form": {
+    "name": "Имя пользователя",
+    "password": "Пароль",
+    "email": "Email",
+    "newPassword": "Новый пароль",
+    "oldPassword": "Старый пароль",
+    "profileImage": "Аватар",
+    "language": "Язык",
+    "preferredLanguage": "Предпочитаемый язык",
+    "placeholders": {
+      "email": "Введите email",
+      "name": "Введите имя пользователя",
+      "password": "Введите пароль",
+      "newPassword": "Введите новый пароль",
+      "oldPassword": "Введите старый пароль",
+      "profileImage": {
+        "fileTypes": "(Допустимые форматы: JPEG, JPG, PNG)",
+        "maxSize": "Не более 1 МБ"
+      }
+    },
+    "descriptions": {
+      "preferredLanguage": "Быстрое переключение на предпочитаемый язык в один клик"
+    },
+    "customErrors": {
+      "passwordRegex": "{path, select, missingTranslation {String} other {{path}}} должен содержать минимум одну заглавную букву, одну строчную, одну цифру и один специальный символ"
     }
   }
 }

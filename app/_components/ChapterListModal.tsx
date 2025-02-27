@@ -4,15 +4,22 @@ import {Button, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure} from
 import {Manga_ChapterQuery} from "@/app/__generated__/graphql";
 import ChapterList from "@/app/_components/ChapterList";
 import {useParams} from "next/navigation";
+import {extractChapterTitle, extractMangaTitle} from "@/app/lib/utils/extractionUtils";
+import {useLocale, useTranslations} from "next-intl";
+import {LocaleType} from "@/app/types";
 
 interface Props{
   data: Manga_ChapterQuery
 }
 
 export default function ChapterListModal({data}: Props) {
+  const t = useTranslations("common.manga");
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
-  const {chapter} = useParams<{id: string, chapter: string}>();
+  const {number, id} = useParams<{id: string, number: string}>();
   const maxNumberOfMangaTitleCharacters = data.chapter.languages.length > 1 ? 10 : 20;
+  const locale = useLocale();
+  const mangaTitle = extractMangaTitle(data.manga?.title ?? [], locale as LocaleType)
+  const chapterTitle = extractChapterTitle(data.chapter.versions, locale as LocaleType);
 
  return (
   <>
@@ -23,15 +30,15 @@ export default function ChapterListModal({data}: Props) {
         onPress={() => setTimeout(onOpen, 10)}
     >
       <div className="sm:hidden">
-        {data.manga && data.manga.title.length > maxNumberOfMangaTitleCharacters
-          ? data.manga?.title.slice(0, maxNumberOfMangaTitleCharacters) + "..."
-          : data.manga?.title}
+        {mangaTitle.length > maxNumberOfMangaTitleCharacters
+          ? mangaTitle.slice(0, maxNumberOfMangaTitleCharacters) + "..."
+          : mangaTitle}
       </div>
       <div className="hidden sm:block">
-        {data.manga?.title}
+        {mangaTitle}
       </div>
       <div className="text-xs text-gray-200">
-        Chapter {data.chapter.number}
+        {chapterTitle}
       </div>
     </Button>
     <Modal
@@ -43,13 +50,14 @@ export default function ChapterListModal({data}: Props) {
     >
       <ModalContent>
         <ModalHeader>
-          Chapters
+          {t("chapters")}
         </ModalHeader>
         <ModalBody>
           <ChapterList
             chapters={data.manga?.chapters}
-            selectedChapter={chapter}
-            mangaSlug={data.manga?.title}
+            selectedChapter={number}
+            mangaSlug={id}
+            languages={data.manga?.languages ?? []}
           />
         </ModalBody>
       </ModalContent>

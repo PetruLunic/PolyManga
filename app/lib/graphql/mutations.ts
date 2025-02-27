@@ -12,7 +12,6 @@ export const CREATE_CHAPTER = gql(`
         },
         language
       }
-      title,
       createdAt
     }
   }
@@ -95,14 +94,14 @@ export const DELETE_MANGA = gql(`
 `)
 
 export const DELETE_CHAPTERS = gql(`
-  mutation deleteChapters($mangaId: ID!, $ids: [ID!]!) {
-    deleteChapters(mangaId: $mangaId, ids: $ids)
+  mutation deleteChapters($slug: String!, $ids: [ID!]!) {
+    deleteChapters(slug: $slug, ids: $ids)
   }
 `)
 
 export const ADD_CHAPTER_BOOKMARK = gql(`
-  mutation addChapterBookmark($chapterId: String!) {
-    addChapterBookmark(chapterId: $chapterId) {
+  mutation addChapterBookmark($slug: String!, $number: Float!) {
+    addChapterBookmark(slug: $slug, number: $number) {
       id
     }
   }

@@ -1,5 +1,19 @@
 {
   "common": {
+    "badges": {
+      "languageAvailability": {
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "items": {
+          "chapter": "chapter",
+          "manga": "manga"
+        },
+        "tooltips": {
+          "available": "This {item} is available in your language",
+          "unavailable": "This {item} is not available in your language"
+        }
+      }
+    },
     "manga": {
       "status": {
         "ONGOING": "Ongoing",
@@ -52,9 +66,16 @@
         "sport": "sport"
       },
       "chapter": "Chapter",
+      "chapters": "Chatpers",
       "noChapter": "No chapter"
     },
     "ui": {
+      "buttons": {
+        "save": "Save",
+        "close": "Close",
+        "submit": "Submit",
+        "delete": "Delete"
+      },
       "timeSince": {
         "second": "{count, plural, =1 {one second} other {# seconds}} ago",
         "minute": "{count, plural, =1 {one minute} other {# minutes}} ago",
@@ -110,6 +131,15 @@
         "status": "Status",
         "type": "Type",
         "language": "Language"
+      },
+      "metadata": {
+        "title": "Read free multi-language manga | {siteName}",
+        "description": "Read high-quality manga chapters for free in multiple languages.",
+        "keywords": "manga, read manga, read manhwa, read manhua, best manga, free manga, read manga online, popular manga",
+        "openGraph": {
+          "title": "Read free multi-language manga",
+          "description": "Read high-quality manga chapters for free in multiple languages."
+        }
       }
     },
     "verifyEmail": {
@@ -130,7 +160,52 @@
     "user": {
       "history": {
         "history": "History"
+      },
+      "bookmarks": {
+        "bookmarks": "Bookmarks"
+      },
+      "settings": {
+        "settings": "Settings",
+        "information": "Information",
+        "security": "Security",
+        "preferences": "Preferences",
+        "alerts": {
+          "unexpectedError": "Unexpected error!",
+          "userInfoUpdated": "User info updated",
+          "passwordChanged": "Password changed",
+          "preferencesChanged": "Preferences changed"
+        }
       }
+    },
+    "chapter": {
+      "metadata": {
+        "title": "{manga} read {chapter} | {siteName}",
+        "description": "{manga} read {chapter} for free in {languages}",
+        "keywords": "{manga}, {number}, {chapter}, read manga in {languages}, best manga, free manga, read manga online, popular manga",
+        "openGraph": {
+          "title": "{manga} read {chapter} | {siteName}",
+          "description": "{manga} read {chapter} for free"
+        }
+      }
+    },
+    "forbidden": {
+      "title": "Access Forbidden",
+      "description": "You don't have permission to view this page",
+      "returnHome": "Return to home page"
+    },
+    "unauthorized": {
+      "title": "Unauthorized",
+      "description": "You are not authorized to view this page",
+      "signIn": "Sign In",
+      "returnHome": "Return to home page"
+    },
+    "notfound": {
+      "messages": {
+        "default": "The page you're looking for doesn't exist",
+        "manga": "The comics you're looking for doesn't exist",
+        "chapter": "The chapter you're looking for doesn't exist"
+      },
+      "returnHome": "Return to home page"
     }
   },
   "components": {
@@ -146,7 +221,9 @@
     "chaptersList": {
       "ascending": "Ascending",
       "descending": "Descending",
-      "noChapter": "No chapter"
+      "noChapter": "No chapter",
+      "languageFilter": "Language filter",
+      "all": "All"
     },
     "buttons": {
       "bookmark": {
@@ -194,6 +271,10 @@
           "error": "Like error!"
         }
       }
+    },
+    "languageSelect": {
+      "label": "Language",
+      "placeholder": "Select the chapter language"
     },
     "modals": {
       "signInOut": {
@@ -249,7 +330,8 @@
       "existingName": "User with this name already exists",
       "incorrectToken": "This token is invalid or expired!",
       "userNotFound": "User not found!",
-      "expiredEmailToken": "Email token has expired!"
+      "expiredEmailToken": "Email token has expired!",
+      "incorrectPassword": "Incorrect password!"
     }
   },
   "htmlTemplates": {
@@ -269,11 +351,28 @@
     }
   },
   "form": {
-    "name": "Username",
+    "name": "User name",
     "password": "Password",
     "email": "Email",
     "newPassword": "New password",
     "oldPassword": "Old password",
+    "profileImage": "Profile image",
+    "language": "Language",
+    "preferredLanguage": "Preferred language",
+    "placeholders": {
+      "email": "Enter your email",
+      "name": "Enter your user name",
+      "password": "Enter your password",
+      "newPassword": "Enter your new password",
+      "oldPassword": "Enter your old password",
+      "profileImage": {
+        "fileTypes": "(Only *.jpeg, *.jpg and *.png images will be accepted)",
+        "maxSize": "No larger than 1 MB"
+      }
+    },
+    "descriptions": {
+      "preferredLanguage": "Fast, one-click swap to the preferred language"
+    },
     "customErrors": {
       "passwordRegex": "{path, select, missingTranslation {String} other {{path}}} must contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
     }

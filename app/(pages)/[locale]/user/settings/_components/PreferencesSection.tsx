@@ -7,10 +7,11 @@ import z from "zod";
 import {Session} from "next-auth";
 import {Button, Select, SelectItem} from "@heroui/react";
 import {ChapterLanguageFull} from "@/app/types";
-import {changeUserPreferences} from "@/app/(pages)/[locale]/user/[id]/settings/actions";
+import {changeUserPreferences} from "@/app/(pages)/[locale]/user/settings/actions";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
 import {useSession} from "next-auth/react";
 import {ChapterLanguage} from "@/app/__generated__/graphql";
+import {useTranslations} from "next-intl";
 
 interface Props{
   user: Session["user"]
@@ -19,6 +20,9 @@ interface Props{
 export type FormType = z.infer<typeof UserPreferencesSchema>;
 
 export default function PreferencesSection({user}: Props) {
+  const tForm = useTranslations("form");
+  const tButton = useTranslations("common.ui.buttons");
+  const tAlert = useTranslations("pages.user.settings.alerts");
   const {
     handleSubmit,
     register,
@@ -36,10 +40,10 @@ export default function PreferencesSection({user}: Props) {
     try {
       await changeUserPreferences(data);
       await update({user: {...session?.user, preferences: data}});
-      addAlert({message: "Preferences changed", type: "success"});
+      addAlert({message: tAlert("preferencesChanged"), type: "success"});
     } catch(e) {
       console.error(e);
-      addAlert({message: "Unexpected error", type: "danger"});
+      addAlert({message: tAlert("unexpectedError"), type: "danger"});
     }
   })
 
@@ -49,21 +53,21 @@ export default function PreferencesSection({user}: Props) {
       onSubmit={onSubmit}
   >
     <Select
-        label="Language"
-        description="One-click swap of the language at the chapter images"
+        label={tForm("preferredLanguage")}
+        description={tForm("descriptions.preferredLanguage")}
         errorMessage={errors.language?.message}
         isInvalid={!!errors.language}
         defaultSelectedKeys={user.preferences?.language ? [user.preferences.language] : []}
         {...register("language")}
     >
       {Object.keys(ChapterLanguage).map(language =>
-          <SelectItem key={language.toLowerCase()}>
+          <SelectItem key={language}>
             {ChapterLanguageFull[language as ChapterLanguage]}
           </SelectItem>
       )}
     </Select>
     <Button isLoading={isSubmitting} color="primary" type="submit">
-      Save
+      {tButton("save")}
     </Button>
   </form>
  );

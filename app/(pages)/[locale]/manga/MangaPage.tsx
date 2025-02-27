@@ -26,9 +26,11 @@ import SortButton from "@/app/(pages)/[locale]/manga/_components/SortButton";
 import SortBySelect from "@/app/(pages)/[locale]/manga/_components/SortBySelect";
 import {Divider} from "@heroui/divider";
 import MangaCard from "@/app/_components/MangaCard";
-import {useTranslations} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
+import {LocaleType} from "@/app/types";
 
 export default function MangaPage() {
+  const locale = useLocale();
   const t = useTranslations("pages.manga");
   const limit = 10;
   const [hasMore, setHasMore] = useState(true);
@@ -107,7 +109,7 @@ export default function MangaPage() {
                 isLoading={loading}
               >
                   {mangas?.map(manga =>
-                      <MangaCard key={manga.id} manga={manga} isExtendable/>
+                      <MangaCard key={manga.id} locale={locale as LocaleType} manga={manga} isExtendable/>
                   )}
             </MangaList>
           </div>

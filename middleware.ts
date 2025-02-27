@@ -2,16 +2,26 @@ import {NextRequest, NextResponse} from "next/server";
 import {getSession} from "@/app/lib/utils/getSession";
 import createMiddleware from "next-intl/middleware";
 import {locales, routing} from "@/i18n/routing";
+import {notFound} from "next/navigation";
+import {NotFoundError} from "rxjs";
+
+const userPaths = [
+  "/user/bookmarks",
+  "/user/history",
+  "/user/settings",
+]
 
 // Paths allowed to moderators
 const moderatorPaths = [
-  "/(.+)/manga/:id/upload",
-  "/(.+)/manga/create",
-  "/(.+)/manga/:id/edit"
+  "/manga/:id/upload",
+  "/manga/create",
+  "/manga/:id/edit",
+  "/manga/:id/edit/chapters",
+  "/manga/:id/chapter/:number/edit"
 ];
 
 const adminPaths = [
-    "/(.+)/admin"
+    "/admin"
 ];
 
 // Function to convert path array to regex array
@@ -22,6 +32,7 @@ const convertPathToRegex = (path: string) => {
 
 const convertPathsToRegex = (paths: string[]) => paths.map(convertPathToRegex);
 
+const userRegexes = convertPathsToRegex(userPaths);
 const moderatorRegexes = convertPathsToRegex(moderatorPaths);
 const adminRegexes = convertPathsToRegex(adminPaths);
 
@@ -56,24 +67,30 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(req.nextUrl);
   }
 
-  const isPathMatched = (regexArray: RegExp[]) => regexArray.some(regex => regex.test(path));
+  const locale = path.slice(1).split("/")[0];
 
-  // if (!session) {
-  //   return NextResponse.rewrite(unauthorizedUrl);
-  // }
+  // Part of authorization
+  const pathWithNoLocale = `/${path.slice(1).split("/").slice(1).join("/")}`;
+  const isPathMatched = (regexArray: RegExp[]) => regexArray.some(regex => regex.test(pathWithNoLocale));
 
   switch(session?.role) {
     case "MODERATOR":
       if (isPathMatched(adminRegexes)) {
-        return NextResponse.rewrite(forbiddenUrl);
+        return NextResponse.rewrite(new URL(`/${locale}/not-found`, req.nextUrl));
       }
       break;
 
     case "USER":
-      if (isPathMatched(adminRegexes) || isPathMatched(moderatorRegexes)) {
-        return NextResponse.rewrite(forbiddenUrl);
+    case undefined:
+      if (isPathMatched([...adminRegexes, ...moderatorRegexes])) {
+        return NextResponse.rewrite(new URL(`/${locale}/not-found`, req.nextUrl));
       }
       break;
+  }
+
+  // If isn't authorized at all then forbid the user's paths
+  if (!session && isPathMatched(userRegexes)) {
+    return NextResponse.redirect(unauthorizedUrl);
   }
 
   return handleI18n;
@@ -81,11 +98,6 @@ export default async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/user/:id/(.+)",
-    "/manga/:id/upload",
-    "/manga/create",
-    "/manga/:id/edit",
-    "/admin",
     '/((?!api|_next|.*\\.).*)'
   ]
 }

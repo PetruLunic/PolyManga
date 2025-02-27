@@ -1,7 +1,7 @@
 "use server"
 
-import {FormType as InfoFormType} from "@/app/(pages)/[locale]/user/[id]/settings/_components/InfoSection";
-import {FormType as SecurityFormType} from "@/app/(pages)/[locale]/user/[id]/settings/_components/SecuritySection";
+import {FormType as InfoFormType} from "@/app/(pages)/[locale]/user/settings/_components/InfoSection";
+import {FormType as SecurityFormType} from "@/app/(pages)/[locale]/user/settings/_components/SecuritySection";
 import {nanoid} from "nanoid";
 import {auth} from "@/auth";
 import dbConnect from "@/app/lib/utils/dbConnect";
@@ -13,8 +13,9 @@ import {DeleteObjectCommandOutput} from "@aws-sdk/client-s3/dist-types/commands"
 import bcrypt from "bcryptjs";
 import {HydratedDocument} from "mongoose";
 import {User} from "@/app/lib/graphql/schema";
-import {FormType as PreferencesFormType} from "@/app/(pages)/[locale]/user/[id]/settings/_components/PreferencesSection";
+import {FormType as PreferencesFormType} from "@/app/(pages)/[locale]/user/settings/_components/PreferencesSection";
 import {ChapterLanguage} from "@/app/types";
+import {getTranslations} from "next-intl/server";
 
 export async function modifyUserInfo(input: InfoFormType, formData?: FormData): Promise<{success: boolean, imageUrl?: string}> {
   const session = await auth();
@@ -33,7 +34,7 @@ export async function modifyUserInfo(input: InfoFormType, formData?: FormData): 
   const user = await UserModel.findOne({id: session.user.id});
 
   if (!user) {
-    throw new Error(`There is no user with ${session.user.id} id`);
+    throw new Error("Unexpected error!");
   }
 
   let imageUrl: string | undefined;
@@ -93,6 +94,7 @@ export async function modifyUserInfo(input: InfoFormType, formData?: FormData): 
 }
 
 export async function changePassword({oldPassword, newPassword}: SecurityFormType) {
+  const t = await getTranslations("server.user");
   const session = await auth();
 
   if (!session) {
@@ -108,18 +110,13 @@ export async function changePassword({oldPassword, newPassword}: SecurityFormTyp
   await dbConnect();
   const user: HydratedDocument<User> | null = await UserModel.findOne({id: session.user.id});
 
-  if (!user) {
-    throw new Error(`There is no user with ${session.user.id} id`);
-  }
-
-  // If user is signed up through Oauth
-  if (user.provider !== "CREDENTIALS") {
-    throw new Error(`You cannot change the password of ${user.provider.toLowerCase()} account`)
+  if (!user || user.provider !== "CREDENTIALS") {
+    throw new Error(t("unexpectedError"));
   }
 
   // If password are not matching
   if (!bcrypt.compareSync(oldPassword, user.password)) {
-    throw new Error ("Incorrect password");
+    throw new Error (t("incorrectPassword"));
   }
 
   // Hashing and saving new password
@@ -145,11 +142,13 @@ export async function changeUserPreferences({language}: PreferencesFormType) {
   const user: HydratedDocument<User> | null = await UserModel.findOne({id: session.user.id});
 
   if (!user) {
-    throw new Error(`There is no user with ${session.user.id} id`);
+    throw new Error("Unexpected error!");
   }
 
-  user.preferences.language = language ? language as ChapterLanguage : null;
-
+  user.preferences = {
+    ...user.preferences,
+    language: language as ChapterLanguage ?? null
+  }
   await user.save();
 
   return user.id;

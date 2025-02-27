@@ -7,13 +7,15 @@ import {useQuery} from "@apollo/client";
 import {GET_LATEST_UPLOADED_CHAPTERS} from "@/app/lib/graphql/queries";
 import {useInfiniteScroll} from "@/app/lib/hooks/useInfiniteScroll";
 import {Spinner} from "@heroui/react";
-import {useTranslations} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
+import {LocaleType} from "@/app/types";
 
 interface Props{
  initialChapters: GetLatestUploadedChaptersQuery["latestChapters"]
 }
 
 export default function LatestChaptersList({initialChapters}: Props) {
+  const locale = useLocale();
   const t = useTranslations("pages.home");
   const limit = 16; // Number of items per page
   const [chapters, setChapters] = useState(initialChapters); // Combined list of chapters
@@ -58,6 +60,7 @@ export default function LatestChaptersList({initialChapters}: Props) {
       {chapters.map(chapter =>
           <ChapterUpdateCard
               chapter={chapter}
+              locale={locale as LocaleType}
               key={chapter.id}
           />
       )}

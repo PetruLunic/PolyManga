@@ -4,7 +4,14 @@ import {Spinner} from "@heroui/react";
 import {Metadata} from "next";
 import {seoMetaData} from "@/app/lib/seo/metadata";
 
-export const metadata: Metadata = seoMetaData.manga;
+interface Props {
+  params: Promise<{locale: string}>
+}
+
+export async function generateMetadata({params}: Props): Promise<Metadata>  {
+  const {locale} = await params;
+  return await seoMetaData.manga(locale);
+}
 
 export default async function Page() {
 

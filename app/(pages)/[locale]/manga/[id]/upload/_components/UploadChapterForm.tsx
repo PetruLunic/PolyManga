@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Alert from "@/app/_components/Alert";
 
 interface Props{
-  mangaId: string;
+  slug: string;
   latestChapterNumber?: number;
 }
 
@@ -28,6 +28,7 @@ export interface SelectItem {
 export interface ImageInputSection {
   [key: string]: {
     language: ChapterLanguage,
+    title: string,
     images: File[]
   }
 }
@@ -36,11 +37,6 @@ const ChapterInputSchema = z.object({
   number: z
       .number({required_error: "Chapter number is required", invalid_type_error: "Chapter number must be a number"})
       .nonnegative("Chapter number must be positive")
-  ,
-  title: z
-      .string()
-      .min(1, "Chapter title must be at least 1 character long")
-      .max(50, "Chapter title must be maximum 50 characters long")
 })
 
 const languagesMap: SelectItem[] = Object.keys(ChapterLanguage)
@@ -54,10 +50,10 @@ interface FormData extends ChapterInputType {
   images: ImageInputSection
 }
 
-export default function UploadChapterForm({mangaId, latestChapterNumber}: Props) {
+export default function UploadChapterForm({slug, latestChapterNumber}: Props) {
   // Setting first input section default with first language, and empty images
   const [imageInputSections, setImageInputSections] =
-      useState<ImageInputSection>({[nanoid()]: {language: languagesMap[0].key, images: []}});
+      useState<ImageInputSection>({[nanoid()]: {language: languagesMap[0].key, images: [], title: ""}});
   const formRef = useRef<HTMLFormElement | null>(null);
   const {
     register,
@@ -82,7 +78,7 @@ export default function UploadChapterForm({mangaId, latestChapterNumber}: Props)
       const formData = new FormData(formRef.current);
 
       // Append additional data to FormData
-      formData.append("mangaId", mangaId);
+      formData.append("slug", slug);
 
       // Append images to formData
       for (let id in imageInputSections) {
@@ -93,6 +89,10 @@ export default function UploadChapterForm({mangaId, latestChapterNumber}: Props)
           return;
         }
 
+        // Append title to form data
+        formData.append(`title-${imageInputSections[id].language}`, imageInputSections[id].title);
+
+        // Append images to form data
         for (let image of imageInputSections[id].images) {
           formData.append(`images-${imageInputSections[id].language}`, image);
         }
@@ -147,15 +147,6 @@ export default function UploadChapterForm({mangaId, latestChapterNumber}: Props)
           />
           <div className="flex flex-col gap-3 md:flex-row">
             <Input
-                label="Chapter title"
-                type="text"
-                placeholder="Enter chapter title"
-                isInvalid={!!errors.title}
-                errorMessage={errors.title?.message}
-                defaultValue={`Chapter ${latestChapterNumber ? latestChapterNumber + 1 : ""}`}
-                {...register("title")}
-            />
-            <Input
                 label="Chapter number"
                 type="number"
                 placeholder="Enter chapter number"
@@ -187,7 +178,7 @@ export default function UploadChapterForm({mangaId, latestChapterNumber}: Props)
                     radius="full"
                     onPress={() =>
                         setImageInputSections(prev => {
-                          return {...prev, [nanoid()]: {language: languagesMap[0].key, images: []}}
+                          return {...prev, [nanoid()]: {language: languagesMap[0].key, images: [], title: ""}}
                         })
                     }
                 >

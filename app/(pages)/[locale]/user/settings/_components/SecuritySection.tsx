@@ -6,12 +6,16 @@ import {ChangePasswordSchema} from "@/app/lib/utils/zodSchemas";
 import z from "zod";
 import {Button} from "@heroui/react";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
-import {changePassword} from "@/app/(pages)/[locale]/user/[id]/settings/actions";
+import {changePassword} from "@/app/(pages)/[locale]/user/settings/actions";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useTranslations} from "next-intl";
 
 export type FormType = z.infer<typeof ChangePasswordSchema>;
 
 export default function SecuritySection() {
+  const tForm = useTranslations("form");
+  const tButton = useTranslations("common.ui.buttons");
+  const tAlert = useTranslations("pages.user.settings.alerts");
   const {
     handleSubmit,
     register,
@@ -28,14 +32,14 @@ export default function SecuritySection() {
     try {
       await changePassword(data);
 
-      addAlert({message: "Password changed", type: "success"});
+      addAlert({message: tAlert("passwordChanged"), type: "success"});
     } catch (e) {
       console.error(e);
 
       if (e && typeof e === "object" && "message" in e && typeof e.message === "string") {
-        addAlert({message: e.message, type: "danger", delay: 10000});
+        addAlert({message: e.message, type: "danger"});
       } else {
-        addAlert({message: "Unexpected error", type: "danger"})
+        addAlert({message: tAlert("unexpectedError"), type: "danger"})
       }
     }
   })
@@ -45,16 +49,16 @@ export default function SecuritySection() {
    <InputPassword
        isRequired
        autoFocus
-       label="Old password"
-       placeholder="Enter your password"
+       label={tForm("oldPassword")}
+       placeholder={tForm("placeholders.oldPassword")}
        errorMessage={errors.oldPassword?.message}
        isInvalid={!!errors.oldPassword}
        {...register("oldPassword")}
    />
     <InputPassword
         isRequired
-        label="New password"
-        placeholder="Enter your new password"
+        label={tForm("newPassword")}
+        placeholder={tForm("placeholders.newPassword")}
         errorMessage={errors.newPassword?.message}
         isInvalid={!!errors.newPassword}
         {...register("newPassword")}
@@ -65,7 +69,7 @@ export default function SecuritySection() {
         type="submit"
         isLoading={isSubmitting}
     >
-      Save
+      {tButton("save")}
     </Button>
   </form>
  );

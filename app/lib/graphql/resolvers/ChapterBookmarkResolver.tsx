@@ -37,8 +37,22 @@ export class ChapterBookmarkResolver {
 
   @Authorized(["USER", "MODERATOR"])
   @Mutation(() => ChapterBookmark, { nullable: true })
-  async addChapterBookmark(@Arg("chapterId") chapterId: string, @Ctx() ctx: ApolloContext): Promise<ChapterBookmark | null> {
-    const chapter: Chapter | null = await ChapterModel.findOne({id: chapterId});
+  async addChapterBookmark(
+    @Arg("slug") slug: string,
+    @Arg("number") number: number,
+    @Ctx() ctx: ApolloContext
+  ): Promise<ChapterBookmark | null> {
+    const manga: Manga | null = await MangaModel.findOne({slug}).lean();
+
+    if (!manga) {
+      throw new GraphQLError("Manga not found", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
+    const chapter: Chapter | null = await ChapterModel.findOne({number, mangaId: manga.id});
 
     if (!chapter) {
       throw new GraphQLError("Chapter not found", {
@@ -52,7 +66,7 @@ export class ChapterBookmarkResolver {
     await ChapterBookmarkModel.findOneAndDelete({userId: ctx.user?.id, mangaId: chapter.mangaId});
 
     // Create new bookmark
-    const newBookmark = new ChapterBookmarkModel({chapterId, mangaId: chapter.mangaId, userId: ctx.user?.id});
+    const newBookmark = new ChapterBookmarkModel({chapterId: chapter.id, mangaId: chapter.mangaId, userId: ctx.user?.id});
     await newBookmark.save();
 
     return newBookmark;

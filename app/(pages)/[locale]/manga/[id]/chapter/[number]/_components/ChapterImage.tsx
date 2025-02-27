@@ -2,11 +2,12 @@
 
 import {Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Image} from "@heroui/react";
 import {useEffect, useState} from "react";
-import {MultiLanguageImage} from "@/app/(pages)/manga/[id]/[chapter]/_utils/transformChapter";
 import {ChapterLanguage} from "@/app/__generated__/graphql";
 import {isStringInEnum} from "@/app/lib/utils/isStringinEnum";
 import NextImage from "next/image";
 import {useSession} from "next-auth/react";
+import {MultiLanguageImage} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_utils/transformChapter";
+import {useLocale} from "next-intl";
 
 interface Props{
   image: MultiLanguageImage,
@@ -16,7 +17,9 @@ interface Props{
 
 export default function ChapterImage({image, languageQuery, priority}: Props) {
   const session = useSession();
-  const [language, setLanguage] = useState<ChapterLanguage>(Object.keys(image)[0] as ChapterLanguage);
+  const locale = useLocale();
+  const languages = Object.keys(image);
+  const [language, setLanguage] = useState<ChapterLanguage>((languages[0] as ChapterLanguage));
   const [offset, setOffset] = useState<number>(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   let preferredLanguage = session.data?.user?.preferences?.language
@@ -27,6 +30,13 @@ export default function ChapterImage({image, languageQuery, priority}: Props) {
 
     setLanguage(languageQuery as ChapterLanguage);
   }, [languageQuery]);
+
+  // Set the locale language as default if exists in chapter
+  useEffect(() => {
+    const lang = languages.find(lang => lang.toLowerCase() === locale) as ChapterLanguage;
+    if (!lang) return;
+    setLanguage(lang);
+  }, [locale]);
 
   // If the image has not this language
   if (!image[language]) return null;

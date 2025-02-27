@@ -8,12 +8,16 @@ import MangaList from "@/app/_components/MangaList";
 import {getFragmentData} from "@/app/__generated__";
 import {MANGA_CARD} from "@/app/lib/graphql/queries";
 import MangaCard from "@/app/_components/MangaCard";
+import {useLocale, useTranslations} from "next-intl";
+import {LocaleType} from "@/app/types";
 
 interface Props{
   data?: BookmarksQuery
 }
 
 export default function BookmarksPage({data}: Props) {
+  const t = useTranslations("components.buttons.bookmark");
+  const locale = useLocale();
   const {setParam} = useQueryParams();
   const bookmarkType = useSearchParams().get("type");
   const bookmarks = data?.user?.bookmarks
@@ -33,38 +37,38 @@ export default function BookmarksPage({data}: Props) {
           tab: "px-2 text-sm md:text-base"
     }}
     >
-      <Tab key="reading" title={`Reading (${bookmarks?.reading?.length})`}>
+      <Tab key="reading" title={`${t("reading")} (${bookmarks?.reading?.length})`}>
         <MangaList>
           {getFragmentData(MANGA_CARD, bookmarks?.reading)?.map(manga =>
-            <MangaCard manga={manga} key={manga.id} isExtendable/>
+            <MangaCard manga={manga} key={manga.id} locale={locale as LocaleType} isExtendable/>
           )}
         </MangaList>
       </Tab>
-      <Tab key="inPlans" title={`In plans (${bookmarks?.inPlans?.length})`}>
+      <Tab key="inPlans" title={`${t("inPlans")} (${bookmarks?.inPlans?.length})`}>
         <MangaList>
           {getFragmentData(MANGA_CARD, bookmarks?.inPlans)?.map(manga =>
-              <MangaCard manga={manga} key={manga.id} isExtendable/>
+              <MangaCard manga={manga} key={manga.id} locale={locale as LocaleType} isExtendable/>
           )}
         </MangaList>
       </Tab>
-      <Tab key="finished" title={`Finished (${bookmarks?.finished?.length})`}>
+      <Tab key="finished" title={`${t("finished")} (${bookmarks?.finished?.length})`}>
         <MangaList>
           {getFragmentData(MANGA_CARD, bookmarks?.finished)?.map(manga =>
-              <MangaCard manga={manga} key={manga.id} isExtendable/>
+              <MangaCard manga={manga} key={manga.id} locale={locale as LocaleType} isExtendable/>
           )}
         </MangaList>
       </Tab>
-      <Tab key="dropped" title={`Dropped (${bookmarks?.dropped?.length})`}>
+      <Tab key="dropped" title={`${t("dropped")} (${bookmarks?.dropped?.length})`}>
         <MangaList>
           {getFragmentData(MANGA_CARD, bookmarks?.dropped)?.map(manga =>
-              <MangaCard manga={manga} key={manga.id} isExtendable/>
+              <MangaCard manga={manga} key={manga.id} locale={locale as LocaleType} isExtendable/>
           )}
         </MangaList>
       </Tab>
-      <Tab key="favourite" title={`Favourite (${bookmarks?.favourite?.length})`}>
+      <Tab key="favourite" title={`${t("favourite")} (${bookmarks?.favourite?.length})`}>
         <MangaList>
           {getFragmentData(MANGA_CARD, bookmarks?.favourite)?.map(manga =>
-              <MangaCard manga={manga} key={manga.id} isExtendable/>
+              <MangaCard manga={manga} key={manga.id} locale={locale as LocaleType} isExtendable/>
           )}
         </MangaList>
       </Tab>

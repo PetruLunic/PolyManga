@@ -6,6 +6,7 @@ import {IoBookmarks, IoSettingsSharp} from "react-icons/io5";
 import {CiLogout} from "react-icons/ci";
 import {MdHistory} from "react-icons/md";
 import {useTranslations} from "next-intl";
+import {Link} from "@/i18n/routing";
 
 export default function UserAvatar() {
   const session = useSession();
@@ -23,27 +24,33 @@ export default function UserAvatar() {
          />
        </DropdownTrigger>
        <DropdownMenu aria-label="Profile Actions" variant="flat">
-         <DropdownItem key="profile" className="h-14 gap-2">
+         <DropdownItem
+           key="profile"
+           className="h-14 gap-2"
+         >
            <p className="font-semibold">{session.data.user?.name}</p>
          </DropdownItem>
          <DropdownItem
              startContent={<IoBookmarks />}
              key="bookmarks"
-             href={`/user/${session.data.user.id}/bookmarks`}
+             as={Link}
+             href={`/user/bookmarks`}
          >
            {t("bookmarks")}
          </DropdownItem>
          <DropdownItem
              startContent={<MdHistory />}
              key="history"
-             href={`/user/${session.data.user.id}/history`}
+             as={Link}
+             href={`/user/history`}
          >
            {t("history")}
          </DropdownItem>
          <DropdownItem
              startContent={<IoSettingsSharp />}
              key="settings"
-             href={`/user/${session.data.user.id}/settings`}
+             as={Link}
+             href={`/user/settings`}
          >
            {t("settings")}
          </DropdownItem>

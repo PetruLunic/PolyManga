@@ -13,12 +13,12 @@ export const revalidate = 10;
 export default async function Page({params}: Props) {
   const {id} = await params;
   const client = createApolloClient();
-  const {data} = await client.query({query: GET_MANGA_EDIT, variables: {id: getMangaIdFromURL(id)}})
+  const {data} = await client.query({query: GET_MANGA_EDIT, variables: {id}})
       .catch(() => notFound());
 
   if (!data.manga) notFound();
 
   return (
-      <EditMangaForm manga={data.manga}/>
+      <EditMangaForm manga={JSON.parse(JSON.stringify(data.manga))}/>
   );
 };

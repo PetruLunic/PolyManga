@@ -10,8 +10,14 @@ import {IoIosMail} from "react-icons/io";
 import {generateAndSendEmailToken} from "@/app/lib/userActions";
 import {useTranslations} from "next-intl";
 import VerifyEmailForm from "@/app/_components/signForms/VerifyEmailForm";
+import {UserSchema} from "@/app/lib/utils/zodSchemas";
+import z from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
 
 type Props = Partial<ModalProps>;
+
+const FormSchema = UserSchema.pick({email: true});
+type FormType = z.infer<typeof FormSchema>;
 
 export default function ForgotPasswordModal1({isOpen, onOpenChange, onClose}: Props) {
   const t = useTranslations("components.modals.forgotPassword");
@@ -25,7 +31,9 @@ export default function ForgotPasswordModal1({isOpen, onOpenChange, onClose}: Pr
       errors,
       isSubmitting,
     }
-  } = useForm<{ email: string }>();
+  } = useForm<FormType>({
+    resolver: zodResolver(FormSchema)
+  });
 
   const onSubmit = handleSubmit(async data => {
     const response = await generateAndSendEmailToken(data.email, "resetPassword");

@@ -4,15 +4,17 @@ import {Tab, Tabs} from "@heroui/react";
 import {useQueryParams} from "@/app/lib/hooks/useQueryParams";
 import {useSearchParams} from "next/navigation";
 import {Session} from "next-auth";
-import InfoSection from "@/app/(pages)/[locale]/user/[id]/settings/_components/InfoSection";
-import SecuritySection from "@/app/(pages)/[locale]/user/[id]/settings/_components/SecuritySection";
-import PreferencesSection from "@/app/(pages)/[locale]/user/[id]/settings/_components/PreferencesSection";
+import InfoSection from "@/app/(pages)/[locale]/user/settings/_components/InfoSection";
+import SecuritySection from "@/app/(pages)/[locale]/user/settings/_components/SecuritySection";
+import PreferencesSection from "@/app/(pages)/[locale]/user/settings/_components/PreferencesSection";
+import {useTranslations} from "next-intl";
 
 interface Props{
   user: Session["user"]
 }
 
 export default function SettingsPage({user}: Props) {
+  const t = useTranslations("pages.user.settings");
   const {setParam} = useQueryParams();
   const section = useSearchParams().get("section");
 
@@ -33,19 +35,19 @@ export default function SettingsPage({user}: Props) {
     >
       <Tab
         key="information"
-        title="Information"
+        title={t("information")}
       >
         <InfoSection user={user}/>
       </Tab>
       <Tab
         key="security"
-        title="Security"
+        title={t("security")}
       >
         <SecuritySection/>
       </Tab>
       <Tab
         key="preferences"
-        title="Preferences"
+        title={t("preferences")}
       >
         <PreferencesSection user={user}/>
       </Tab>

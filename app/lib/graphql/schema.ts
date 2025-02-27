@@ -77,6 +77,9 @@ export class ChapterVersion {
   @Field(() => [ChapterImage])
   images: ChapterImage[]
 
+  @Field()
+  title: string
+
   @Field(() => ChapterLanguage)
   language: ChapterLanguage
 }
@@ -94,9 +97,6 @@ export class Chapter {
 
   @Field(() => [ChapterLanguage])
   languages: ChapterLanguage[]
-
-  @Field()
-  title: string;
 
   @Field(() => ID)
   mangaId: string;
@@ -454,6 +454,9 @@ export class ChapterVersionInput implements ChapterVersion {
   @Field(() => [ImageInput])
   images: ImageInput[]
 
+  @Field()
+  title: string
+
   @Field(() => ChapterLanguage)
   language: ChapterLanguage
 }
@@ -462,9 +465,6 @@ export class ChapterVersionInput implements ChapterVersion {
 export class AddChapterInput implements Partial<Chapter> {
   @Field(() => ID)
   id: string;
-
-  @Field()
-  title: string;
 
   @Field(() => Float)
   number: number;

@@ -10,10 +10,11 @@ import {Button, Image} from "@heroui/react";
 import {CiImageOn} from "react-icons/ci";
 import z from "zod";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
-import {modifyUserInfo} from "@/app/(pages)/[locale]/user/[id]/settings/actions";
+import {modifyUserInfo} from "@/app/(pages)/[locale]/user/settings/actions";
 import {useSession} from "next-auth/react";
 import {USER_IMAGE_MAX_SIZE} from "@/app/lib/utils/constants";
 import {useMemo} from "react";
+import {useTranslations} from "next-intl";
 
 interface Props{
   user: Session["user"]
@@ -22,6 +23,9 @@ interface Props{
 export type FormType = z.infer<typeof UserInfoSchema>;
 
 export default function InfoSection({user}: Props) {
+  const tForm = useTranslations("form");
+  const tButton = useTranslations("common.ui.buttons");
+  const tAlert = useTranslations("pages.user.settings.alerts");
   const {
     handleSubmit,
     control,
@@ -65,15 +69,11 @@ export default function InfoSection({user}: Props) {
       }
 
       // If no error was thrown then it was successful
-      addAlert({message: "User info updated", type: "success"});
+      addAlert({message: tAlert("userInfoUpdated"), type: "success"});
     } catch (e) {
       console.error(e);
 
-      if (e && typeof e === "object" && "message" in e && typeof e.message === "string") {
-        addAlert({message: e.message, type: "danger", delay: 10000});
-      } else {
-        addAlert({message: "Unexpected error", type: "danger"})
-      }
+      addAlert({message: tAlert("unexpectedError"), type: "danger"});
     }
   })
 
@@ -85,8 +85,8 @@ export default function InfoSection({user}: Props) {
     <Input
       isRequired
       autoFocus
-      label="Name"
-      placeholder="Your name"
+      label={tForm("name")}
+      placeholder={tForm("placeholders.name")}
       errorMessage={errors.name?.message}
       defaultValue={user.name}
       isInvalid={!!errors.name}
@@ -94,13 +94,12 @@ export default function InfoSection({user}: Props) {
       />
     <Input
       isDisabled
-      label="Email"
-      placeholder="Your email"
+      label={tForm("email")}
       defaultValue={user.email}
       />
     <div {...getRootProps({className: 'dropzone w-48'})}>
       <input {...getInputProps()} />
-      <div className={`flex flex-col w-48 border ${errors.root && errors.root["image"] ? "border-danger text-danger" : "border-gray-500 text-gray-400"}  border-dashed rounded-2xl ease-in duration-100 cursor-pointer hover:bg-gray-900/10`}>
+      <div className={`flex flex-col w-48 border ${fileRejections.length !== 0 ? "border-danger text-danger" : "border-gray-500 text-gray-400"} border-dashed rounded-2xl ease-in duration-100 cursor-pointer hover:bg-gray-900/10`}>
         {acceptedFiles.length
             ? <Image
                 src={URL.createObjectURL(acceptedFiles[0])}
@@ -109,12 +108,11 @@ export default function InfoSection({user}: Props) {
             />
             : <div className="flex flex-col items-center justify-center py-10 text-center">
               <CiImageOn className="text-3xl"/>
-              <p className="font-bold">Profile image</p>
-              <p>(Only *.jpeg, *.jpg and *.png images will be accepted)</p>
-              <p>No larger than 1 MB</p>
+              <p className="font-bold">{tForm("profileImage")}</p>
+              <p>{tForm("placeholders.profileImage.fileTypes")}</p>
+              <p>{tForm("placeholders.profileImage.maxSize")}</p>
             </div>}
       </div>
-      {errors.root && errors.root["image"] && <div className="text-tiny text-danger">{errors.root["image"].message}</div>}
       {fileRejections.length !== 0 &&
           <ul>
             {fileRejections.map((file, index) =>
@@ -132,7 +130,7 @@ export default function InfoSection({user}: Props) {
         isLoading={isSubmitting}
         isDisabled={!session || isTheSameInfo}
     >
-      Save
+      {tButton("save")}
     </Button>
   </form>
  );

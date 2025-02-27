@@ -19,17 +19,20 @@ import {FaRegTrashCan} from "react-icons/fa6";
 import {useMutation} from "@apollo/client";
 import {DELETE_CHAPTERS} from "@/app/lib/graphql/mutations";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
-import Link from "next/link";
-import {getMangaIdFromURL} from "@/app/lib/utils/URLFormating";
+import {extractChapterTitle} from "@/app/lib/utils/extractionUtils";
+import {useLocale} from "next-intl";
+import {LocaleType} from "@/app/types";
+import {Link} from "@/i18n/routing";
 
 type ChapterList = Exclude<ChaptersQuery["manga"], undefined | null>["chapters"]
 
 interface Props{
   chapters?: ChapterList,
-  mangaId: string,
+  slug: string,
 }
 
-export default function ChapterListEdit({chapters, mangaId,}: Props) {
+export default function ChapterListEdit({chapters, slug}: Props) {
+  const locale = useLocale();
   const {isOpen, onOpen, onClose, onOpenChange} = useDisclosure();
   const [currentChapters, setCurrentChapters] = useState<ChapterList | undefined>(chapters);
   const [descending, setDescending] = useState(true);
@@ -39,7 +42,7 @@ export default function ChapterListEdit({chapters, mangaId,}: Props) {
 
   const onDeleteMany = async () => {
     try {
-      await deleteChapters({variables: {mangaId: getMangaIdFromURL(mangaId), ids: selectedChapters}});
+      await deleteChapters({variables: {slug, ids: selectedChapters}});
       addAlert({type: "success", message: `${selectedChapters.length} chapters deleted`});
 
       // Delete the selected chapters from the current chapters
@@ -56,8 +59,9 @@ export default function ChapterListEdit({chapters, mangaId,}: Props) {
 
   const onDeleteOne = (selectedChapter: ChapterList[number]) => async () => {
     try {
-      await deleteChapters({variables: {mangaId: getMangaIdFromURL(mangaId), ids: [selectedChapter.id]}});
-      addAlert({type: "success", message: `${selectedChapter.title} was deleted!`});
+      await deleteChapters({variables: {slug, ids: [selectedChapter.id]}});
+      const title = extractChapterTitle(selectedChapter.versions, locale as LocaleType);
+      addAlert({type: "success", message: `${title} was deleted!`});
 
       // Delete the chapter from the current chapters
       setCurrentChapters(prev => prev?.filter(chapter => selectedChapter.id !== chapter.id));
@@ -119,14 +123,14 @@ export default function ChapterListEdit({chapters, mangaId,}: Props) {
                    <span>Chapter {chapter.number}</span>
                  </div>
                  <div className="flex gap-1 items-center">
-                   <span>{new Date(parseInt(chapter.createdAt)).toLocaleDateString()}</span>
+                   <span>{new Date(parseInt(chapter.createdAt)).toLocaleDateString(locale)}</span>
                    <Button
                      isIconOnly
                      radius="full"
                      variant="light"
                      className="z-10"
                      as={Link}
-                     href={`/manga/${mangaId}/${chapter.id}/edit`}
+                     href={`/manga/${slug}/chapter/${chapter.number}/edit`}
                    >
                      <FaRegEdit/>
                    </Button>

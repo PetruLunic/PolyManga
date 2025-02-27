@@ -16,11 +16,6 @@ export const ChapterSchema = new Schema<Chapter>({
     required: [true, "Chapter must have a order number"],
     min: 0
   },
-  title: {
-    type: String,
-    required: [true, "Chapter must have a title"],
-    maxlength: [50, "Title cannot be more than 50 characters"]
-  },
   mangaId: {
     type: String,
     required: [true, "Chapter must be linked to a manga"]
@@ -45,8 +40,15 @@ export const ChapterSchema = new Schema<Chapter>({
         type: Number,
         required: [true, "Image should have a height"],
       }
-    }]
+    }],
+    title: {
+      type: String,
+      required: [true, "Chapter must have a title"],
+      maxlength: [50, "Title cannot be more than 50 characters"]
+    },
   }],
 }, {timestamps: true})
+
+ChapterSchema.index({ number: 1, mangaId: 1 }); // Unique chapter number per manga
 
 export default mongoose.models["Chapter"] as ChapterModel || model<Chapter, ChapterModel>("Chapter", ChapterSchema)
