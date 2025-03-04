@@ -18,6 +18,7 @@ import {getTranslations} from "next-intl/server";
 import {Link, routing} from "@/i18n/routing";
 import {extractMangaTitle} from "@/app/lib/utils/extractionUtils";
 import {LocaleType} from "@/app/types";
+import LinkButton from "@/app/_components/LinkButton";
 
 export async function generateMetadata({ params}: Props): Promise<Metadata> {
   const {id, locale} = await params;
@@ -109,31 +110,26 @@ export default async function Page({params}: Props) {
             <div className="flex gap-3">
               <div className="flex gap-1 items-center">
                 {pageT("status")}
-                <Link
+                <LinkButton
                   href={`/manga/?status=${manga?.status}`}
+                  variant="flat"
+                  size="sm"
+                  className="font-light text-sm"
+                  as="span"
                 >
-                  <Button
-                    variant="flat"
-                    size="sm"
-                    className="font-light text-sm"
-                  >
-                    {mangaT(`status.${manga?.status}`)}
-                  </Button>
-                </Link>
+                  {mangaT(`status.${manga?.status}`)}
+                </LinkButton>
               </div>
               <div className="flex gap-1 items-center">
                 {pageT("type")}
-                <Link
+                <LinkButton
                   href={`/manga/?type=${manga?.type}`}
+                  variant="flat"
+                  size="sm"
+                  className="font-light text-sm"
                 >
-                  <Button
-                    variant="flat"
-                    size="sm"
-                    className="font-light text-sm"
-                  >
-                    {mangaT(`type.${manga?.type}`)}
-                  </Button>
-                </Link>
+                  {mangaT(`type.${manga?.type}`)}
+                </LinkButton>
               </div>
             </div>
           </div>
@@ -193,18 +189,15 @@ export default async function Page({params}: Props) {
                 <p>{pageT("genres")}</p>
                 <div className="flex flex-wrap gap-2">
                   {manga?.genres.map(genre =>
-                    <Link
+                    <LinkButton
                       key={genre}
                       href={`/manga/?genre=${genre}`}
+                      variant="flat"
+                      size="sm"
+                      className="font-light text-sm"
                     >
-                      <Button
-                        variant="flat"
-                        size="sm"
-                        className="font-light text-sm"
-                      >
-                        {mangaT(`genres.${genre}`)}
-                      </Button>
-                    </Link>
+                      {mangaT(`genres.${genre}`)}
+                    </LinkButton>
                   )}
                 </div>
               </div>
@@ -213,18 +206,15 @@ export default async function Page({params}: Props) {
                 <div className="flex flex-wrap gap-2">
                   {manga?.languages.map(language =>
                       <div key={language} className="text-gray-300 font-light">
-                        <Link
+                        <LinkButton
                           key={language}
                           href={`/manga/?language=${language}`}
+                          variant="flat"
+                          size="sm"
+                          className="font-light text-sm"
                         >
-                          <Button
-                            variant="flat"
-                            size="sm"
-                            className="font-light text-sm"
-                          >
-                            {language}
-                          </Button>
-                        </Link>
+                          {language}
+                        </LinkButton>
                       </div>
                   )}
                 </div>

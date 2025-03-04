@@ -21,8 +21,7 @@ export default function ChapterBookmarkFetch({slug, number}: Props) {
   useEffect(() => {
     if (firstFetchRef.current) return;
     if (!session.data) return;
-    if (!data) return;
-    if (data.getBookmarkedChapter?.chapter?.number && number <= data.getBookmarkedChapter?.chapter?.number) return;
+    if (data?.getBookmarkedChapter?.chapter?.number && number <= data.getBookmarkedChapter?.chapter?.number) return;
 
     try {
       // Fetching only one time
