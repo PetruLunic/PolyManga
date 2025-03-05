@@ -4,6 +4,11 @@ import PopularMangaList from "@/app/_components/PopularMangaList";
 import LatestChaptersList from "@/app/_components/LatestChaptersList";
 import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
 import {LocaleType} from "@/app/types";
+import {locales} from "@/i18n/routing";
+
+export async function generateStaticParams() {
+  return locales.map(locale => ({locale}));
+}
 
 // 1 hours revalidation
 export const revalidate = 3600;

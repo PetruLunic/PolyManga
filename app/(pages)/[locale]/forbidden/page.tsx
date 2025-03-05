@@ -1,6 +1,10 @@
 import {Button} from "@heroui/react";
-import {Link} from "@/i18n/routing";
+import {Link, locales} from "@/i18n/routing";
 import {getTranslations} from "next-intl/server";
+
+export async function generateStaticParams() {
+  return locales.map(locale => ({locale}));
+}
 
 export default async function ForbiddenPage() {
   const t = await getTranslations('pages.forbidden');

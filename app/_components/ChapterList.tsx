@@ -160,6 +160,7 @@ export default function ChapterList({chapters, selectedChapter, mangaSlug, langu
              </Button>
              <Button
                as={Link}
+               prefetch={false}
                className="w-full flex justify-between items-center h-full"
                variant={selectedChapter === chapter.number.toString() ? "solid" : "light"}
                href={`/manga/${mangaSlug}/chapter/${chapter.number}`}

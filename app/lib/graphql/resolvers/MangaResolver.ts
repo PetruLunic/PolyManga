@@ -215,7 +215,7 @@ export class MangaResolver {
       // Increment views for comics
       const manga = await MangaModel.findOneAndUpdate(
           {
-            id,
+            slug: id,
             isDeleted: false,
             isBanned: false
           }, {

@@ -4,12 +4,12 @@ import "../../globals.css";
 import Providers from "@/app/providers";
 import NavbarRoot from "@/app/_components/navbar/NavbarRoot";
 import {SessionProviderProps} from "next-auth/react";
-import {seoMetaData, siteName, type} from "@/app/lib/seo/metadata";
+import {seoMetaData} from "@/app/lib/seo/metadata";
 import {NextIntlClientProvider} from "next-intl";
 import {getMessages} from "next-intl/server";
 import RefreshCheck from "@/app/_components/RefreshCheck";
 import {setZodErrorMap} from "@/app/lib/utils/zodErrorMap";
-import {notFound} from "next/navigation";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,7 +37,7 @@ export default async function RootLayout({children, params}: Props) {
       style={{ colorScheme: 'dark' }}
     >
     <body
-        className={inter.className + " before:bg-[url('https://img.freepik.com/free-vector/blurred-abstract-background-design_1107-169.jpg')]" +
+        className={inter.className + " before:bg-[url('/main-bg.avif')]" +
             " bg-black/50 min-h-screen before:bg-fixed before:bg-cover before:bg-no-repeat before:bg-center " +
             "before:bg-black/50 before:content-[''] before:h-full before:w-full before:block before:t-0 before:l-0 before:fixed before:z-[-1]"
         }>
@@ -53,6 +53,7 @@ export default async function RootLayout({children, params}: Props) {
         <RefreshCheck/>
       </Providers>
     </NextIntlClientProvider>
+    <SpeedInsights />
     </body>
     </html>
   );
