@@ -16,7 +16,7 @@ export default function ChapterListModal({data}: Props) {
   const t = useTranslations("common.manga");
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const {number, id} = useParams<{id: string, number: string}>();
-  const maxNumberOfMangaTitleCharacters = data.chapter.languages.length > 1 ? 10 : 20;
+  const maxNumberOfMangaTitleCharacters = data.chapter.languages.length > 1 ? 10 : 15;
   const locale = useLocale();
   const mangaTitle = extractMangaTitle(data.manga?.title ?? [], locale as LocaleType)
   const chapterTitle = extractChapterTitle(data.chapter.versions, locale as LocaleType);
@@ -26,10 +26,10 @@ export default function ChapterListModal({data}: Props) {
     <Button
         variant="flat"
         radius="none"
-        className="h-full px-3 flex-col justify-evenly gap-0 md:px-6 md:max-w-none"
+        className="h-full px-2 sm:px-3 flex-col justify-evenly gap-0 md:px-6 md:max-w-none"
         onPress={() => setTimeout(onOpen, 10)}
     >
-      <div className="sm:hidden">
+      <div className="sm:hidden text-sm">
         {mangaTitle.length > maxNumberOfMangaTitleCharacters
           ? mangaTitle.slice(0, maxNumberOfMangaTitleCharacters) + "..."
           : mangaTitle}

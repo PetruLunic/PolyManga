@@ -1,15 +1,16 @@
 "use client"
 
-import {Button, Navbar, NavbarContent, NavbarItem} from "@heroui/react";
+import {Button, NavbarContent, NavbarItem} from "@heroui/react";
 import {useParams} from "next/navigation";
 import { IoArrowBackSharp } from "react-icons/io5";
 import LanguageSelect from "@/app/_components/navbar/LanguageSelect";
 import ChapterListModal from "@/app/_components/ChapterListModal";
 import {Manga_ChapterQuery} from "@/app/__generated__/graphql";
 import {createPortal} from "react-dom";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {FaChevronLeft, FaChevronRight} from "react-icons/fa";
 import {Link} from "@/i18n/routing";
+import Navbar from "@/app/_components/Navbar";
 
 interface Props {
   data: Manga_ChapterQuery
@@ -18,7 +19,9 @@ interface Props {
 export default function NavbarChapter({data}: Props) {
   const {id} = useParams<{id: string, chapter: string}>();
   const [portalDiv, setPortalDiv] = useState<Element | null>(null);
+  const [shouldHideOnScroll, setShouldHideOnScroll] = useState(true);
   const noLanguageSelect = data.chapter.languages.length < 2;
+  const prevPositionRef = useRef(0);
 
   useEffect(() => {
     setPortalDiv(document.querySelector("#navbar-portal"));
@@ -28,7 +31,12 @@ export default function NavbarChapter({data}: Props) {
 
  return (
      <>
-       {createPortal(<Navbar shouldHideOnScroll classNames={{ wrapper: "p-1" }}>
+       {createPortal(
+         <Navbar
+           shouldHideOnScroll
+           scrollThreshold={500}
+           classNames={{ wrapper: "p-1 gap-2 sm:gap-4" }}
+         >
          <NavbarContent justify="start" className="gap-1">
            <NavbarItem className="h-full">
              <Button
@@ -38,7 +46,7 @@ export default function NavbarChapter({data}: Props) {
                  href={`/manga/${id}`}
                  size="lg"
                  isIconOnly
-                 className={`h-full ${noLanguageSelect ? "w-[--navbar-height]" : ""} md:w-[--navbar-height]`}
+                 className={`h-full md:w-[--navbar-height]`}
              >
                <IoArrowBackSharp size={20}/>
              </Button>
@@ -57,7 +65,7 @@ export default function NavbarChapter({data}: Props) {
                  isDisabled={data.chapter.isFirst}
                  isIconOnly
                  radius="none"
-                 className={`h-full ${noLanguageSelect ? "w-[--navbar-height]" : ""} md:w-[--navbar-height]`}
+                 className={`h-full ${noLanguageSelect ? "w-14" : ""} md:w-[--navbar-height]`}
                  href={`/manga/${id}/chapter/${data.chapter.prevChapter?.number}`}
                  as={Link}
              >
@@ -70,7 +78,7 @@ export default function NavbarChapter({data}: Props) {
                  isDisabled={data.chapter.isLast}
                  isIconOnly
                  radius="none"
-                 className={`h-full ${noLanguageSelect ? "w-[--navbar-height]" : ""} md:w-[--navbar-height]`}
+                 className={`h-full ${noLanguageSelect ? "w-14" : ""} md:w-[--navbar-height]`}
                  href={`/manga/${id}/chapter/${data.chapter.nextChapter?.number}`}
                  as={Link}
              >

@@ -1,11 +1,12 @@
 "use client"
 
-import {Button, Navbar, NavbarBrand, NavbarContent, NavbarItem} from "@heroui/react";
+import {Button, NavbarBrand, NavbarContent, NavbarItem} from "@heroui/react";
 import {useParams} from "next/navigation";
 import SignUpButton from "@/app/_components/navbar/SignUpButton";
 import {useTranslations} from "next-intl";
 import LocaleSelect from "@/app/_components/LocaleSelect";
 import { Link } from "@/i18n/routing";
+import Navbar from "@/app/_components/Navbar";
 
 
 export default function NavbarRoot() {

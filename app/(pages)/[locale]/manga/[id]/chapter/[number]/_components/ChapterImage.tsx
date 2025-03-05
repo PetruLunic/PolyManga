@@ -15,7 +15,7 @@ interface Props{
   priority?: boolean
 }
 
-export default function ChapterImage({image, languageQuery, priority}: Props) {
+export default function ChapterImage({image, languageQuery}: Props) {
   const session = useSession();
   const locale = useLocale();
   const languages = Object.keys(image);
@@ -52,7 +52,7 @@ export default function ChapterImage({image, languageQuery, priority}: Props) {
         width={image[language]?.width}
         height={image[language]?.height}
         style={{height: "auto"}}
-        priority={priority}
+        priority
         onClick={() => {
           if (preferredLanguage) {
             setLanguage(preferredLanguage[0].toUpperCase() + preferredLanguage.substring(1) as ChapterLanguage);
@@ -119,7 +119,7 @@ export default function ChapterImage({image, languageQuery, priority}: Props) {
                  width={image[language]?.width}
                  height={image[language]?.height}
                  style={{height: "auto"}}
-                 priority={priority}
+                 priority
                  radius="none"
              />
          </DropdownTrigger>
