@@ -2,8 +2,6 @@ import {NextRequest, NextResponse} from "next/server";
 import {getSession} from "@/app/lib/utils/getSession";
 import createMiddleware from "next-intl/middleware";
 import {locales, routing} from "@/i18n/routing";
-import {notFound} from "next/navigation";
-import {NotFoundError} from "rxjs";
 
 const userPaths = [
   "/user/bookmarks",
@@ -42,7 +40,6 @@ const basePaths = ["manga", "user", "unauthorized", "forbidden"] as const;
 const intlMiddleware = createMiddleware(routing);
 
 export default async function middleware(req: NextRequest) {
-  const forbiddenUrl = new URL('/forbidden', req.url).toString();
   const unauthorizedUrl = new URL('/unauthorized', req.url).toString();
   const path = req.nextUrl.pathname;
   const session = await getSession(req);
@@ -98,6 +95,6 @@ export default async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next|.*\\.).*)'
+    '/((?!api|_next|_vercel|.*\\.).*)'
   ]
 }

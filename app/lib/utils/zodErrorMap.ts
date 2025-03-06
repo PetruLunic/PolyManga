@@ -148,7 +148,9 @@ export const makeZodI18nMap: MakeZodI18nMap = (option) => (issue, ctx) => {
           });
         }
       } else {
+        // @ts-ignore
         message = t(`errors.invalid_string.${issue.validation}`, {
+          // @ts-ignore
           validation: t(`validations.${issue.validation}`),
           ...path,
         });
@@ -237,5 +239,6 @@ export const setZodErrorMap = async (locale: string) => {
   const t = await getTranslations({namespace: "zod", locale});
   const tForm = await getTranslations({namespace: "form", locale});
   const tCustom = await getTranslations({namespace: "form.customErrors", locale});
+  // @ts-ignore
   setErrorMap(makeZodI18nMap({ t, tForm, tCustom }));
 }

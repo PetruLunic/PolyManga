@@ -8,7 +8,6 @@ import {useRouter} from "@/i18n/routing";
 export default function RefreshCheck() {
   const refresh = useSearchParams().get("refresh");
   const writeParams = useQueryParams();
-  const router = useRouter();
 
   useEffect(() => {
     if (refresh === "true") {

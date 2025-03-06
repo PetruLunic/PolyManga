@@ -5,6 +5,7 @@ import LatestChaptersList from "@/app/_components/LatestChaptersList";
 import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
 import {LocaleType} from "@/app/types";
 import {locales} from "@/i18n/routing";
+import {setRequestLocale} from "next-intl/server";
 
 export async function generateStaticParams() {
   return locales.map(locale => ({locale}));
@@ -21,6 +22,7 @@ interface Props {
 
 export default async function Page({params}: Props) {
   const {locale} = await params;
+  setRequestLocale(locale);
 
   const [{data: dailyMangaData},
     {data: weeklyMangaData},

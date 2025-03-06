@@ -4,7 +4,6 @@ import dbConnect from "@/app/lib/utils/dbConnect";
 import {schema} from "@/app/lib/graphql/resolvers";
 import {auth} from "@/auth";
 import {GraphQLError} from "graphql/error";
-import {isGraphQLError} from "@/app/lib/utils/errorsNarrowing";
 
 // Graphql query executor
 export async function queryGraphql<TData, TVariables extends { [key: string]: unknown } | undefined>(

@@ -6,7 +6,7 @@ import NavbarRoot from "@/app/_components/navbar/NavbarRoot";
 import {SessionProviderProps} from "next-auth/react";
 import {seoMetaData} from "@/app/lib/seo/metadata";
 import {NextIntlClientProvider} from "next-intl";
-import {getMessages} from "next-intl/server";
+import {getMessages, setRequestLocale} from "next-intl/server";
 import RefreshCheck from "@/app/_components/RefreshCheck";
 import {setZodErrorMap} from "@/app/lib/utils/zodErrorMap";
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -30,6 +30,8 @@ export default async function RootLayout({children, params}: Props) {
   const {session, locale} = await params;
   await setZodErrorMap(locale);
   const messages = await getMessages();
+  setRequestLocale(locale);
+
   return (
     <html
       lang={locale}
@@ -41,7 +43,7 @@ export default async function RootLayout({children, params}: Props) {
             " bg-black/50 min-h-screen before:bg-fixed before:bg-cover before:bg-no-repeat before:bg-center " +
             "before:bg-black/50 before:content-[''] before:h-full before:w-full before:block before:t-0 before:l-0 before:fixed before:z-[-1]"
         }>
-    <NextIntlClientProvider messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={messages}>
       <Providers session={session}>
         <NavbarRoot/>
         <div className="z-40 w-full h-auto sticky top-0 inset-x-0" id="navbar-portal"></div>
@@ -50,7 +52,7 @@ export default async function RootLayout({children, params}: Props) {
         >
           {children}
         </main>
-        <RefreshCheck/>
+        {/*<RefreshCheck/>*/}
       </Providers>
     </NextIntlClientProvider>
     <SpeedInsights />

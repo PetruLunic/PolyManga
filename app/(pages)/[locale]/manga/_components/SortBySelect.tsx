@@ -6,12 +6,12 @@ import {useQueryParams} from "@/app/lib/hooks/useQueryParams";
 import {useEffect} from "react";
 import {useTranslations} from "next-intl";
 
-const sortByList = ["views", "likes", "rating", "bookmarks", "chapters", "createdAt"];
+const sortByList = ["views", "likes", "rating", "bookmarks", "chapters", "createdAt"] as const;
 
 export default function SortBySelect() {
   const t = useTranslations("pages.manga")
   const searchParams = useSearchParams();
-  const sortBy = searchParams.get("sortBy");
+  const sortBy = searchParams.get("sortBy") as typeof sortByList[number] | null;
   const {replaceParam, deleteParam} = useQueryParams();
 
   // Validating query param

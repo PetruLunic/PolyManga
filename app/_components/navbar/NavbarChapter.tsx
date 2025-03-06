@@ -19,9 +19,7 @@ interface Props {
 export default function NavbarChapter({data}: Props) {
   const {id} = useParams<{id: string, chapter: string}>();
   const [portalDiv, setPortalDiv] = useState<Element | null>(null);
-  const [shouldHideOnScroll, setShouldHideOnScroll] = useState(true);
   const noLanguageSelect = data.chapter.languages.length < 2;
-  const prevPositionRef = useRef(0);
 
   useEffect(() => {
     setPortalDiv(document.querySelector("#navbar-portal"));

@@ -28,7 +28,7 @@ interface Props{
   nrVotes?: number
 }
 
-const ratingList = ["terrible", "veryBad", "bad", "poor", "soSo", "fair", "good", "veryGood", "great", "excellent"];
+const ratingList = ["terrible", "veryBad", "bad", "poor", "soSo", "fair", "good", "veryGood", "great", "excellent"] as const;
 
 export default function RatingButton({slug, rating, nrVotes, mangaTitle}: Props) {
   const {onOpen} = useModal("signIn");

@@ -53,7 +53,7 @@ export default function FilterInputs({}: Props) {
     })
   }, [genres, statuses, types, deleteParam, languages]);
 
- return (
+  return (
   <div className="flex flex-col gap-3">
     <Select
         label={placeholdersT("genres")}
@@ -70,6 +70,7 @@ export default function FilterInputs({}: Props) {
     >
       {Object.values(ComicsGenre).sort().map((type) =>
           <SelectItem key={type}>
+            {/* @ts-ignore*/}
             {mangaT(`genres.${type.toLowerCase()}`)}
           </SelectItem>
       )}

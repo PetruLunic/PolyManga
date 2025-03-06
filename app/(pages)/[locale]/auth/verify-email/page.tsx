@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import React, {useState, useEffect} from "react";
 import {verifyTokenAndSignIn} from "@/app/lib/userActions";
-import {useRouter} from "@/i18n/routing";
+import {locales, useRouter} from "@/i18n/routing";
 import {useTranslations} from "next-intl";
 
 export default function Page() {

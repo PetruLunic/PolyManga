@@ -10,10 +10,13 @@ import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
 import ChapterImagesList from "@/app/_components/ChapterImagesList";
 import {extractChapterTitle, extractMangaTitle} from "@/app/lib/utils/extractionUtils";
 import {locales} from "@/i18n/routing";
-import {getTranslations} from "next-intl/server";
+import {getTranslations, setRequestLocale} from "next-intl/server";
+import {Suspense} from "react";
+import {Spinner} from "@heroui/react";
 
 export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {id, number: numberString, locale} = await params;
+  setRequestLocale(locale);
   const number = Number.parseFloat(numberString);
 
   if (Number.isNaN(number)) return await seoMetaData.manga(locale);
@@ -71,6 +74,7 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
 }
 
 export const dynamicParams = true;
+export const dynamic = 'force-static';
 
 export async function generateStaticParams(): Promise<Params[]> {
   const {data} = await queryGraphql(GET_STATIC_CHAPTERS);
@@ -105,10 +109,10 @@ interface Props{
 export const revalidate = 21600;
 
 export default async function Page({params}: Props) {
-  const {id: mangaId, number: numberString} = await params;
+  const {id: mangaId, number: numberString, locale} = await params;
+  setRequestLocale(locale);
   const number = Number.parseFloat(numberString);
   if (Number.isNaN(number)) notFound();
-
   const [
     {data: chapterData},
     {data: navbarData}
@@ -121,12 +125,16 @@ export default async function Page({params}: Props) {
   const chapter = transformChapter(chapterData.chapter);
 
   return (
-      <div>
-        <NavbarChapter data={JSON.parse(JSON.stringify(navbarData))}/>
+      <>
+        <Suspense>
+          <NavbarChapter data={JSON.parse(JSON.stringify(navbarData))}/>
+        </Suspense>
         <div className="flex flex-col gap-3 min-h-screen">
-          <ChapterImagesList images={JSON.parse(JSON.stringify(chapter.images))} />
+          <Suspense fallback={<Spinner/>}>
+            <ChapterImagesList images={JSON.parse(JSON.stringify(chapter.images))} />
+          </Suspense>
         </div>
         <ChapterBookmarkFetch slug={mangaId} number={chapter.number}/>
-      </div>
+      </>
   );
 };

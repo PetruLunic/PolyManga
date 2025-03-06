@@ -14,14 +14,15 @@ import {formatNumber} from "@/app/lib/utils/formatNumber";
 import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
 import ContinueReadingButton from "@/app/_components/ContinueReadingButton";
 import {notFound} from "next/navigation";
-import {getTranslations} from "next-intl/server";
-import {Link, routing} from "@/i18n/routing";
+import {getTranslations, setRequestLocale} from "next-intl/server";
+import {routing} from "@/i18n/routing";
 import {extractMangaTitle} from "@/app/lib/utils/extractionUtils";
 import {LocaleType} from "@/app/types";
 import LinkButton from "@/app/_components/LinkButton";
 
 export async function generateMetadata({ params}: Props): Promise<Metadata> {
   const {id, locale} = await params;
+  setRequestLocale(locale);
   const {data} = await queryGraphql(GET_MANGA_METADATA, {id});
   const mangaT = await getTranslations({locale, namespace: "common.manga"});
   const metadataT = await getTranslations({locale, namespace: "pages.mangaDetails.metadata"});
@@ -50,6 +51,7 @@ export async function generateMetadata({ params}: Props): Promise<Metadata> {
 }
 
 export const dynamicParams = true;
+export const dynamic = 'force-static';
 
 export async function generateStaticParams() {
   const {data} = await queryGraphql(GET_STATIC_MANGAS);
@@ -76,6 +78,7 @@ export const revalidate = 7200;
 
 export default async function Page({params}: Props) {
   const {id, locale} = await params;
+  setRequestLocale(locale);
   const {data} = await queryGraphql(GET_MANGA, {id});
 
   if (!data) notFound();
@@ -96,7 +99,7 @@ export default async function Page({params}: Props) {
         <div className="flex flex-col md:flex-row gap-4">
           {/* Left column of the card*/}
           <div className="flex flex-col gap-3 w-full items-center md:w-1/3">
-            <MangaSettingsDropdown mangaId={getMangaIdFromURL(id)} className="absolute right-2 top-2"/>
+            <MangaSettingsDropdown mangaId={id} className="absolute right-2 top-2"/>
             <Image
                 className="w-[250px] h-[350px] object-cover"
                 src={manga?.image}

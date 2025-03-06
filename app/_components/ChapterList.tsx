@@ -15,7 +15,7 @@ import {GET_BOOKMARKED_CHAPTER} from "@/app/lib/graphql/queries";
 import {useLocale, useTranslations} from "next-intl";
 import {extractChapterTitle} from "@/app/lib/utils/extractionUtils";
 import {ChapterLanguage, ChapterLanguageFull, LocaleType} from "@/app/types";
-import {Link, locales} from "@/i18n/routing";
+import {Link} from "@/i18n/routing";
 
 type ChapterList = Exclude<Manga_ChapterQuery["manga"], undefined | null>["chapters"]
 

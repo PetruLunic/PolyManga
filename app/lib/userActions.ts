@@ -30,6 +30,7 @@ export const signUp = async (user: UserSignUp): Promise<ResponseType> => {
 
     if (errors) {
       if (errors[0].extensions?.localeKey) {
+        // @ts-ignore
         return {success: false, message: t(errors[0].extensions?.localeKey)}
       }
 
@@ -49,6 +50,7 @@ export const signUp = async (user: UserSignUp): Promise<ResponseType> => {
     console.error(e);
 
     if (isGraphQLErrorsWithLocaleKey(e)) {
+      // @ts-ignore
       return {success: false, message: t(e.graphQLErrors[0].extensions.localeKey)}
     }
 
@@ -92,6 +94,7 @@ export const signIn = async (user: UserSignIn):  Promise<ResponseType> => {
     return {success: true, message: "Successful sign in"};
   } catch(e) {
     if (isGraphQLErrorsWithLocaleKey(e)) {
+      // @ts-ignore
       return {success: false, message: t(e.graphQLErrors[0].extensions.localeKey)}
     }
 
