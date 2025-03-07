@@ -13,6 +13,7 @@ import {locales} from "@/i18n/routing";
 import {getTranslations, setRequestLocale} from "next-intl/server";
 import {Suspense} from "react";
 import {Spinner} from "@heroui/react";
+import NavigationButtons from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/NavigationButtons";
 
 export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {id, number: numberString, locale} = await params;
@@ -81,7 +82,7 @@ export async function generateStaticParams(): Promise<Params[]> {
 
   if (!data?.mangas) return [];
 
-  return locales.map(locale =>
+  const urls = locales.map(locale =>
     data.mangas.map(manga =>
       manga.chapters
         // Generate the chapter page if it supports the selected locale
@@ -92,7 +93,14 @@ export async function generateStaticParams(): Promise<Params[]> {
         locale
       })
     )
-  )).flat(2)
+  )).flat(2);
+
+  // Return only the first and last 2 chapters
+  if (urls.length >= 4) {
+    return [...urls.slice(0, 2), ...urls.slice(urls.length - 2)];
+  } else {
+    return urls;
+  }
 }
 
 interface Params {
@@ -127,9 +135,14 @@ export default async function Page({params}: Props) {
   return (
       <>
         <NavbarChapter data={JSON.parse(JSON.stringify(navbarData))}/>
-        <div className="flex flex-col gap-3 min-h-screen">
+        <div className="flex flex-col gap-6 min-h-screen pb-10">
           <Suspense fallback={<Spinner/>}>
             <ChapterImagesList images={JSON.parse(JSON.stringify(chapter.images))} />
+            <NavigationButtons
+              prevChapter={navbarData.chapter.prevChapter?.number}
+              nextChapter={navbarData.chapter.nextChapter?.number}
+              mangaId={mangaId}
+              />
           </Suspense>
         </div>
         <ChapterBookmarkFetch slug={mangaId} number={chapter.number}/>

@@ -270,7 +270,9 @@
         "alerts": {
           "error": "Like error!"
         }
-      }
+      },
+      "next": "Next",
+      "previous": "Previous"
     },
     "languageSelect": {
       "label": "Language",

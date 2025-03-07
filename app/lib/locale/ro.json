@@ -271,7 +271,9 @@
         "alerts": {
           "error": "Eroare la like!"
         }
-      }
+      },
+      "next": "Următorul",
+      "previous": "Precedent"
     },
     "languageSelect": {
       "label": "Limba",

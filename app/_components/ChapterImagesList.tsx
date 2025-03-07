@@ -4,6 +4,8 @@ import ChapterImage from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_co
 import {ChapterLanguage} from "@/app/__generated__/graphql";
 import {useSearchParams} from "next/navigation";
 import {MultiLanguageImage} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_utils/transformChapter";
+import {Button} from "@heroui/react";
+import {Link} from "@/i18n/routing";
 
 interface Props {
   images: MultiLanguageImage[];

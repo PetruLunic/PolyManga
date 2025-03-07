@@ -270,7 +270,9 @@
         "alerts": {
           "error": "Ошибка лайка!"
         }
-      }
+      },
+      "next": "Следующий",
+      "previous": "Предыдущий"
     },
     "languageSelect": {
       "label": "Язык",
