@@ -82,8 +82,8 @@ export default async function Page({params}: Props) {
   const {data} = await queryGraphql(GET_MANGA, {id});
 
   if (!data) notFound();
-  const mangaT = await getTranslations("common.manga");
-  const pageT = await getTranslations("pages.mangaDetails");
+  const mangaT = await getTranslations({locale, namespace:"common.manga"});
+  const pageT = await getTranslations({locale, namespace:"pages.mangaDetails"});
 
   const {manga} = data;
 

@@ -10,6 +10,8 @@ import {getMessages, setRequestLocale} from "next-intl/server";
 import RefreshCheck from "@/app/_components/RefreshCheck";
 import {setZodErrorMap} from "@/app/lib/utils/zodErrorMap";
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import {Suspense} from "react";
+import Loading from "@/app/(pages)/[locale]/loading";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,9 +30,9 @@ interface Props {
 
 export default async function RootLayout({children, params}: Props) {
   const {session, locale} = await params;
-  await setZodErrorMap(locale);
-  const messages = await getMessages();
   setRequestLocale(locale);
+  await setZodErrorMap(locale);
+  const messages = await getMessages({locale});
 
   return (
     <html
@@ -52,7 +54,9 @@ export default async function RootLayout({children, params}: Props) {
         >
           {children}
         </main>
-        {/*<RefreshCheck/>*/}
+        <Suspense>
+          <RefreshCheck/>
+        </Suspense>
       </Providers>
     </NextIntlClientProvider>
     <SpeedInsights />

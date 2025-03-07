@@ -8,7 +8,7 @@ import React from "react";
 import {Button} from "@heroui/react";
 import InputPassword from "@/app/_components/InputPassword";
 import {useTranslations} from "next-intl";
-import {locales, useRouter} from "@/i18n/routing";
+import {useRouter} from "@/i18n/routing";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
 import {useSearchParams} from "next/navigation";
 import {PasswordSchema} from "@/app/lib/utils/zodSchemas";

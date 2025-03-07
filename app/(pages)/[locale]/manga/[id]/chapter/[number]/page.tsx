@@ -126,9 +126,7 @@ export default async function Page({params}: Props) {
 
   return (
       <>
-        <Suspense>
-          <NavbarChapter data={JSON.parse(JSON.stringify(navbarData))}/>
-        </Suspense>
+        <NavbarChapter data={JSON.parse(JSON.stringify(navbarData))}/>
         <div className="flex flex-col gap-3 min-h-screen">
           <Suspense fallback={<Spinner/>}>
             <ChapterImagesList images={JSON.parse(JSON.stringify(chapter.images))} />
