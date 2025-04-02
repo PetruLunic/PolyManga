@@ -11,13 +11,19 @@ import RefreshCheck from "@/app/_components/RefreshCheck";
 import {setZodErrorMap} from "@/app/lib/utils/zodErrorMap";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import {Suspense} from "react";
-import Loading from "@/app/(pages)/[locale]/loading";
+import {NavigationLoadingIndicator} from "@/app/_components/NavigationLoadingIndicator";
+import {locales} from "@/i18n/routing";
+import {SWRegistration} from "@/app/_components/SWRegistration";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export async function generateMetadata({params}: Props): Promise<Metadata>  {
   const {locale} = await params;
   return await seoMetaData.default(locale);
+}
+
+export async function generateStaticParams() {
+  return locales.map(locale => ({locale}));
 }
 
 interface Props {
@@ -48,6 +54,8 @@ export default async function RootLayout({children, params}: Props) {
     <NextIntlClientProvider locale={locale} messages={messages}>
       <Providers session={session}>
         <NavbarRoot/>
+        <SWRegistration />
+        <NavigationLoadingIndicator />
         <div className="z-40 w-full h-auto sticky top-0 inset-x-0" id="navbar-portal"></div>
         <main
           className="w-full max-w-[1024px] mx-auto mt-3"
@@ -59,7 +67,7 @@ export default async function RootLayout({children, params}: Props) {
         </Suspense>
       </Providers>
     </NextIntlClientProvider>
-    <SpeedInsights />
+    <SpeedInsights  />
     </body>
     </html>
   );

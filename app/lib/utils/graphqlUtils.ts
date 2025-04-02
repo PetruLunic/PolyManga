@@ -4,9 +4,11 @@ import dbConnect from "@/app/lib/utils/dbConnect";
 import {schema} from "@/app/lib/graphql/resolvers";
 import {auth} from "@/auth";
 import {GraphQLError} from "graphql/error";
+import {cache} from "react";
 
-// Graphql query executor
-export async function queryGraphql<TData, TVariables extends { [key: string]: unknown } | undefined>(
+// Graphql query executor, only server-side
+export const queryGraphql = cache(
+  async function queryGraphql<TData, TVariables extends { [key: string]: unknown } | undefined> (
   document: TypedDocumentNode<TData, TVariables>,
   variables?: TVariables,
   options?: {
@@ -16,16 +18,16 @@ export async function queryGraphql<TData, TVariables extends { [key: string]: un
   try {
     await dbConnect(); // Connecting to mongoDB
 
-    const contextValue = options?.withSession ? {
-        user: (await auth())?.user
-      }
-      : null
+    // const contextValue = options?.withSession ? {
+    //     user: (await auth())?.user
+    //   }
+    //   : null
 
     const result = await execute({
       schema,
       document: parse(print(document)),
       variableValues: variables,
-      contextValue
+      // contextValue
     });
 
     return {data: result.data as TData, errors: result.errors};
@@ -34,4 +36,4 @@ export async function queryGraphql<TData, TVariables extends { [key: string]: un
     console.error(errorMessage, e);
     return {data: null, errors: [new GraphQLError(errorMessage)]}
   }
-}
+})

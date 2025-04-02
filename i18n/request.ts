@@ -1,4 +1,4 @@
-import {getRequestConfig} from 'next-intl/server';
+import {getRequestConfig, setRequestLocale} from 'next-intl/server';
 import {routing} from './routing';
 
 export default getRequestConfig(async ({requestLocale}) => {
@@ -9,6 +9,8 @@ export default getRequestConfig(async ({requestLocale}) => {
   if (!locale || !routing.locales.includes(locale as any)) {
     locale = routing.defaultLocale;
   }
+
+  setRequestLocale(locale); // for pages static generation
 
   return {
     locale,

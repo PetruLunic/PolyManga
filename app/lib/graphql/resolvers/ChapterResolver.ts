@@ -6,6 +6,7 @@ import {HydratedDocument} from "mongoose";
 import MangaModel from "@/app/lib/models/Manga";
 import {ChapterLanguage} from "@/app/types";
 import {deleteImage} from "@/app/lib/utils/awsUtils";
+import {LogExecutionTime} from "@/app/lib/utils/decorators";
 
 @Resolver(Chapter)
 export class ChapterResolver {

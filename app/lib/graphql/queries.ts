@@ -132,10 +132,10 @@ export const GET_CHAPTER = gql(`
       isLast,
       languages,
       nextChapter {
-        id
+        number
       },
       prevChapter {
-        id
+        number
       }
     }
   }

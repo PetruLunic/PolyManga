@@ -1,23 +1,24 @@
-import {notFound} from "next/navigation";
-import {GET_CHAPTER, GET_CHAPTER_METADATA, GET_NAVBAR_CHAPTER, GET_STATIC_CHAPTERS} from "@/app/lib/graphql/queries";
-import {transformChapter} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_utils/transformChapter";
-import NavbarChapter from "@/app/_components/navbar/NavbarChapter";
-import ChapterBookmarkFetch from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/ChapterBookmarkFetch";
+import {GET_CHAPTER_METADATA, GET_STATIC_CHAPTERS} from "@/app/lib/graphql/queries";
 import {Metadata} from "next";
 import {domain, seoMetaData, siteName, type} from "@/app/lib/seo/metadata";
 import {ChapterLanguageFull, LocaleType} from "@/app/types";
 import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
-import ChapterImagesList from "@/app/_components/ChapterImagesList";
 import {extractChapterTitle, extractMangaTitle} from "@/app/lib/utils/extractionUtils";
 import {locales} from "@/i18n/routing";
 import {getTranslations, setRequestLocale} from "next-intl/server";
 import {Suspense} from "react";
+import {ChapterContent} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/ChapterContent";
+import {
+  ChapterNavbarWrapper
+} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/ChapterNavbarWrapper";
+import {notFound} from "next/navigation";
 import {Spinner} from "@heroui/react";
-import NavigationButtons from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/NavigationButtons";
+// import ChapterNavbarSkeleton
+//   from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/ChapterNavbarSkeleton";
+// import Loading from "@/app/(pages)/[locale]/loading";
 
 export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {id, number: numberString, locale} = await params;
-  setRequestLocale(locale);
   const number = Number.parseFloat(numberString);
 
   if (Number.isNaN(number)) return await seoMetaData.manga(locale);
@@ -75,32 +76,35 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
 }
 
 export const dynamicParams = true;
-export const dynamic = 'force-static';
 
 export async function generateStaticParams(): Promise<Params[]> {
   const {data} = await queryGraphql(GET_STATIC_CHAPTERS);
 
   if (!data?.mangas) return [];
 
-  const urls = locales.map(locale =>
-    data.mangas.map(manga =>
-      manga.chapters
-        // Generate the chapter page if it supports the selected locale
+  // Process each manga separately and then flatten results
+  return locales.flatMap(locale =>
+    data.mangas.flatMap(manga => {
+      // Get chapters for this manga that support the current locale
+      const mangaChapters = manga.chapters
         .filter(chapter => chapter.languages.some(lang => lang.toLowerCase() === locale))
         .map(chapter => ({
-        id: manga.slug,
-        number: chapter.number.toString(),
-        locale
-      })
-    )
-  )).flat(2);
+          id: manga.slug,
+          number: chapter.number.toString(),
+          locale
+        }));
 
-  // Return only the first and last 2 chapters
-  if (urls.length >= 4) {
-    return [...urls.slice(0, 2), ...urls.slice(urls.length - 2)];
-  } else {
-    return urls;
-  }
+      // Apply first and last 2 chapters PER MANGA
+      if (mangaChapters.length >= 4) {
+        return [
+          ...mangaChapters.slice(0, 2),                   // First 2 chapters
+          ...mangaChapters.slice(mangaChapters.length - 2)  // Last 2 chapters
+        ];
+      } else {
+        return mangaChapters;  // If fewer than 4 chapters, keep all
+      }
+    })
+  );
 }
 
 interface Params {
@@ -109,7 +113,7 @@ interface Params {
   locale: string
 }
 
-interface Props{
+interface Props {
   params: Promise<Params>
 }
 
@@ -117,35 +121,20 @@ interface Props{
 export const revalidate = 21600;
 
 export default async function Page({params}: Props) {
-  const {id: mangaId, number: numberString, locale} = await params;
+  const {locale, id, number: numberString} = await params;
   setRequestLocale(locale);
+
   const number = Number.parseFloat(numberString);
   if (Number.isNaN(number)) notFound();
-  const [
-    {data: chapterData},
-    {data: navbarData}
-  ] = await Promise.all([
-    queryGraphql(GET_CHAPTER, {number, slug: mangaId}),
-    queryGraphql(GET_NAVBAR_CHAPTER, {slug: mangaId, number})
-  ])
-  if (!chapterData || !navbarData) notFound();
-
-  const chapter = transformChapter(chapterData.chapter);
 
   return (
-      <>
-        <NavbarChapter data={JSON.parse(JSON.stringify(navbarData))}/>
-        <div className="flex flex-col gap-6 min-h-screen pb-10">
-          <Suspense fallback={<Spinner/>}>
-            <ChapterImagesList images={JSON.parse(JSON.stringify(chapter.images))} />
-            <NavigationButtons
-              prevChapter={navbarData.chapter.prevChapter?.number}
-              nextChapter={navbarData.chapter.nextChapter?.number}
-              mangaId={mangaId}
-              />
-          </Suspense>
-        </div>
-        <ChapterBookmarkFetch slug={mangaId} number={chapter.number}/>
-      </>
+    <>
+      <Suspense fallback={<Spinner />} key={id + numberString + "navbar"}>
+        <ChapterNavbarWrapper id={id} number={number} />
+      </Suspense>
+      <Suspense fallback={<Spinner />} key={id + numberString + "content"}>
+        <ChapterContent id={id} number={number} />
+      </Suspense>
+    </>
   );
 };

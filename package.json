@@ -30,7 +30,7 @@
       "jsonwebtoken": "^9.0.2",
       "mongoose": "8.9.5",
       "nanoid": "5.0.9",
-      "next": "15.1.6",
+      "next": "15.2.3",
       "next-auth": "^5.0.0-beta.25",
       "next-intl": "^3.26.3",
       "next-themes": "^0.2.1",

@@ -7,12 +7,8 @@ import {LocaleType} from "@/app/types";
 import {locales} from "@/i18n/routing";
 import {setRequestLocale} from "next-intl/server";
 
-export async function generateStaticParams() {
-  return locales.map(locale => ({locale}));
-}
-
 // 1 hours revalidation
-export const revalidate = 3600;
+export const revalidate = 20;
 
 interface Props {
   params: Promise<{

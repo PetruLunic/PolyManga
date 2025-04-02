@@ -7,7 +7,7 @@ import LanguageSelect from "@/app/_components/navbar/LanguageSelect";
 import ChapterListModal from "@/app/_components/ChapterListModal";
 import {Manga_ChapterQuery} from "@/app/__generated__/graphql";
 import {createPortal} from "react-dom";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {FaChevronLeft, FaChevronRight} from "react-icons/fa";
 import {Link} from "@/i18n/routing";
 import Navbar from "@/app/_components/Navbar";

@@ -15,7 +15,7 @@ import {type ApolloContext} from "@/app/api/graphql/route";
 import {HydratedDocument, PipelineStage} from "mongoose";
 import {cookies} from "next/headers";
 import ChapterBookmarkModel from "@/app/lib/models/ChapterBookmark";
-import {getMangaIdFromURL} from "@/app/lib/utils/URLFormating";
+import {LogExecutionTime} from "@/app/lib/utils/decorators";
 
 @Resolver(of => ComicsStats)
 export class ComicsStatsResolver {

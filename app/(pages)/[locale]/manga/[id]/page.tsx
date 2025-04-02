@@ -22,7 +22,6 @@ import LinkButton from "@/app/_components/LinkButton";
 
 export async function generateMetadata({ params}: Props): Promise<Metadata> {
   const {id, locale} = await params;
-  setRequestLocale(locale);
   const {data} = await queryGraphql(GET_MANGA_METADATA, {id});
   const mangaT = await getTranslations({locale, namespace: "common.manga"});
   const metadataT = await getTranslations({locale, namespace: "pages.mangaDetails.metadata"});
@@ -51,7 +50,6 @@ export async function generateMetadata({ params}: Props): Promise<Metadata> {
 }
 
 export const dynamicParams = true;
-export const dynamic = 'force-static';
 
 export async function generateStaticParams() {
   const {data} = await queryGraphql(GET_STATIC_MANGAS);
@@ -239,3 +237,63 @@ export default async function Page({params}: Props) {
   </div>
  );
 };
+
+// import {GET_LATEST_UPLOADED_CHAPTERS, GET_MANGA_CARDS, MANGA_CARD} from "@/app/lib/graphql/queries";
+// import {getFragmentData} from "@/app/__generated__";
+// import PopularMangaList from "@/app/_components/PopularMangaList";
+// import LatestChaptersList from "@/app/_components/LatestChaptersList";
+// import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
+// import {LocaleType} from "@/app/types";
+// import {locales} from "@/i18n/routing";
+// import {setRequestLocale} from "next-intl/server";
+//
+// export const dynamicParams = true;
+//
+// // 1 hours revalidation
+// export const revalidate = 7;
+//
+// interface Props {
+//   params: Promise<{
+//     locale: string,
+//     id: string
+//   }>
+// }
+//
+// export default async function Page({params}: Props) {
+//   const {locale, id} = await params;
+//   console.log(`rendering ${id} page chapter`);
+//   setRequestLocale(locale);
+//   const [{data: dailyMangaData},
+//     {data: weeklyMangaData},
+//     {data: monthlyMangaData},
+//     {data: latestChapters}] = await Promise.all([
+//     queryGraphql(GET_MANGA_CARDS, {
+//       limit: 10,
+//       sortBy: "dailyViews"
+//     }),
+//     queryGraphql(GET_MANGA_CARDS, {
+//       limit: 10,
+//       sortBy: "weeklyViews"
+//     }),
+//     queryGraphql(GET_MANGA_CARDS, {
+//       limit: 10,
+//       sortBy: "monthlyViews"
+//     }),
+//     queryGraphql(GET_LATEST_UPLOADED_CHAPTERS, {
+//       limit: 16
+//     })
+//   ]);
+//
+//   return (
+//     <div className="flex flex-col gap-3 mx-3">
+//       <PopularMangaList
+//         locale={locale as LocaleType}
+//         daily={JSON.parse(JSON.stringify(getFragmentData(MANGA_CARD, dailyMangaData?.mangas) ?? []))}
+//         weekly={JSON.parse(JSON.stringify(getFragmentData(MANGA_CARD, weeklyMangaData?.mangas) ?? []))}
+//         monthly={JSON.parse(JSON.stringify(getFragmentData(MANGA_CARD, monthlyMangaData?.mangas) ?? []))}
+//       />
+//       <LatestChaptersList initialChapters={JSON.parse(JSON.stringify(latestChapters?.latestChapters ?? []))}/>
+//     </div>
+//
+//   );
+// };

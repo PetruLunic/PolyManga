@@ -1,4 +1,10 @@
-import Loading from "@/app/(pages)/[locale]/loading";
+import {Spinner} from "@heroui/react";
 
+export default function Loading() {
 
-export default Loading;
+  return (
+    <div className="w-full min-h-[calc(100vh-80px)] flex items-center justify-center">
+      <Spinner size="lg"/>
+    </div>
+  );
+};
