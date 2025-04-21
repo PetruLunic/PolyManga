@@ -13,6 +13,7 @@ import {HydratedDocument} from "mongoose";
 import {Chapter, ChapterVersion} from "@/app/lib/graphql/schema";
 import sharp from "sharp";
 import dbConnect from "@/app/lib/utils/dbConnect";
+import {ChapterImageBuffer} from "@/app/(pages)/[locale]/manga/[id]/upload/actions";
 
 export async function editChapter(formData: FormData, languages: ChapterLanguage[]) {
   const session = await auth();
@@ -52,32 +53,54 @@ export async function editChapter(formData: FormData, languages: ChapterLanguage
   }
 
   // Cropping images into slices of MAX_HEIGHT and WIDTH
-  const croppedImages: Record<ChapterLanguage, {images: Buffer[], width: number}> = {} as Record<ChapterLanguage, {images: Buffer[], width: number}>;
+  // const croppedImages: Record<ChapterLanguage, {images: Buffer[], width: number}> = {} as Record<ChapterLanguage, {images: Buffer[], width: number}>;
+  //
+  // await Promise.all(languages.map(async language => {
+  //   const images = formData.getAll(`images-${language}`) as File[];
+  //
+  //   if (images.length > 0) {
+  //     croppedImages[language] = {
+  //       width: CHAPTER_IMAGE_WIDTH,
+  //       images: []
+  //     }
+  //
+  //     // Extracting first image width
+  //     const firstImageWidth = await sharp(await images[0].arrayBuffer()).metadata().then(res => res.width);
+  //     croppedImages[language].width = firstImageWidth ?? CHAPTER_IMAGE_WIDTH;
+  //     croppedImages[language].images = await combineAndCropImagesVertically(images, firstImageWidth ?? CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT) || [];
+  //   }
+  //  }));
+  const imagesMap: Record<ChapterLanguage, ChapterImageBuffer[]> = {} as Record<ChapterLanguage, ChapterImageBuffer[]>;
 
   await Promise.all(languages.map(async language => {
     const images = formData.getAll(`images-${language}`) as File[];
 
     if (images.length > 0) {
-      croppedImages[language] = {
-        width: CHAPTER_IMAGE_WIDTH,
-        images: []
+      imagesMap[language] = [];
+
+      for (const img of images) {
+        const width = await sharp(await img.arrayBuffer()).metadata().then(res => res.width);
+        const height = await sharp(await img.arrayBuffer()).metadata().then(res => res.height);
+
+        if (!width || !height) throw new Error(`Wasn't able to extract metadata for ${img.name}`);
+
+        imagesMap[language].push({
+          buffer: await img.arrayBuffer(),
+          width,
+          height
+        });
       }
-
-      // Extracting first image width
-      const firstImageWidth = await sharp(await images[0].arrayBuffer()).metadata().then(res => res.width);
-      croppedImages[language].width = firstImageWidth ?? CHAPTER_IMAGE_WIDTH;
-      croppedImages[language].images = await combineAndCropImagesVertically(images, firstImageWidth ?? CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT) || [];
     }
-   }));
+  }))
 
-  const languagesWithNewImages = Object.keys(croppedImages);
+  const languagesWithNewImages = Object.keys(imagesMap);
 
   // Creating url for every image
   const imagesURLs: Record<ChapterLanguage, string[]> = {} as Record<ChapterLanguage, string[]>;
 
   languages.forEach(language => {
     if (languagesWithNewImages.includes(language)) {
-      const imagesIds = Array.from({length: croppedImages[language].images.length}, () => nanoid());
+      const imagesIds = Array.from({length: imagesMap[language].length}, () => nanoid());
 
       imagesURLs[language] = getImageURLs(mangaId, id, language, imagesIds);
     }
@@ -101,8 +124,8 @@ export async function editChapter(formData: FormData, languages: ChapterLanguage
 
   languages.forEach((language) => {
     if (languagesWithNewImages.includes(language)) {
-      croppedImages[language].images.forEach((image, index) => {
-        const imageFile = new File([image], 'combined-image.webp', { type: 'image/webp' });
+      imagesMap[language].forEach((image, index) => {
+        const imageFile = new File([image.buffer], 'combined-image.webp', { type: 'image/webp' });
 
         fetchImagesPromises.push(fetch(signedURLs[language][index], {
           method: "PUT",
@@ -122,17 +145,16 @@ export async function editChapter(formData: FormData, languages: ChapterLanguage
     versions.push({
       language: language,
       title: titles[language],
-      images: imagesURLs[language]?.map(url => ({
-        src: AWS_BUCKET_URL + url,
-        width: croppedImages[language].width,
-        height: MAX_CHAPTER_IMAGE_HEIGHT
+      images: imagesURLs[language]?.map((url, index) => ({
+        src: url,
+        width: imagesMap[language][index].width,
+        height: imagesMap[language][index].height
       })) ?? []
     })
   })
 
   // Deleting the images that are getting replaced
-  for (let language of languages) {
-    if (!languagesWithNewImages.includes(language)) continue;
+  for (let language of languagesWithNewImages) {
 
     const images = chapter.versions.find(e => e.language === language)?.images;
     if (!images) continue;

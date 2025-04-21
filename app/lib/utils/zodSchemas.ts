@@ -31,7 +31,8 @@ export const UserSignInSchema = UserSchema.pick({email: true, password: true});
 export const UserInfoSchema = UserSchema.pick({name: true});
 
 export const UserPreferencesSchema = z.object({
-  language: z.string(),
+  sourceLanguage: z.string(),
+  targetLanguage: z.string()
 })
 
 export const IDSchema = z.string().length(nanoid().length);
@@ -89,3 +90,21 @@ export const MangaSchema = z.object({
   genres: z.string(),
   releaseYear: z.number().positive().int()
 })
+
+const CoordsItemSchema = z.object({
+  x1: z.number().int(),
+  x2: z.number().int(),
+  y1: z.number().int(),
+  y2: z.number().int(),
+});
+
+export const MetadataSchema = z.array(z.array(z.object({
+  coords: z.array(z.object({
+    language: z.string(),
+    coord: CoordsItemSchema
+  })),
+  translatedTexts: z.array(z.object({
+    language: z.string(),
+    text: z.string()
+  }))
+})));

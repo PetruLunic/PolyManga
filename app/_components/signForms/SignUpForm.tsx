@@ -20,8 +20,7 @@ import {UserSchema} from "@/app/lib/utils/zodSchemas";
 import {UserSignUp} from "@/app/lib/graphql/schema";
 import {signUp} from "@/app/lib/userActions";
 import Alert from "@/app/_components/Alert";
-import {useModal} from "@/app/lib/contexts/ModalsContext";
-import {ModalProps} from "@/app/types";
+import {ModalProps, useModal} from "@/app/lib/contexts/ModalsContext";
 import InputPassword from "@/app/_components/InputPassword";
 import {useTranslations} from "next-intl";
 

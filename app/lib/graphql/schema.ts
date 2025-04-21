@@ -7,7 +7,7 @@ import {
   ComicsStatus,
   ComicsType,
   UserProvider,
-  UserRole
+  UserRole, LocaleEnum
 } from "@/app/types";
 import "reflect-metadata";
 
@@ -34,6 +34,10 @@ registerEnumType(UserRole, {
 
 registerEnumType(UserProvider, {
   name: "UserProvider"
+})
+
+registerEnumType(LocaleEnum, {
+  name: "LocaleEnum"
 })
 
 @ObjectType("ComicsRating")
@@ -203,8 +207,11 @@ export class Manga {
 
 @ObjectType("UserPreferences")
 export class UserPreferences {
-  @Field(() => ChapterLanguage, {nullable: true})
-  language: ChapterLanguage | null;
+  @Field(() => LocaleEnum, {nullable: true})
+  sourceLanguage: LocaleEnum | null;
+
+  @Field(() => LocaleEnum, {nullable: true})
+  targetLanguage: LocaleEnum | null;
 }
 
 @ObjectType("User")
@@ -322,6 +329,72 @@ export class ChapterBookmark {
 
   @Field()
   updatedAt: string;
+}
+
+// @ObjectType("TextItem")
+// export class TextItem {
+//   @Field()
+//   text!: string;
+//
+//   @Field(() => Float, {nullable: true})
+//   fontSize?: number
+// }
+
+@ObjectType("TranslatedText")
+export class TranslatedText {
+  @Field(() => LocaleEnum)
+  language!: LocaleEnum;
+
+  @Field()
+  text!: string;
+
+  @Field(() => Float, {nullable: true})
+  fontSize?: number
+}
+
+@ObjectType("Coord")
+export class CoordsItem {
+  @Field(() => Int)
+  x1!: number;
+
+  @Field(() => Int)
+  x2!: number;
+
+  @Field(() => Int)
+  y1!: number;
+
+  @Field(() => Int)
+  y2!: number;
+}
+
+@ObjectType("Coords")
+export class Coords {
+  @Field(() => CoordsItem)
+  coord!: CoordsItem
+
+  @Field(() => LocaleEnum)
+  language!: LocaleEnum
+}
+
+@ObjectType("ContentItemRaw")
+export class ContentItemRaw {
+  @Field(() => [TranslatedText])
+  translatedTexts!: TranslatedText[];
+
+  @Field(() => [Coords])
+  coords!: Coords[];
+}
+
+@ObjectType("ChapterMetadataRaw")
+export class ChapterMetadataRaw {
+  @Field()
+  id!: string;
+
+  @Field()
+  chapterId!: string;
+
+  @Field(() => [ContentItemRaw])
+  content!: ContentItemRaw[];
 }
 
 /********************  INPUTS  ********************/

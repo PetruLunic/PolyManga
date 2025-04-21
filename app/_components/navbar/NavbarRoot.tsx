@@ -7,6 +7,7 @@ import {useTranslations} from "next-intl";
 import LocaleSelect from "@/app/_components/LocaleSelect";
 import { Link } from "@/i18n/routing";
 import Navbar from "@/app/_components/Navbar";
+import {Suspense} from "react";
 
 
 export default function NavbarRoot() {
@@ -35,7 +36,9 @@ export default function NavbarRoot() {
      </NavbarBrand>
      <NavbarContent justify="end" className="items-center">
        <NavbarItem>
-         <LocaleSelect />
+         <Suspense>
+           <LocaleSelect />
+         </Suspense>
        </NavbarItem>
        <NavbarItem>
         <SignUpButton/>

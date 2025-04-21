@@ -7,7 +7,7 @@ import {extractChapterTitle, extractMangaTitle} from "@/app/lib/utils/extraction
 import {locales} from "@/i18n/routing";
 import {getTranslations, setRequestLocale} from "next-intl/server";
 import {Suspense} from "react";
-import {ChapterContent} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/ChapterContent";
+import {ChapterContentFetch} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/ChapterContentFetch";
 import {
   ChapterNavbarWrapper
 } from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/ChapterNavbarWrapper";
@@ -133,7 +133,7 @@ export default async function Page({params}: Props) {
         <ChapterNavbarWrapper id={id} number={number} />
       </Suspense>
       <Suspense fallback={<Spinner />} key={id + numberString + "content"}>
-        <ChapterContent id={id} number={number} />
+        <ChapterContentFetch id={id} number={number} />
       </Suspense>
     </>
   );

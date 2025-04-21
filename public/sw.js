@@ -1,4 +1,4 @@
-let ignore = { image: 1, audio: 1, video: 1, style: 1, font: 1 };
+let ignore = { image: 1, audio: 1, video: 1, style: 1, font: 1, script: 1 };
 
 self.addEventListener("install", () => self.skipWaiting());
 
@@ -11,6 +11,7 @@ self.addEventListener("fetch", e => {
             client?.postMessage({
                 fetchUrl: request.url,
                 dest: destination,
+                isNextRouterPrefetch: request.headers.get("Next-Router-Prefetch") || request.headers.get("next-router-prefetch")
             }),
         ),
     );

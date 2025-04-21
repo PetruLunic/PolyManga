@@ -54,20 +54,21 @@ export default async function RootLayout({children, params}: Props) {
     <NextIntlClientProvider locale={locale} messages={messages}>
       <Providers session={session}>
         <NavbarRoot/>
-        <SWRegistration />
-        <NavigationLoadingIndicator />
-        <div className="z-40 w-full h-auto sticky top-0 inset-x-0" id="navbar-portal"></div>
+        <SWRegistration/>
+        <NavigationLoadingIndicator/>
+        <nav className="z-40 w-full h-auto sticky top-0 inset-x-0" id="chapter-navbar-portal"></nav>
         <main
           className="w-full max-w-[1024px] mx-auto mt-3"
         >
           {children}
         </main>
+        <nav className="z-40 w-full h-auto sticky bottom-0 left-0 inset-x-0" id="language-navbar-portal"></nav>
         <Suspense>
           <RefreshCheck/>
         </Suspense>
       </Providers>
     </NextIntlClientProvider>
-    <SpeedInsights  />
+    <SpeedInsights/>
     </body>
     </html>
   );

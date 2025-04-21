@@ -4,7 +4,6 @@ import PopularMangaList from "@/app/_components/PopularMangaList";
 import LatestChaptersList from "@/app/_components/LatestChaptersList";
 import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
 import {LocaleType} from "@/app/types";
-import {locales} from "@/i18n/routing";
 import {setRequestLocale} from "next-intl/server";
 
 // 1 hours revalidation

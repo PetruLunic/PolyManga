@@ -32,7 +32,7 @@ export const createManga = async (formData: FormData, mangaInput: FormType) => {
   }
 
   const mangaId = nanoid();
-  const imageUrl = `manga/${mangaId}/cover/${nanoid()}`
+  const imageUrl = `/manga/${mangaId}/cover/${nanoid()}`
   const signedUrl = await getSignedURLs([imageUrl]);
 
   if ("failure" in signedUrl) {
@@ -47,7 +47,7 @@ export const createManga = async (formData: FormData, mangaInput: FormType) => {
     description: mangaInput.description.map(({value, language}) => ({value, language: language as ChapterLanguage})),
     id: mangaId,
     slug: generateSlug(mangaInput.title),
-    image: AWS_BUCKET_URL + imageUrl,
+    image: imageUrl,
     uploadedBy: session.user.id,
     genres: mangaInput.genres.split(",") as ComicsGenre[],
     languages: languages as ChapterLanguage[],

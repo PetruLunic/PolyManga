@@ -3,6 +3,9 @@
 import s3 from "@/app/lib/utils/S3Client";
 import {DeleteObjectsCommand, ListObjectsV2Command} from "@aws-sdk/client-s3";
 import Manga from "@/app/lib/models/Manga";
+import Chapter from "@/app/lib/models/Chapter";
+import User from "@/app/lib/models/User";
+import dbConnect from "@/app/lib/utils/dbConnect";
 
 // Function that cleans up the objects that are not used
 export async function cleanAwsBucket() {

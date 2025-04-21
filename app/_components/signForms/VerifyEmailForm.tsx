@@ -2,10 +2,10 @@
 
 import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@heroui/react";
 import React, {useEffect, useRef, useState} from "react";
-import {ModalProps} from "@/app/types";
 import {generateAndSendEmailToken} from "@/app/lib/userActions";
 import {useTranslations} from "next-intl";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
+import {ModalProps} from "@/app/lib/contexts/ModalsContext";
 
 type Props = Partial<ModalProps>;
 

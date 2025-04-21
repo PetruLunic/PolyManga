@@ -1,36 +1,259 @@
-import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
-import {GET_CHAPTER} from "@/app/lib/graphql/queries";
-import {transformChapter} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_utils/transformChapter";
-import {Suspense} from "react";
-import ChapterImagesList from "@/app/_components/ChapterImagesList";
-import NavigationButtons from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/NavigationButtons";
-import ChapterBookmarkFetch from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/ChapterBookmarkFetch";
+"use client"
+
+import NextImage from "next/image";
+import {Button, Card, CardBody, Image} from "@heroui/react";
+import React, {useEffect, useState} from "react";
+import {useScreenWidth} from "@/app/lib/hooks/useScreenWidth";
+import {ChapterMetadata, LocaleType} from "@/app/types";
 import {notFound} from "next/navigation";
+import LanguageSelectNavbar from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/LanguageSelectNavbar";
+import {Link, locales, usePathname} from "@/i18n/routing";
+import {ChapterQuery} from "@/app/__generated__/graphql";
+import {IoLanguage} from "react-icons/io5";
+import {TbLanguageOff} from "react-icons/tb";
+import {motion} from "framer-motion";
+import {useChapterLanguage} from "@/app/lib/hooks/useChapterLanguage";
+import wildWords from "@/app/lib/fonts/WildWords";
+import {ChapterImage} from "@/app/lib/graphql/schema";
+import {useSession} from "next-auth/react";
+
+const METADATA_BOX_PADDING = 0;
+const BUCKET_URL = process.env.NEXT_PUBLIC_BUCKET_URL;
 
 interface Props {
-  id: string,
-  number: number,
+  chapter: ChapterQuery["chapter"];
+  metadata: ChapterMetadata["content"] | null;
 }
 
-export async function ChapterContent({id, number}: Props) {
-  const {data} = await queryGraphql(GET_CHAPTER, {number, slug: id});
-  if (!data) notFound();
+export default function ChapterContent({chapter, metadata}: Props) {
+  const session = useSession();
+  const path = usePathname();
+  const sourceLang = useChapterLanguage({queryName: "source_lang"});
+  const targetLang = useChapterLanguage({queryName: "target_lang"});
+  const [activeTargetIndex, setActiveTargetIndex] = useState<number | null>(null);
+  const [hiddenSourceIndex, setHiddenSourceIndex] = useState<number | null>(null);
+  const [showAllTargetLang, setShowAllTargetLang] = useState(false);
+  const screenWidth = useScreenWidth();
+  let imagesLanguage = sourceLang;
 
-  const chapter = transformChapter(data.chapter);
+  // If chapter has no native images for source and target languages, then set the first ones
+  if (!chapter.languages.map(lang => lang.toLowerCase()).includes(imagesLanguage)) {
+    imagesLanguage = targetLang;
+
+    if (!chapter.languages.map(lang => lang.toLowerCase()).includes(targetLang)) {
+      imagesLanguage = chapter.languages[0].toLowerCase() as LocaleType;
+    }
+  }
+
+  // Extract the images with imagesLanguage from the chapter
+  const images = chapter.versions.find(({language}) => language.toLowerCase() === imagesLanguage)?.images;
+
+  if (!images) notFound();
+
+  const averageImageWidth = images.reduce((acc, {width}) => acc + width, 0) / images.length;
+
+  const calcImages: ChapterImage[] = images.map(image => {
+    const scalingFactor = screenWidth < image.width ? screenWidth / image.width : 1;
+
+    return {
+      height: Math.round(image.height * scalingFactor),
+      width: screenWidth > image.width ? image.width : screenWidth,
+      src: image.src
+    }
+  })
+
+  // Adjust metadata coordinates
+  const adjustedMetadataContent = metadata?.flatMap((item, index) => {
+    const scalingFactor = screenWidth < averageImageWidth ? screenWidth / averageImageWidth : 1;
+    const languages = Object.keys(item.translatedTexts) as LocaleType[];
+    const coordsLanguage = item.coords[imagesLanguage] ? imagesLanguage : Object.keys(item.coords)[0] as LocaleType;
+
+    return {
+      translatedTexts: languages.reduce((acc, lang) => ({
+      ...acc,
+      [lang]: {
+        ...acc[lang],
+        fontSize: (acc[lang].fontSize ?? 22) * scalingFactor
+      }
+    }), item.translatedTexts),
+      coords: {
+        x1: Math.round(item.coords[coordsLanguage].x1 * scalingFactor),
+        y1: Math.round(item.coords[coordsLanguage].y1 * scalingFactor),
+        x2: Math.round(item.coords[coordsLanguage].x2 * scalingFactor),
+        y2: Math.round(item.coords[coordsLanguage].y2 * scalingFactor)
+      }
+    }
+  })
+
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      // Check if the click is inside a Card element
+      const cardElement = (event.target as HTMLElement).closest(".card");
+      if (!cardElement) {
+        setActiveTargetIndex(null);
+        setHiddenSourceIndex(null);
+      }
+    }
+
+    document.body.addEventListener("click", onClick);
+
+    return () => {
+      document.body.removeEventListener("click", onClick);
+    }
+  }, []);
 
   return (
     <>
-      <div className="flex flex-col gap-6 min-h-screen pb-10">
-        <Suspense>
-          <ChapterImagesList images={JSON.parse(JSON.stringify(chapter.images))}/>
-        </Suspense>
-        <NavigationButtons
-          prevChapter={chapter.prevChapter?.number}
-          nextChapter={chapter.nextChapter?.number}
-          mangaId={id}
-        />
+      <div className="overflow-hidden flex flex-col items-center min-h-screen">
+        <div className="relative">
+          {calcImages.map((image, index) =>
+            <Image
+              key={image.src}
+              as={NextImage}
+              src={BUCKET_URL + image.src}
+              alt={image.src}
+              priority={index < 2}
+              width={image.width ?? images[index].width}
+              height={image.height ?? images[index].height}
+              classNames={{
+                img: "object-contain"
+              }}
+              radius="none"
+            />
+          )}
+          {imagesLanguage !== sourceLang && adjustedMetadataContent?.map((data, index) => {
+            const width = (data.coords.x2 - data.coords.x1) + METADATA_BOX_PADDING * 2
+            const height = (data.coords.y2 - data.coords.y1) + METADATA_BOX_PADDING * 2
+
+            return (
+              <Card
+                key={index}
+                className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em]"
+                style={{
+                  opacity: showAllTargetLang ? hiddenSourceIndex === index ? 1 : 0 : hiddenSourceIndex === index ? 0 : 1,
+                  left: `${data.coords.x1 - METADATA_BOX_PADDING}px`,
+                  top: `${data.coords.y1 - METADATA_BOX_PADDING}px`,
+                  width: `${width}px`,
+                  minHeight: `${height}px`,
+                  maxWidth: `${screenWidth}px`
+                }}
+                onPress={() => {
+                  if (imagesLanguage !== targetLang) return;
+                  setHiddenSourceIndex(hiddenSourceIndex === index ? null : index);
+                }}
+                isPressable={imagesLanguage === targetLang}
+              >
+                <CardBody
+                  className={`p-1 sm:p-2 text-center justify-center ${wildWords.className}`}
+                >
+                  <div className={`text-center ${wildWords.className}`} style={{
+                    fontSize: data.translatedTexts[sourceLang]?.fontSize ?? 28,
+                    lineHeight: 1.25
+                  }}>
+                    <div
+                      className={`
+                      relative 
+                      [-webkit-text-stroke:0.2em_white]
+                      before:content-[attr(data-content)]
+                      before:absolute
+                      before:inset-0 
+                      before:text-black 
+                      before:[-webkit-text-fill-color:black] 
+                      before:[-webkit-text-stroke:0]
+                      `}
+                      data-content={data.translatedTexts[sourceLang]?.text}>
+                      {data.translatedTexts[sourceLang]?.text}
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+            )
+          })}
+          {sourceLang !== targetLang // If the source and target languages are the same then don't display the metadata
+            && targetLang !== imagesLanguage && adjustedMetadataContent?.map((data, index) => {
+              const width = (data.coords.x2 - data.coords.x1) + METADATA_BOX_PADDING * 2
+              const height = (data.coords.y2 - data.coords.y1) + METADATA_BOX_PADDING * 2
+
+              return (
+                <Card
+                  key={index}
+                  className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em]"
+                  style={{
+                    opacity: showAllTargetLang ? activeTargetIndex === index ? 0 : 1 : activeTargetIndex === index ? 1 : 0,
+                    left: `${data.coords.x1 - METADATA_BOX_PADDING}px`,
+                    top: `${data.coords.y1 - METADATA_BOX_PADDING}px`,
+                    width: `${width}px`,
+                    minHeight: `${height}px`,
+                  }}
+                  isPressable
+                  onPress={() => setActiveTargetIndex(activeTargetIndex === index ? null : index)}
+                >
+                  <CardBody
+                    className={`p-1 sm:p-2 text-center justify-center ${wildWords.className}`}
+                  >
+                    <div className={`text-center ${wildWords.className}`} style={{
+                      fontSize: data.translatedTexts[targetLang]?.fontSize ?? 28,
+                      lineHeight: 1.25
+                    }}>
+                      <div
+                        className={`
+                      relative 
+                      [-webkit-text-stroke:0.2em_white]
+                      before:content-[attr(data-content)]
+                      before:absolute
+                      before:inset-0 
+                      before:text-black 
+                      before:[-webkit-text-fill-color:black] 
+                      before:[-webkit-text-stroke:0]
+                      `}
+                        data-content={data.translatedTexts[targetLang]?.text}>
+                        {data.translatedTexts[targetLang]?.text}
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              )
+            })}
+        </div>
       </div>
-      <ChapterBookmarkFetch slug={id} number={chapter.number}/>
+      {metadata && targetLang !== sourceLang &&
+          <Button
+              isIconOnly
+              className="fixed bottom-16 right-4 z-20 opacity-80"
+              size="lg"
+              radius="full"
+              onPress={() => setShowAllTargetLang(prev => !prev)}
+          >
+              <motion.div
+                  initial={{opacity: 0, rotate: 0}}
+                  animate={{opacity: 1, rotate: showAllTargetLang ? 0 : 360}}
+                  transition={{duration: 0.1}}
+              >
+                {showAllTargetLang
+                  ? <TbLanguageOff size={28}/>
+                  : <IoLanguage size={26}/>}
+              </motion.div>
+          </Button>
+      }
+      <LanguageSelectNavbar
+        nativeLanguages={chapter.languages.map(lang => lang.toLowerCase()) as LocaleType[]}
+        languages={locales}
+      />
+      {(session.data?.user.role === "ADMIN" || session.data?.user.role === "MODERATOR")
+        && <div className="fixed top-40 right-5 flex flex-col gap-3 max-w-40">
+              <Button
+                as={Link}
+                href={path + "/edit"}
+              >
+                  Edit chapter
+              </Button>
+              <Button
+                  as={Link}
+                  href={path + "/edit/metadata"}
+              >
+                  Edit chapter metadata
+              </Button>
+          </div>}
     </>
-  );
+  )
 }

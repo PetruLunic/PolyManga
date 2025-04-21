@@ -276,8 +276,20 @@
       "previous": "Precedent"
     },
     "languageSelect": {
-      "label": "Limba",
-      "placeholder": "Selectează limba capitolului"
+      "labels": {
+        "default": "Limbă",
+        "source": "Limba sursă",
+        "target": "Limba țintă"
+      },
+      "placeholders": {
+        "default": "Selectați limba capitolului",
+        "source": "Selectați limba sursă",
+        "target": "Selectați limba țintă"
+      },
+      "sections": {
+        "edited": "Editate",
+        "AI": "Generate de AI"
+      }
     },
     "modals": {
       "signInOut": {
@@ -361,7 +373,8 @@
     "oldPassword": "Parolă veche",
     "profileImage": "Imagine profil",
     "language": "Limbă",
-    "preferredLanguage": "Limba preferată",
+    "sourceLanguage": "Limba sursă preferată",
+    "targetLanguage": "Limba țintă preferată",
     "placeholders": {
       "email": "Introduceți adresa de email",
       "name": "Introduceți numele de utilizator",
@@ -372,9 +385,6 @@
         "fileTypes": "(Doar imagini *.jpeg, *.jpg și *.png sunt acceptate)",
         "maxSize": "Mărime maximă 1 MB"
       }
-    },
-    "descriptions": {
-      "preferredLanguage": "Schimbarea rapidă, cu un singur clic, în limba preferată"
     },
     "customErrors": {
       "passwordRegex": "{path, select, missingTranslation {String} other {{path}}} trebuie să conțină cel puțin o literă mare, o literă mică, o cifră și un caracter special"

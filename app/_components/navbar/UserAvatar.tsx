@@ -7,6 +7,7 @@ import {CiLogout} from "react-icons/ci";
 import {MdHistory} from "react-icons/md";
 import {useTranslations} from "next-intl";
 import {Link} from "@/i18n/routing";
+import {USER_NO_IMAGE_SRC} from "@/app/lib/utils/constants";
 
 export default function UserAvatar() {
   const session = useSession();
@@ -14,13 +15,20 @@ export default function UserAvatar() {
 
   if (session.status !== "authenticated") return;
 
- return (
+  let imageSrc = session.data?.user?.image!
+
+  // If image is relative and is not the default one then prepend the bucket url
+  if (!imageSrc.startsWith("https") && imageSrc !== USER_NO_IMAGE_SRC) {
+    imageSrc = process.env.NEXT_PUBLIC_BUCKET_URL + imageSrc;
+  }
+
+  return (
      <Dropdown placement="bottom-end">
        <DropdownTrigger>
          <Avatar
              as="button"
              className="transition-transform"
-             src={session.data?.user?.image!}
+             src={imageSrc}
          />
        </DropdownTrigger>
        <DropdownMenu aria-label="Profile Actions" variant="flat">

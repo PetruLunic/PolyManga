@@ -16,6 +16,7 @@ import {useLocale, useTranslations} from "next-intl";
 import {extractChapterTitle} from "@/app/lib/utils/extractionUtils";
 import {ChapterLanguage, ChapterLanguageFull, LocaleType} from "@/app/types";
 import {Link} from "@/i18n/routing";
+import {useChapterLanguage} from "@/app/lib/hooks/useChapterLanguage";
 
 type ChapterList = Exclude<Manga_ChapterQuery["manga"], undefined | null>["chapters"]
 
@@ -42,6 +43,9 @@ export default function ChapterList({chapters, selectedChapter, mangaSlug, langu
   const [languageFilter, setLanguageFilter] = useState<LanguageSelectItem>(
     languages?.find(lang => lang.toLowerCase() === locale) ?? "all"
   )
+  const targetLang = useChapterLanguage({queryName: "target_lang"});
+  const sourceLang = useChapterLanguage({queryName: "source_lang"});
+  const queryString = `?source_lang=${sourceLang}&target_lang=${targetLang}`;
   useEffect(() => {
     if (!data?.getBookmarkedChapter) return;
 
@@ -161,11 +165,11 @@ export default function ChapterList({chapters, selectedChapter, mangaSlug, langu
              <Button
                as={Link}
                prefetch={false}
-               className="w-full flex justify-between items-center h-full"
+               className="w-full flex justify-between items-center h-full text-sm"
                variant={selectedChapter === chapter.number.toString() ? "solid" : "light"}
-               href={`/manga/${mangaSlug}/chapter/${chapter.number}`}
+               href={`/manga/${mangaSlug}/chapter/${chapter.number}${queryString}`}
              >
-               <span>{chapterTitle}</span>
+               <span className="truncate">{chapterTitle}</span>
                <span
                  className="tracking-wider">{new Date(parseInt(chapter.createdAt)).toLocaleDateString(locale)}</span>
              </Button>

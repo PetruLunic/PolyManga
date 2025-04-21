@@ -14,7 +14,7 @@ import bcrypt from "bcryptjs";
 import {HydratedDocument} from "mongoose";
 import {User} from "@/app/lib/graphql/schema";
 import {FormType as PreferencesFormType} from "@/app/(pages)/[locale]/user/settings/_components/PreferencesSection";
-import {ChapterLanguage} from "@/app/types";
+import {ChapterLanguage, LocaleEnum, LocaleType} from "@/app/types";
 import {getTranslations} from "next-intl/server";
 
 export async function modifyUserInfo(input: InfoFormType, formData?: FormData): Promise<{success: boolean, imageUrl?: string}> {
@@ -54,13 +54,12 @@ export async function modifyUserInfo(input: InfoFormType, formData?: FormData): 
     }
 
     // Generating an image URL
-    imageUrl = `user/${session.user.id}/image/${nanoid()}`;
+    imageUrl = `/user/${session.user.id}/image/${nanoid()}`;
     imageFetchPromise = uploadImage(image, imageUrl);
-    imageUrl = getAbsoluteAwsUrl(imageUrl);
 
     const prevImage = user.image;
 
-    // If the previous image is the default one then don't delete it
+    // If the previous image is the default one or is from the OAuth providers then don't delete it
     if (prevImage !== USER_NO_IMAGE_SRC) {
       deleteImageFetchPromise = deleteImage(prevImage);
     }
@@ -125,14 +124,14 @@ export async function changePassword({oldPassword, newPassword}: SecurityFormTyp
   await user.save()
 }
 
-export async function changeUserPreferences({language}: PreferencesFormType) {
+export async function changeUserPreferences({sourceLanguage, targetLanguage}: PreferencesFormType) {
   const session = await auth();
 
   if (!session) {
     throw new Error("Forbidden action");
   }
 
-  const isValid = UserPreferencesSchema.safeParse({language});
+  const isValid = UserPreferencesSchema.safeParse({sourceLanguage, targetLanguage});
 
   if (!isValid.success) {
     throw new Error("Validation error: " + isValid.error.message);
@@ -146,8 +145,8 @@ export async function changeUserPreferences({language}: PreferencesFormType) {
   }
 
   user.preferences = {
-    ...user.preferences,
-    language: language as ChapterLanguage ?? null
+    sourceLanguage: sourceLanguage.toLowerCase() as LocaleEnum || null,
+    targetLanguage: targetLanguage.toLowerCase() as LocaleEnum || null,
   }
   await user.save();
 

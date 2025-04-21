@@ -91,7 +91,7 @@ export default function MangaCard({manga, type, bookmarkedChapter, chapterBookma
                width="100%"
                alt={mangaTitle}
                className={`object-cover ${isExtendable ? "w-full aspect-[3/4]" : "w-36 h-44 sm:w-44 sm:h-[210px]"} `}
-               src={manga.image}
+               src={process.env.NEXT_PUBLIC_BUCKET_URL + manga.image}
              />
            </Badge>
            <div className="flex flex-col justify-between h-full">

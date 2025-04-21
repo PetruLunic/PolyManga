@@ -5,7 +5,6 @@ import Alert from "@/app/_components/Alert";
 import {Input} from "@heroui/input";
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";
-import {ModalProps} from "@/app/types";
 import {IoIosMail} from "react-icons/io";
 import {generateAndSendEmailToken} from "@/app/lib/userActions";
 import {useTranslations} from "next-intl";
@@ -13,6 +12,7 @@ import VerifyEmailForm from "@/app/_components/signForms/VerifyEmailForm";
 import {UserSchema} from "@/app/lib/utils/zodSchemas";
 import z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {ModalProps} from "@/app/lib/contexts/ModalsContext";
 
 type Props = Partial<ModalProps>;
 

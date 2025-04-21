@@ -23,8 +23,9 @@ export function useOnNavigate(): boolean {
 
       const url = toURL(data.fetchUrl);
       if (
-        url?.search.startsWith("?_rsc=") &&
-        data.dest === ""
+        url?.pathname !== pathWhenClicked &&
+        data.dest === "" &&
+        !data.isNextRouterPrefetch
       ) {
         clickTime = 0;
         setLoading(true);

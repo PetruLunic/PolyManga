@@ -60,7 +60,7 @@ export default function ChapterUpdateCard({chapter, locale = 'en'}: Props) {
     >
      <div className="flex gap-2 sm:gap-5 items-center w-full h-full justify-between">
        <Image
-           src={chapter.manga.image}
+           src={process.env.NEXT_PUBLIC_BUCKET_URL + chapter.manga.image}
            alt={mangaTitle}
            className="object-cover h-24 w-20"
        />

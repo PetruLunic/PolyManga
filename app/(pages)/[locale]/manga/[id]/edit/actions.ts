@@ -39,12 +39,11 @@ export const editManga = async (manga: EditMangaInput, formData?: FormData) => {
     }
 
     // Uploading new image to the aws s3 bucket
-    imageUrl = `manga/${manga.id}/cover/${nanoid()}`;
-    await uploadImage(image, imageUrl);
-    imageUrl = getAbsoluteAwsUrl(imageUrl);
-
-    // Deleting previous image
-    await deleteImage(manga.image);
+    imageUrl = `/manga/${manga.id}/cover/${nanoid()}`;
+    await Promise.all([
+      uploadImage(image, imageUrl),
+      deleteImage(manga.image)
+    ])
   }
 
   const client = createApolloClient();

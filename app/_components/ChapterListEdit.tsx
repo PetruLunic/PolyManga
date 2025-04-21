@@ -134,6 +134,15 @@ export default function ChapterListEdit({chapters, slug}: Props) {
                    >
                      <FaRegEdit/>
                    </Button>
+                   <Button
+                     radius="full"
+                     variant="light"
+                     className="z-10"
+                     as={Link}
+                     href={`/manga/${slug}/chapter/${chapter.number}/edit/metadata`}
+                   >
+                     metadata <FaRegEdit/>
+                   </Button>
                    <Popover placement="right">
                      <PopoverTrigger>
                        <Button

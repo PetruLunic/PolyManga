@@ -5,6 +5,7 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig = {
     experimental: {
+        reactCompiler: true,
         serverActions: {
             bodySizeLimit: '100mb',
         },
@@ -22,6 +23,10 @@ const nextConfig = {
             {
                 protocol: 'https',
                 hostname: 'manga-image.s3.eu-central-1.amazonaws.com', // AWS Bucket Cloud
+            },
+            {
+                protocol: 'https',
+                hostname: `${process.env.AWS_BUCKET_NAME}.${process.env.AWS_BUCKET_ENDPOINT}`, // Backblaze Bucket Cloud
             },
         ],
     },

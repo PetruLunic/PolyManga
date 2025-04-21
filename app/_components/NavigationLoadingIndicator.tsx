@@ -9,7 +9,7 @@ export function NavigationLoadingIndicator() {
   if (!loading) return null;
 
   return (
-    <div className="fixed w-screen h-screen z-[999] bg-background/80 backdrop-blur-sm flex items-center justify-center">
+    <div className="fixed inset-0 w-screen h-screen z-[999] bg-background/80 backdrop-blur-sm flex items-center justify-center">
       <Spinner size="lg" />
     </div>
   );

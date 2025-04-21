@@ -3,12 +3,15 @@ import SignInForm from "@/app/_components/signForms/SignInForm";
 import SignUpForm from "@/app/_components/signForms/SignUpForm";
 import {useDisclosure} from "@heroui/react";
 import VerifyEmailForm from "@/app/_components/signForms/VerifyEmailForm";
-import {ModalProps} from "@/app/types";
 import ForgotPasswordModal1 from "@/app/_components/signForms/ForgotPasswordModals/ForgotPasswordModal1";
 
 const ModalsName = ["signIn", "signUp", "verifyEmail", "forgotPassword"] as const;
 
 type ModalsName = typeof ModalsName[number];
+
+export interface ModalProps extends ReturnType<typeof useDisclosure> {
+  prop: ReturnType<typeof useState<string>>
+}
 
 type ModalsState = Record<ModalsName, ModalProps>;
 

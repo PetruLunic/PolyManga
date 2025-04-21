@@ -1,18 +1,21 @@
 "use server";
 
-import {combineAndCropImagesVertically} from "@/app/lib/utils/compositeImages";
 import {nanoid} from "nanoid";
 import {AddChapterInput, ChapterLanguage} from "@/app/__generated__/graphql";
 import {getImageURLs} from "@/app/lib/utils/getImageURL";
 import createApolloClient from "@/app/lib/utils/apollo-client";
 import {CREATE_CHAPTER} from "@/app/lib/graphql/mutations";
 import {isGraphQLErrors} from "@/app/lib/utils/errorsNarrowing";
-import {AWS_BUCKET_URL, getSignedURLs} from "@/app/lib/utils/awsUtils";
-import {CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT} from "@/app/lib/utils/constants";
+import {getSignedURLs} from "@/app/lib/utils/awsUtils";
 import {auth} from "@/auth";
 import sharp from "sharp";
 import dbConnect from "@/app/lib/utils/dbConnect";
 import Manga from "@/app/lib/models/Manga";
+import {ChapterImage} from "@/app/lib/graphql/schema";
+
+export interface ChapterImageBuffer extends Omit<ChapterImage, "src"> {
+  buffer: ArrayBuffer
+}
 
 export async function createChapter(formData: FormData, languages: ChapterLanguage[]) {
   const session = await auth();
@@ -46,30 +49,34 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
 
   const chapterId = nanoid();
 
-  // Cropping images into slices of MAX_HEIGHT and WIDTH
-  const croppedImages: Record<ChapterLanguage, {images: Buffer[], width: number}> = {} as Record<ChapterLanguage, {images: Buffer[], width: number}>;
+  const imagesMap: Record<ChapterLanguage, ChapterImageBuffer[]> = {} as Record<ChapterLanguage, ChapterImageBuffer[]>;
 
   await Promise.all(languages.map(async language => {
     const images = formData.getAll(`images-${language}`) as File[];
 
-    if (images.length === 0) throw new Error(`No image for ${language} language`)
+    if (images.length === 0) throw new Error(`No image for ${language} language`);
 
-    croppedImages[language] = {
-      width: CHAPTER_IMAGE_WIDTH,
-      images: []
+    imagesMap[language] = [];
+
+    for (const img of images) {
+      const width = await sharp(await img.arrayBuffer()).metadata().then(res => res.width);
+      const height = await sharp(await img.arrayBuffer()).metadata().then(res => res.height);
+
+      if (!width || !height) throw new Error(`Wasn't able to extract metadata for ${img.name}`);
+
+      imagesMap[language].push({
+        buffer: await img.arrayBuffer(),
+        width,
+        height
+      });
     }
-
-    // Extracting first image width
-    const firstImageWidth = await sharp(await images[0].arrayBuffer()).metadata().then(res => res.width);
-    croppedImages[language].width = firstImageWidth ?? CHAPTER_IMAGE_WIDTH;
-    croppedImages[language].images = await combineAndCropImagesVertically(images, firstImageWidth ?? CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT) || [];
   }))
 
   // Creating url for every image
   const imagesURLs: Record<ChapterLanguage, string[]> = {} as Record<ChapterLanguage, string[]>;
 
   languages.forEach(language => {
-    const imagesIds = Array.from({length: croppedImages[language].images.length}, () => nanoid());
+    const imagesIds = Array.from({length: imagesMap[language].length}, () => nanoid());
 
     imagesURLs[language] = getImageURLs(manga.id, chapterId, language, imagesIds);
   })
@@ -89,8 +96,8 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
   const fetchImagesPromises: Promise<Response>[] = [];
 
   languages.forEach((language) => {
-    croppedImages[language].images.forEach((image, index) => {
-      const imageFile = new File([image], 'combined-image.webp', { type: 'image/webp' });
+    imagesMap[language].forEach((image, index) => {
+      const imageFile = new File([image.buffer], 'combined-image.webp', { type: 'image/webp' });
 
 
       fetchImagesPromises.push(fetch(signedURLs[language][index], {
@@ -110,10 +117,10 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
     versions.push({
       language,
       title: titles[language],
-      images: imagesURLs[language].map(url => ({
-        src: AWS_BUCKET_URL + url,
-        width: croppedImages[language].width,
-        height: MAX_CHAPTER_IMAGE_HEIGHT
+      images: imagesURLs[language].map((url, index) => ({
+        src: url,
+        width: imagesMap[language][index].width,
+        height: imagesMap[language][index].height
       }))
     })
   })

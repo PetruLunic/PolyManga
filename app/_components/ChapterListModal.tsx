@@ -16,7 +16,6 @@ export default function ChapterListModal({data}: Props) {
   const t = useTranslations("common.manga");
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const {number, id} = useParams<{id: string, number: string}>();
-  const maxNumberOfMangaTitleCharacters = data.chapter.languages.length > 1 ? 10 : 15;
   const locale = useLocale();
   const mangaTitle = extractMangaTitle(data.manga?.title ?? [], locale as LocaleType)
   const chapterTitle = extractChapterTitle(data.chapter.versions, locale as LocaleType);
@@ -26,18 +25,13 @@ export default function ChapterListModal({data}: Props) {
     <Button
         variant="flat"
         radius="none"
-        className="h-full px-2 sm:px-3 flex-col justify-evenly gap-0 md:px-6 md:max-w-none"
+        className="h-full px-2 sm:px-3 flex-col justify-evenly gap-0 md:px-6 max-w-40 md:max-w-none"
         onPress={() => setTimeout(onOpen, 10)}
     >
-      <div className="sm:hidden text-sm">
-        {mangaTitle.length > maxNumberOfMangaTitleCharacters
-          ? mangaTitle.slice(0, maxNumberOfMangaTitleCharacters) + "..."
-          : mangaTitle}
-      </div>
-      <div className="hidden sm:block">
+      <div className="max-w-full truncate">
         {mangaTitle}
       </div>
-      <div className="text-xs text-gray-200">
+      <div className="max-w-full text-xs text-gray-200 truncate">
         {chapterTitle}
       </div>
     </Button>
@@ -52,7 +46,7 @@ export default function ChapterListModal({data}: Props) {
         <ModalHeader>
           {t("chapters")}
         </ModalHeader>
-        <ModalBody>
+        <ModalBody className="px-4 sm:px-6">
           <ChapterList
             chapters={data.manga?.chapters}
             selectedChapter={number}

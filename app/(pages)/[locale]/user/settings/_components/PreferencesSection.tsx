@@ -39,7 +39,10 @@ export default function PreferencesSection({user}: Props) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       await changeUserPreferences(data);
-      await update({user: {...session?.user, preferences: data}});
+      await update({user: {...session?.user, preferences: {
+        sourceLanguage: data.sourceLanguage.toLowerCase(),
+        targetLanguage: data.targetLanguage.toLowerCase()
+      }}});
       addAlert({message: tAlert("preferencesChanged"), type: "success"});
     } catch(e) {
       console.error(e);
@@ -53,17 +56,29 @@ export default function PreferencesSection({user}: Props) {
       onSubmit={onSubmit}
   >
     <Select
-        label={tForm("preferredLanguage")}
-        description={tForm("descriptions.preferredLanguage")}
-        errorMessage={errors.language?.message}
-        isInvalid={!!errors.language}
-        defaultSelectedKeys={user.preferences?.language ? [user.preferences.language] : []}
-        {...register("language")}
+        label={tForm("sourceLanguage")}
+        errorMessage={errors.sourceLanguage?.message}
+        isInvalid={!!errors.sourceLanguage}
+        defaultSelectedKeys={user.preferences?.sourceLanguage ? [user.preferences.sourceLanguage[0].toUpperCase() + user.preferences.sourceLanguage[1]] : []}
+        {...register("sourceLanguage")}
     >
       {Object.keys(ChapterLanguage).map(language =>
           <SelectItem key={language}>
             {ChapterLanguageFull[language as ChapterLanguage]}
           </SelectItem>
+      )}
+    </Select>
+    <Select
+      label={tForm("targetLanguage")}
+      errorMessage={errors.targetLanguage?.message}
+      isInvalid={!!errors.targetLanguage}
+      defaultSelectedKeys={user.preferences?.targetLanguage ? [user.preferences.targetLanguage[0].toUpperCase() + user.preferences.targetLanguage[1]] : []}
+      {...register("targetLanguage")}
+    >
+      {Object.keys(ChapterLanguage).map(language =>
+        <SelectItem key={language}>
+          {ChapterLanguageFull[language as ChapterLanguage]}
+        </SelectItem>
       )}
     </Select>
     <Button isLoading={isSubmitting} color="primary" type="submit">

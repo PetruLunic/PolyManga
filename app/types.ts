@@ -1,6 +1,4 @@
-import {useDisclosure} from "@heroui/react";
-import {useState} from "react";
-import {UserPreferences} from "@/app/lib/graphql/schema";
+import {CoordsItem, UserPreferences} from "@/app/lib/graphql/schema";
 import {locales} from "@/i18n/routing";
 
 export interface UserSession {
@@ -33,7 +31,28 @@ export enum ChapterLanguage {
   Fr = "Fr"
 }
 
-export type LocaleType = typeof locales[number]
+export type LocaleType = typeof locales[number];
+
+export enum LocaleEnum {
+  EN = "en",
+  RU = "ru",
+  RO = "ro"
+}
+
+export interface TextItem {
+  text: string,
+  fontSize?: number | null
+}
+
+export interface ContentItem {
+  translatedTexts: Record<LocaleType, TextItem>,
+  coords: Record<LocaleType, CoordsItem>;
+}
+
+export interface ChapterMetadata {
+  chapterId: string; // Reference to Chapter.id
+  content: ContentItem[];
+}
 
 export enum ChapterLanguageFull {
   En = "English",
@@ -94,14 +113,8 @@ export enum UserProvider {
   CREDENTIALS = "CREDENTIALS"
 }
 
-export interface ModalProps extends ReturnType<typeof useDisclosure> {
-  prop: ReturnType<typeof useState<string>>
-}
-
 export const bookmarkTypes = ["reading", "inPlans", "finished", "dropped", "favourite"] as const;
 export type BookmarkType = typeof bookmarkTypes[number];
 
 export const likeableObjects = ["Manga"] as const;
 export type LikeableObject = typeof likeableObjects[number];
-
-export type MangaCardType = "default" | "history" | "bookmark";

@@ -6,7 +6,7 @@ import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
 
 export const AWS_BUCKET_URL = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/`
 
-export const deleteImage = (url: string): Promise<DeleteObjectCommandOutput> | undefined => {
+export const deleteImage = (pathname: string): Promise<DeleteObjectCommandOutput> | undefined => {
   const bucketName = process.env.AWS_BUCKET_NAME;
 
   if (!bucketName) {
@@ -15,9 +15,7 @@ export const deleteImage = (url: string): Promise<DeleteObjectCommandOutput> | u
 
   // Wrapping in a try catch, to catch if manga image is not a valid url
   try {
-    // Extracting image key from image url
-    const urlObj = new URL(url);
-    const Key =  urlObj.pathname.substring(1); // Remove the leading '/'
+    const Key = pathname.substring(1); // Delete / prefix from the pathname
 
     // Deleting previous image
     const command = new DeleteObjectCommand({
@@ -32,7 +30,7 @@ export const deleteImage = (url: string): Promise<DeleteObjectCommandOutput> | u
   }
 }
 
-export async function getSignedURLs(urls: string[]): Promise<{ failure: string } | { success: string[] }> {
+export async function getSignedURLs(pathnames: string[]): Promise<{ failure: string } | { success: string[] }> {
   const session = await auth();
 
   if (!session) {
@@ -41,10 +39,12 @@ export async function getSignedURLs(urls: string[]): Promise<{ failure: string }
 
   const signedUrls: string[] = [];
 
-  for (let url of urls) {
+  for (let path of pathnames) {
+    const Key = path.substring(1); // Deleting leading /
+
     const putObjectCommand = new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME!,
-      Key: url
+      Key
     })
 
     const signedURL = await getSignedUrl(s3, putObjectCommand, {

@@ -100,7 +100,7 @@ export default async function Page({params}: Props) {
             <MangaSettingsDropdown mangaId={id} className="absolute right-2 top-2"/>
             <Image
                 className="w-[250px] h-[350px] object-cover"
-                src={manga?.image}
+                src={process.env.NEXT_PUBLIC_BUCKET_URL + manga?.image}
                 width={250}
                 height={350}
                 alt={title}

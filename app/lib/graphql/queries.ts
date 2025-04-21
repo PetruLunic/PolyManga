@@ -136,6 +136,24 @@ export const GET_CHAPTER = gql(`
       },
       prevChapter {
         number
+      },
+      metadata {
+        content {
+          translatedTexts {
+            language,
+            text,
+            fontSize
+          },
+          coords {
+            coord {
+              x1,
+              x2,
+              y1,
+              y2
+            },
+            language
+          }
+        }
       }
     }
   }
@@ -277,7 +295,8 @@ export const SIGN_IN = gql(`
       image,
       emailVerified,
       preferences {
-        language
+        targetLanguage,
+        sourceLanguage
       }
     }
   }
@@ -352,7 +371,8 @@ export const GET_USER_PREFERENCES = gql(`
     query userPreferences {
       user {
         preferences {
-          language
+          targetLanguage,
+          sourceLanguage
         }
       }
     }

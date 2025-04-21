@@ -1,5 +1,5 @@
 import {Arg, Args, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
-import {AddChapterInput, Chapter, GetChaptersArgs, Manga} from "@/app/lib/graphql/schema";
+import {AddChapterInput, Chapter, ChapterMetadataRaw, GetChaptersArgs, Manga} from "@/app/lib/graphql/schema";
 import ChapterModel from "@/app/lib/models/Chapter";
 import {GraphQLError} from "graphql/error";
 import {HydratedDocument} from "mongoose";
@@ -7,6 +7,7 @@ import MangaModel from "@/app/lib/models/Manga";
 import {ChapterLanguage} from "@/app/types";
 import {deleteImage} from "@/app/lib/utils/awsUtils";
 import {LogExecutionTime} from "@/app/lib/utils/decorators";
+import ChapterMetadataModel from "@/app/lib/models/ChapterMetadata";
 
 @Resolver(Chapter)
 export class ChapterResolver {
@@ -201,5 +202,10 @@ export class ChapterResolver {
   @FieldResolver(() => Manga)
   async manga(@Root() chapter: Chapter): Promise<Manga | null> {
     return MangaModel.findOne({id: chapter.mangaId}).lean();
+  }
+
+  @FieldResolver(() => ChapterMetadataRaw, {nullable: true})
+  async metadata(@Root() chapter: Chapter): Promise<ChapterMetadataRaw | null> {
+    return ChapterMetadataModel.findOne({chapterId: chapter.id}).lean();
   }
 }

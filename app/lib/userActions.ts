@@ -263,8 +263,6 @@ export const resetPasswordAndSignIn = async (newPassword: string, token: string)
     user.password = bcrypt.hashSync(newPassword, 7);
     await user.save();
 
-    console.log({...user.toObject()});
-
     await authSignIn("credentials", {
       redirect: false,
       ...user.toObject(),

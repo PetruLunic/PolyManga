@@ -4,6 +4,7 @@ import {nanoid} from "nanoid";
 import {UserProvider, UserRole, ChapterLanguage} from "@/app/types";
 import Bookmark from "@/app/lib/models/Bookmark";
 import {USER_NO_IMAGE_SRC} from "@/app/lib/utils/constants";
+import {locales} from "@/i18n/routing";
 
 interface UserModel extends Model<User> {}
 
@@ -58,9 +59,14 @@ const UserSchema = new Schema<User>({
     default: false
   },
   preferences: {
-    language: {
+    sourceLanguage: {
       type: String,
-      enum: ChapterLanguage,
+      enum: locales,
+      default: null
+    },
+    targetLanguage: {
+      type: String,
+      enum: locales,
       default: null
     }
   }

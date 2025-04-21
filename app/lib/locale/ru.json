@@ -275,8 +275,20 @@
       "previous": "Предыдущий"
     },
     "languageSelect": {
-      "label": "Язык",
-      "placeholder": "Выберите язык главы"
+      "labels": {
+        "default": "Язык",
+        "source": "Исходный язык",
+        "target": "Целевой язык"
+      },
+      "placeholders": {
+        "default": "Выберите язык главы",
+        "source": "Выберите исходный язык",
+        "target": "Выберите целевой язык"
+      },
+      "sections": {
+        "edited": "Отредактированные",
+        "AI": "Сгенерированные ИИ"
+      }
     },
     "modals": {
       "signInOut": {
@@ -360,7 +372,8 @@
     "oldPassword": "Старый пароль",
     "profileImage": "Аватар",
     "language": "Язык",
-    "preferredLanguage": "Предпочитаемый язык",
+    "sourceLanguage": "Предпочитаемый исходный язык",
+    "targetLanguage": "Предпочитаемый целевой язык",
     "placeholders": {
       "email": "Введите email",
       "name": "Введите имя пользователя",
@@ -371,9 +384,6 @@
         "fileTypes": "(Допустимые форматы: JPEG, JPG, PNG)",
         "maxSize": "Не более 1 МБ"
       }
-    },
-    "descriptions": {
-      "preferredLanguage": "Быстрое переключение на предпочитаемый язык в один клик"
     },
     "customErrors": {
       "passwordRegex": "{path, select, missingTranslation {String} other {{path}}} должен содержать минимум одну заглавную букву, одну строчную, одну цифру и один специальный символ"

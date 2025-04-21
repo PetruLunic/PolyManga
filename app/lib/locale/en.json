@@ -275,8 +275,20 @@
       "previous": "Previous"
     },
     "languageSelect": {
-      "label": "Language",
-      "placeholder": "Select the chapter language"
+      "labels": {
+        "default": "Language",
+        "source": "Source lang",
+        "target": "Target lang"
+      },
+      "placeholders": {
+        "default": "Select the chapter language",
+        "source": "Select the source language",
+        "target": "Select the Target language"
+      },
+      "sections": {
+        "edited": "Edited",
+        "AI": "AI generated"
+      }
     },
     "modals": {
       "signInOut": {
@@ -360,7 +372,8 @@
     "oldPassword": "Old password",
     "profileImage": "Profile image",
     "language": "Language",
-    "preferredLanguage": "Preferred language",
+    "sourceLanguage": "Preferred source language",
+    "targetLanguage": "Preferred target language",
     "placeholders": {
       "email": "Enter your email",
       "name": "Enter your user name",
@@ -371,9 +384,6 @@
         "fileTypes": "(Only *.jpeg, *.jpg and *.png images will be accepted)",
         "maxSize": "No larger than 1 MB"
       }
-    },
-    "descriptions": {
-      "preferredLanguage": "Fast, one-click swap to the preferred language"
     },
     "customErrors": {
       "passwordRegex": "{path, select, missingTranslation {String} other {{path}}} must contain at least one uppercase letter, one lowercase letter, one digit, and one special character"

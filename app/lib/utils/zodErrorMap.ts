@@ -70,7 +70,7 @@ export const makeZodI18nMap: MakeZodI18nMap = (option) => (issue, ctx) => {
   let message: string;
   message = defaultErrorMap(issue, ctx).message;
 
-  const path = issue.path.length > 0 && !!tForm
+  const path = issue.path.length > 0 && !!tForm && tForm.has(issue.path.join('.') as any)
     ? { path: tForm(issue.path.join('.') as any) }
     : {};
 

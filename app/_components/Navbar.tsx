@@ -8,7 +8,7 @@ import {TRANSITION_EASINGS} from "@heroui/framer-utils";
 const SCROLL_THRESHOLD = 300;
 const DEBOUNCE_TIME = 300;
 
-const hideOnScrollVariants: Variants = {
+const getHideOnScrollVariants: (positioning: "top" | "bottom") => Variants = (positioning) => ({
   visible: {
     y: 0,
     transition: {
@@ -16,14 +16,17 @@ const hideOnScrollVariants: Variants = {
     },
   },
   hidden: {
-    y: "-100%",
+    y: positioning === "top" ? "-100%" : '100%',
+    height: positioning === "top" ? 'auto' : 0,
+    overflow: 'hidden',
     transition: {
       ease: TRANSITION_EASINGS.easeIn,
     },
   },
-};
+});
 
 interface CustomNavbarProps extends NavbarProps {
+  positioning?: "top" | "bottom",
   scrollThreshold?: number;
 }
 
@@ -35,6 +38,7 @@ const Navbar = forwardRef<HTMLElement, CustomNavbarProps>((props, ref) => {
   const {
     children,
     scrollThreshold = SCROLL_THRESHOLD,
+    positioning = "top",
     ...otherProps
   } = props;
   const { scrollY } = useScroll();
@@ -82,7 +86,7 @@ const Navbar = forwardRef<HTMLElement, CustomNavbarProps>((props, ref) => {
           <m.nav
             animate={isHidden ? "hidden" : "visible"}
             initial={false}
-            variants={hideOnScrollVariants}
+            variants={getHideOnScrollVariants(positioning)}
             {...mergeProps(context.getBaseProps(), context.motionProps)}
           >
             {content}

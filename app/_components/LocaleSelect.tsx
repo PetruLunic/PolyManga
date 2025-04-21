@@ -4,6 +4,7 @@ import {useLocale, useTranslations} from "next-intl";
 import {Select, SelectItem, SelectProps} from "@heroui/react";
 import {locales, usePathname} from "@/i18n/routing";
 import {ChapterLanguage, ChapterLanguageFull} from "@/app/types";
+import {useSearchParams} from "next/navigation";
 
 type Props = Omit<SelectProps, "children">;
 
@@ -11,6 +12,7 @@ export default function LocaleSelect({className, ...props}: Props) {
   const selectedLocale = useLocale();
   const t = useTranslations("form");
   const pathname = usePathname();
+  const searchParams = useSearchParams().toString();
 
  return (
    <Select
@@ -27,7 +29,7 @@ export default function LocaleSelect({className, ...props}: Props) {
      {locales.map(locale =>
         <SelectItem
           key={locale}
-          href={`/${locale}${pathname}`}
+          href={`/${locale}${pathname}?${searchParams}`}
         >
           {ChapterLanguageFull[(locale[0].toUpperCase() + locale.substring(1)) as ChapterLanguage]}
         </SelectItem>
