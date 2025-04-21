@@ -17,6 +17,7 @@ export default function NavigationButtons({prevChapter, nextChapter, mangaId}: P
    <div className="flex justify-between px-3">
      <Button
        as={Link}
+       scroll={false}
        href={`/manga/${mangaId}/chapter/${prevChapter}`}
        isDisabled={!prevChapter}
        variant="flat"
@@ -26,6 +27,7 @@ export default function NavigationButtons({prevChapter, nextChapter, mangaId}: P
      </Button>
      <Button
        as={Link}
+       scroll={false}
        href={`/manga/${mangaId}/chapter/${nextChapter}`}
        isDisabled={!nextChapter}
        variant="flat"

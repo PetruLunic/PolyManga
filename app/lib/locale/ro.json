@@ -339,6 +339,7 @@
   "server": {
     "user": {
       "unexpectedError": "Eroare neașteptată!",
+      "tokenSentIfExists": "A fost trimis un token dacă e-mailul există.",
       "wrongPasswordOrEmail": "Email-ul sau parola sunt incorecte!",
       "existingEmail": "Un utilizator cu acest email există deja",
       "existingName": "Un utilizator cu acest nume există deja",
