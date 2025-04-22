@@ -58,7 +58,7 @@ export default function ImagesInputSection({id, setImageInputSections, imageInpu
                  }}
              >
                {languagesMap.map(({key, value}) =>
-                   <SelectItem key={key} value={key}>
+                   <SelectItem key={key}>
                      {value}
                    </SelectItem>
                )}

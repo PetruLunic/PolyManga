@@ -2,13 +2,9 @@
 
 import {ChapterLanguageFull, LocaleType} from "@/app/types";
 import {Select, SelectItem, SelectProps, SelectSection} from "@heroui/react";
-import {useSearchParams} from "next/navigation";
 import {useQueryParams} from "@/app/lib/hooks/useQueryParams";
-import {useEffect} from "react";
-import {isStringInEnum} from "@/app/lib/utils/isStringinEnum";
 import {ChapterLanguage} from "@/app/__generated__/graphql";
-import {useLocale, useTranslations} from "next-intl";
-import {locales} from "@/i18n/routing";
+import {useTranslations} from "next-intl";
 import {useChapterLanguage} from "@/app/lib/hooks/useChapterLanguage";
 
 interface Props extends Omit<SelectProps, 'children'> {
@@ -31,7 +27,7 @@ export default function LanguageSelect({languages, queryName, nativeLanguages, .
     languages
       .filter(lang => !nativeLanguages.includes(lang))
       .map(language => ({key: language, value: ChapterLanguageFull[(language[0].toUpperCase() + language[1]) as ChapterLanguage]}));
-  const language = useChapterLanguage({queryName})
+  const language = useChapterLanguage({queryName});
 
  return (
    <Select

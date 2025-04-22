@@ -41,6 +41,9 @@ export default function LanguageSelectNavbar({languages, nativeLanguages}: Props
             queryName="source_lang"
             className="min-w-36 sm:min-w-44"
             placeholder={t("placeholders.source")}
+            classNames={{
+              label: "truncate text-xs sm:text-sm"
+            }}
             label={t("labels.source")}
           />
         </Suspense>
@@ -53,6 +56,9 @@ export default function LanguageSelectNavbar({languages, nativeLanguages}: Props
             queryName="target_lang"
             className="min-w-36 sm:min-w-44"
             placeholder={t("placeholders.target")}
+            classNames={{
+              label: "truncate text-xs sm:text-sm"
+            }}
             label={t("labels.target")}
           />
         </Suspense>
