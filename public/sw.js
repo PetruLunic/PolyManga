@@ -11,7 +11,8 @@ self.addEventListener("fetch", e => {
             client?.postMessage({
                 fetchUrl: request.url,
                 dest: destination,
-                isNextRouterPrefetch: request.headers.get("Next-Router-Prefetch") || request.headers.get("next-router-prefetch")
+                isNextRouterPrefetch: request.headers.get("Next-Router-Prefetch") || request.headers.get("next-router-prefetch"),
+                method: request.method
             }),
         ),
     );

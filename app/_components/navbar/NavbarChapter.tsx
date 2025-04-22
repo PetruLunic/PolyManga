@@ -64,6 +64,7 @@ export default function NavbarChapter({data}: Props) {
                  radius="none"
                  className={`h-full w-14 md:w-[--navbar-height]`}
                  href={`/manga/${id}/chapter/${data.chapter.prevChapter?.number}${queryString}`}
+                 scroll={false}
                  as={Link}
              >
                  <FaChevronLeft />
@@ -77,6 +78,7 @@ export default function NavbarChapter({data}: Props) {
                  radius="none"
                  className={`h-full w-14 md:w-[--navbar-height]`}
                  href={`/manga/${id}/chapter/${data.chapter.nextChapter?.number}${queryString}`}
+                 scroll={false}
                  as={Link}
              >
                  <FaChevronRight />

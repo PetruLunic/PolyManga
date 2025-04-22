@@ -14,6 +14,7 @@ import {Suspense} from "react";
 import {NavigationLoadingIndicator} from "@/app/_components/NavigationLoadingIndicator";
 import {locales} from "@/i18n/routing";
 import {SWRegistration} from "@/app/_components/SWRegistration";
+import ScrollOnTop from "@/app/_components/ScrollOnTop";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -55,6 +56,7 @@ export default async function RootLayout({children, params}: Props) {
       <Providers session={session}>
         <NavbarRoot/>
         <SWRegistration/>
+        <ScrollOnTop/>
         <NavigationLoadingIndicator/>
         <nav className="z-40 w-full h-auto sticky top-0 inset-x-0" id="chapter-navbar-portal"></nav>
         <main
