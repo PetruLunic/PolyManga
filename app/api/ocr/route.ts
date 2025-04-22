@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     if (!chapterId || !data)
       return new Response("Invalid data", {status: 400});
 
-    const result = MetadataSchema.safeParse(JSON.parse(data));
+    const result = MetadataSchema.safeParse(data);
 
     if (result.error)
       return new Response("Invalid data", {status: 400});

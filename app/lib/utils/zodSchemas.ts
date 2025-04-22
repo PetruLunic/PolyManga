@@ -84,6 +84,7 @@ export const MangaSchema = z.object({
     value: z.string().min(1).max(2000),
     language: z.string()
   })),
+  languages: z.string(),
   status: ComicsStatusSchema,
   author: z.string().min(1).max(50),
   type: ComicsTypeSchema,

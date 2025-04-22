@@ -13,18 +13,20 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {MangaSchema} from "@/app/lib/utils/zodSchemas";
 import {useDropzone} from "react-dropzone";
 import {Input, Textarea} from "@heroui/input";
-import {Button, Image, Select, SelectItem} from "@heroui/react";
+import {Button, Image, Select, SelectItem, useDisclosure} from "@heroui/react";
 import z from "zod";
 import {editManga} from "@/app/(pages)/[locale]/manga/[id]/edit/actions";
 import {CiImageOn} from "react-icons/ci";
 import {useEffect} from "react";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
+import {ChapterLanguageFull} from "@/app/types";
+import TranslateMangaModal from "@/app/(pages)/[locale]/manga/[id]/edit/_components/TranslateMangaModal";
 
 interface Props{
   manga: Exclude<MangaEditQuery["manga"], null | undefined>;
 }
 
-type EditMangaForm = z.infer<typeof MangaSchema>
+export type EditMangaForm = z.infer<typeof MangaSchema>
 
 export default function EditMangaForm({manga}: Props) {
   const {addAlert} = useAlert();
@@ -44,11 +46,14 @@ export default function EditMangaForm({manga}: Props) {
     resolver: zodResolver(MangaSchema),
     defaultValues: {
       ...manga,
-      genres: manga.genres.join(",")
+      genres: manga.genres.join(","),
+      languages: manga.languages.join(",")
     }
   })
+  const disclosure = useDisclosure();
 
-  console.log(getValues("genres"))
+  console.log(manga);
+
   const {acceptedFiles, getRootProps, getInputProps} = useDropzone({
     accept: {
       'image/*': ['.jpeg', '.png', '.jpg']
@@ -64,7 +69,6 @@ export default function EditMangaForm({manga}: Props) {
         formData.append("image", acceptedFiles[0]);
       }
 
-      const languages = data.title.map(({language}) => language);
       const description = data.description.map(({language, value}) => ({value, language: language as ChapterLanguage}));
       const title = data.title.map(({language, value}) => ({value, language: language as ChapterLanguage}))
 
@@ -75,7 +79,7 @@ export default function EditMangaForm({manga}: Props) {
         id: manga.id,
         image: manga.image,
         genres: data.genres.split(",") as ComicsGenre[],
-        languages: languages as ChapterLanguage[],
+        languages: data.languages.split(",") as ChapterLanguage[],
         type: data.type as ComicsType,
         status: data.status as ComicsStatus
       }
@@ -128,7 +132,7 @@ export default function EditMangaForm({manga}: Props) {
   };
 
   return (
-    <div>
+    <>
       <h2 className="text-xl pb-3">Edit {manga.title[0].value}</h2>
       <form
         onSubmit={onSubmit}
@@ -223,10 +227,29 @@ export default function EditMangaForm({manga}: Props) {
               isInvalid={!!errors.releaseYear}
               {...register("releaseYear", {valueAsNumber: true})}
             />
+            <Select
+              isRequired
+              label="Languages"
+              disallowEmptySelection
+              selectionMode="multiple"
+              defaultSelectedKeys={manga.languages}
+              errorMessage={errors?.languages?.message}
+              isInvalid={!!errors?.languages?.message}
+              {...register(`languages`)}
+            >
+              {Object.keys(ChapterLanguage).map(lang =>
+                <SelectItem key={lang}>{ChapterLanguageFull[lang as ChapterLanguage]}</SelectItem>
+              )}
+            </Select>
           </div>
         </div>
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg">Translations</h3>
+          <Button
+            onPress={disclosure.onOpen}
+          >
+            Translate
+          </Button>
         </div>
         {fields.map((field, index) => (
           <div key={field.id} className="mb-4">
@@ -250,7 +273,7 @@ export default function EditMangaForm({manga}: Props) {
                 }}
               >
                 {Object.keys(ChapterLanguage).map(lang =>
-                  <SelectItem key={lang}>{lang}</SelectItem>
+                  <SelectItem key={lang}>{ChapterLanguageFull[lang as ChapterLanguage]}</SelectItem>
                 )}
               </Select>
               <Input
@@ -283,7 +306,7 @@ export default function EditMangaForm({manga}: Props) {
         ))}
         <Button
           className="self-end"
-          onClick={addLanguageFields}
+          onPress={addLanguageFields}
         >
           Add Language
         </Button>
@@ -291,6 +314,7 @@ export default function EditMangaForm({manga}: Props) {
           Submit
         </Button>
       </form>
-    </div>
+      <TranslateMangaModal setValue={setValue} manga={manga} {...disclosure} />
+    </>
   );
 };

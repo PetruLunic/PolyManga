@@ -339,7 +339,6 @@ export async function translateWithGemini(
     // Log the specific type of error if possible
     if (error instanceof Error) {
       // Check for specific API related errors if the SDK provides them
-      // Example: if (error.name === 'GoogleGenerativeAIError') { ... }
       throw new Error(`Gemini translation failed: ${error.message}`);
     } else {
       throw new Error(`Gemini translation failed with an unknown error: ${String(error)}`);

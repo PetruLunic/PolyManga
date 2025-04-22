@@ -93,10 +93,18 @@ export type ChapterImage = {
 };
 
 export enum ChapterLanguage {
+  De = 'De',
   En = 'En',
+  Es = 'Es',
   Fr = 'Fr',
+  Id = 'Id',
+  It = 'It',
+  Pt = 'Pt',
   Ro = 'Ro',
-  Ru = 'Ru'
+  Ru = 'Ru',
+  Th = 'Th',
+  Tl = 'Tl',
+  Vn = 'Vn'
 }
 
 export type ChapterMetadataRaw = {

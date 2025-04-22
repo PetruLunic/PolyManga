@@ -24,8 +24,8 @@ import {
 } from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/actions";
 import {useScrollHeight} from "@/app/lib/hooks/useScrollHeight";
 import {transformMetadata} from "@/app/lib/utils/transformMetadata";
-import TranslateModal
-  from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/_components/TranslateModal";
+import TranslateChapterMetadataModal
+  from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/_components/TranslateChapterMetadataModal";
 import {MetadataSchema} from "@/app/lib/utils/zodSchemas";
 
 export interface Box {
@@ -484,7 +484,7 @@ export default function RedactorPage({chapter, metadata}: Props) {
           Save
         </Button>
       </div>
-      <TranslateModal
+      <TranslateChapterMetadataModal
         onOpenChange={onOpenChange}
         boxes={boxes}
         setBoxes={setBoxes}

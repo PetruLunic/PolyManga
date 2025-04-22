@@ -26,7 +26,7 @@ interface Props extends Omit<ModalProps, "children"> {
 
 type TranslateStatus = "pending" | "finished" | "error" | "processing"
 
-export default function TranslateModal({onOpenChange, isOpen, boxes, setBoxes, chapterId}: Props) {
+export default function TranslateChapterMetadataModal({onOpenChange, isOpen, boxes, setBoxes, chapterId}: Props) {
   const [isTranslating, setIsTranslating] = useState<Partial<Record<LocaleType, TranslateStatus>>>({});
   const [sourceLang, setSourceLang] = useState<LocaleType>(locales[0]);
   const [targetLangs, setTargetLangs] = useState<LocaleType[]>([]);
