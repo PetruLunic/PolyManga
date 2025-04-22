@@ -1,0 +1,392 @@
+{
+  "common": {
+    "badges": {
+      "languageAvailability": {
+        "available": "Disponível",
+        "unavailable": "Indisponível",
+        "items": {
+          "chapter": "capítulo",
+          "manga": "mangá"
+        },
+        "tooltips": {
+          "available": "Este {item} está disponível no seu idioma",
+          "unavailable": "Este {item} não está disponível no seu idioma"
+        }
+      }
+    },
+    "manga": {
+      "status": {
+        "ONGOING": "Em Andamento",
+        "FINISHED": "Concluído",
+        "PAUSED": "Pausado",
+        "DROPPED": "Abandonado"
+      },
+      "type": {
+        "manga": "Mangá",
+        "manhwa": "Manhwa",
+        "manhua": "Manhua"
+      },
+      "genres": {
+        "action": "ação",
+        "fantasy": "fantasia",
+        "drama": "drama",
+        "harem": "harém",
+        "martial_arts": "artes marciais",
+        "apocalypse": "apocalipse",
+        "cultivation": "cultivo",
+        "game": "jogo",
+        "hero": "herói",
+        "mature": "adulto",
+        "comedy": "comédia",
+        "genius_mc": "protagonista gênio",
+        "historical": "histórico",
+        "loli": "loli",
+        "mecha": "mecha",
+        "adventure": "aventura",
+        "isekai": "isekai",
+        "magic": "magia",
+        "romance": "romance",
+        "noble": "nobre",
+        "time_travel": "viagem no tempo",
+        "murim": "murim",
+        "rebirth": "renascimento",
+        "school_life": "vida escolar",
+        "system": "sistema",
+        "tower": "torre",
+        "virtual_reality": "realidade virtual",
+        "regression": "regressão",
+        "sci_fi": "ficção científica",
+        "thriller": "suspense",
+        "tragedy": "tragédia",
+        "villain": "vilão",
+        "necromancer": "necromante",
+        "post_apocalyptic": "pós-apocalíptico",
+        "reincarnation": "reencarnação",
+        "revenge": "vingança",
+        "sport": "esporte"
+      },
+      "chapter": "Capítulo",
+      "chapters": "Capítulos",
+      "noChapter": "Nenhum capítulo"
+    },
+    "ui": {
+      "buttons": {
+        "save": "Salvar",
+        "close": "Fechar",
+        "submit": "Enviar",
+        "delete": "Excluir"
+      },
+      "timeSince": {
+        "second": "{count, plural, =1 {um segundo} other {# segundos}} atrás",
+        "minute": "{count, plural, =1 {um minuto} other {# minutos}} atrás",
+        "hour": "{count, plural, =1 {uma hora} other {# horas}} atrás",
+        "day": "{count, plural, =1 {um dia} other {# dias}} atrás",
+        "week": "{count, plural, =1 {uma semana} other {# semanas}} atrás",
+        "month": "{count, plural, =1 {um mês} other {# meses}} atrás",
+        "year": "{count, plural, =1 {um ano} other {# anos}} atrás"
+      }
+    }
+  },
+  "pages": {
+    "home": {
+      "popular": "Popular neste",
+      "latestChapter": "Últimos capítulos enviados",
+      "day": "dia",
+      "week": "semana",
+      "month": "mês"
+    },
+    "mangaDetails": {
+      "metadata": {
+        "keywords": "mangá, ler mangá, ler {type}, melhor mangá, mangá grátis, ler mangá online, mangá popular, {genres}"
+      },
+      "status": "Status",
+      "type": "Tipo",
+      "author": "Autor",
+      "releasedOn": "Lançado em",
+      "genres": "Gêneros",
+      "languages": "Idiomas",
+      "chaptersList": "Lista de Capítulos"
+    },
+    "manga": {
+      "catalog": "Catálogo",
+      "sort": "Ordenar",
+      "filters": "Filtros",
+      "filter": "Filtrar",
+      "descending": "Descendente",
+      "ascending": "Ascendente",
+      "clear": "Limpar",
+      "close": "Fechar",
+      "sortByOptions": {
+        "views": "Visualizações",
+        "likes": "Curtidas",
+        "rating": "Avaliação",
+        "bookmarks": "Favoritos",
+        "chapters": "Capítulos",
+        "createdAt": "Criado em"
+      },
+      "placeholders": {
+        "sortBy": "Ordenar por",
+        "search": "Buscar por nome",
+        "genres": "Gêneros",
+        "status": "Status",
+        "type": "Tipo",
+        "language": "Idioma"
+      },
+      "metadata": {
+        "title": "Leia mangá multilíngue grátis | {siteName}",
+        "description": "Leia capítulos de mangá de alta qualidade gratuitamente em vários idiomas.",
+        "keywords": "mangá, ler mangá, ler manhwa, ler manhua, melhor mangá, mangá grátis, ler mangá online, mangá popular",
+        "openGraph": {
+          "title": "Leia mangá multilíngue grátis",
+          "description": "Leia capítulos de mangá de alta qualidade gratuitamente em vários idiomas."
+        }
+      }
+    },
+    "verifyEmail": {
+      "unexpectedError": "Erro inesperado!",
+      "successfulVerification": "Seu email foi verificado com sucesso.",
+      "invalidLink": "O link de verificação é inválido",
+      "loadingVerification": "Seu email está sendo verificado..."
+    },
+    "resetPassword": {
+      "title": "Redefinir Senha",
+      "submit": "Enviar",
+      "successfulReset": "Senha alterada com sucesso",
+      "unexpectedError": "Erro inesperado!",
+      "newPassword": "Nova senha",
+      "invalidLink": "O link de verificação é inválido",
+      "newPasswordPlaceholder": "Digite sua nova senha"
+    },
+    "user": {
+      "history": {
+        "history": "Histórico"
+      },
+      "bookmarks": {
+        "bookmarks": "Favoritos"
+      },
+      "settings": {
+        "settings": "Configurações",
+        "information": "Informações",
+        "security": "Segurança",
+        "preferences": "Preferências",
+        "alerts": {
+          "unexpectedError": "Erro inesperado!",
+          "userInfoUpdated": "Informações do usuário atualizadas",
+          "passwordChanged": "Senha alterada",
+          "preferencesChanged": "Preferências alteradas"
+        }
+      }
+    },
+    "chapter": {
+      "metadata": {
+        "title": "{manga} ler {chapter} | {siteName}",
+        "description": "{manga} ler {chapter} gratuitamente em {languages}",
+        "keywords": "{manga}, {number}, {chapter}, ler mangá em {languages}, melhor mangá, mangá grátis, ler mangá online, mangá popular",
+        "openGraph": {
+          "title": "{manga} ler {chapter} | {siteName}",
+          "description": "{manga} ler {chapter} gratuitamente"
+        }
+      }
+    },
+    "forbidden": {
+      "title": "Acesso Proibido",
+      "description": "Você não tem permissão para visualizar esta página",
+      "returnHome": "Voltar para a página inicial"
+    },
+    "unauthorized": {
+      "title": "Não Autorizado",
+      "description": "Você não está autorizado a visualizar esta página",
+      "signIn": "Entrar",
+      "returnHome": "Voltar para a página inicial"
+    },
+    "notfound": {
+      "messages": {
+        "default": "A página que você está procurando não existe",
+        "manga": "O quadrinho que você está procurando não existe",
+        "chapter": "O capítulo que você está procurando não existe"
+      },
+      "returnHome": "Voltar para a página inicial"
+    }
+  },
+  "components": {
+    "navbar": {
+      "catalog": "Catálogo",
+      "userDropdown": {
+        "bookmarks": "Favoritos",
+        "history": "Histórico",
+        "settings": "Configurações",
+        "logOut": "Sair"
+      }
+    },
+    "chaptersList": {
+      "ascending": "Ascendente",
+      "descending": "Descendente",
+      "noChapter": "Nenhum capítulo",
+      "languageFilter": "Filtro de idioma",
+      "all": "Todos"
+    },
+    "buttons": {
+      "bookmark": {
+        "default": "Favoritar",
+        "reading": "Lendo",
+        "inPlans": "Planejando",
+        "favourite": "Favorito",
+        "finished": "Concluído",
+        "dropped": "Abandonado",
+        "delete": "Excluir favorito",
+        "alerts": {
+          "error": "Erro ao favoritar!"
+        }
+      },
+      "continueReading": {
+        "continue": "Continuar",
+        "firstChapter": "Primeiro Capítulo"
+      },
+      "rating": {
+        "rate": "Avaliar",
+        "close": "Fechar",
+        "save": "Salvar",
+        "delete": "Excluir",
+        "yourRating": "Sua avaliação",
+        "ratings": {
+          "terrible": "Terrível",
+          "veryBad": "Muito Ruim",
+          "bad": "Ruim",
+          "poor": "Fraco",
+          "soSo": "Razoável",
+          "fair": "Justo",
+          "good": "Bom",
+          "veryGood": "Muito Bom",
+          "great": "Ótimo",
+          "excellent": "Excelente"
+        },
+        "alerts": {
+          "success": "Avaliado com sucesso!",
+          "delete": "Excluído com sucesso!",
+          "error": "Erro ao avaliar!"
+        }
+      },
+      "like": {
+        "alerts": {
+          "error": "Erro ao curtir!"
+        }
+      },
+      "next": "Próximo",
+      "previous": "Anterior"
+    },
+    "languageSelect": {
+      "labels": {
+        "default": "Idioma",
+        "source": "Idioma de origem",
+        "target": "Idioma de destino"
+      },
+      "placeholders": {
+        "default": "Selecione o idioma do capítulo",
+        "source": "Selecione o idioma de origem",
+        "target": "Selecione o idioma de destino"
+      },
+      "sections": {
+        "edited": "Editado",
+        "AI": "Gerado por IA"
+      }
+    },
+    "modals": {
+      "signInOut": {
+        "signIn": "Entrar",
+        "signUp": "Cadastrar",
+        "or": "Ou",
+        "username": "Nome de usuário",
+        "email": "Email",
+        "password": "Senha",
+        "forgotPassword": "Esqueceu a senha?",
+        "close": "Fechar",
+        "errors": {
+          "unexpected": "Erro inesperado!",
+          "submit": "Erro ao enviar"
+        },
+        "placeholders": {
+          "username": "Digite seu nome de usuário",
+          "email": "Digite seu email",
+          "password": "Digite sua senha"
+        }
+      },
+      "forgotPassword": {
+        "forgotPassword": "Esqueceu a Senha",
+        "verifyEmail": "Verificar Email",
+        "tokenSent": "Token foi enviado para o seu email",
+        "email": "Email",
+        "errors": {
+          "unexpected": "Erro inesperado!",
+          "submit": "Erro ao enviar"
+        },
+        "placeholders": {
+          "email": "Digite seu email",
+          "token": "Digite seu token",
+          "newPassword": "Nova senha"
+        },
+        "close": "Fechar",
+        "submit": "Enviar"
+      },
+      "verifyEmail": {
+        "header": "Verificar Email",
+        "message": "Uma mensagem com um link foi enviada para o seu email <email></email>. Por favor, acesse esse link.",
+        "close": "Fechar",
+        "resendButton": "Reenviar o email{seconds, plural, =0 {} other { após # segundos}}"
+      }
+    }
+  },
+  "server": {
+    "user": {
+      "unexpectedError": "Erro inesperado!",
+      "tokenSentIfExists": "Se o email existir, um token foi enviado.",
+      "wrongPasswordOrEmail": "Email ou senha estão incorretos!",
+      "existingEmail": "Usuário com este email já existe",
+      "existingName": "Usuário com este nome já existe",
+      "incorrectToken": "Este token é inválido ou expirou!",
+      "userNotFound": "Usuário não encontrado!",
+      "expiredEmailToken": "Token de email expirou!",
+      "incorrectPassword": "Senha incorreta!"
+    }
+  },
+  "htmlTemplates": {
+    "emailVerification": {
+      "title": "Verifique Seu Endereço de Email",
+      "greeting": "Olá",
+      "instructions": "Por favor, confirme que você deseja usar este endereço de email para sua conta {brandName}.",
+      "cta": "Verificar Endereço de Email",
+      "note": "Se você não criou esta conta, pode ignorar este email com segurança."
+    },
+    "passwordReset": {
+      "title": "Solicitação de Redefinição de Senha",
+      "greeting": "Olá",
+      "instructions": "Recebemos uma solicitação para redefinir sua senha para {brandName}. Clique no botão abaixo para escolher uma nova senha:",
+      "cta": "Redefinir Senha",
+      "note": "Este link expirará em 15 minutos. Se você não solicitou uma redefinição de senha, pode ignorar este email com segurança."
+    }
+  },
+  "form": {
+    "name": "Nome de usuário",
+    "password": "Senha",
+    "email": "Email",
+    "newPassword": "Nova senha",
+    "oldPassword": "Senha antiga",
+    "profileImage": "Imagem de perfil",
+    "language": "Idioma",
+    "sourceLanguage": "Idioma de origem preferido",
+    "targetLanguage": "Idioma de destino preferido",
+    "placeholders": {
+      "email": "Digite seu email",
+      "name": "Digite seu nome de usuário",
+      "password": "Digite sua senha",
+      "newPassword": "Digite sua nova senha",
+      "oldPassword": "Digite sua senha antiga",
+      "profileImage": {
+        "fileTypes": "(Apenas imagens *.jpeg, *.jpg e *.png serão aceitas)",
+        "maxSize": "Não maior que 1 MB"
+      }
+    },
+    "customErrors": {
+      "passwordRegex": "{path, select, missingTranslation {A string} other {{path}}} deve conter pelo menos uma letra maiúscula, uma letra minúscula, um dígito e um caractere especial"
+    }
+  }
+}

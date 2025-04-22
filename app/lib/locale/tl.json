@@ -1,0 +1,392 @@
+{
+  "common": {
+    "badges": {
+      "languageAvailability": {
+        "available": "Magagamit",
+        "unavailable": "Hindi Magagamit",
+        "items": {
+          "chapter": "kabanata",
+          "manga": "manga"
+        },
+        "tooltips": {
+          "available": "Magagamit ang {item} na ito sa iyong wika",
+          "unavailable": "Hindi magagamit ang {item} na ito sa iyong wika"
+        }
+      }
+    },
+    "manga": {
+      "status": {
+        "ONGOING": "Nagpapatuloy",
+        "FINISHED": "Natapos",
+        "PAUSED": "Naka-pause",
+        "DROPPED": "Itinigil"
+      },
+      "type": {
+        "manga": "Manga",
+        "manhwa": "Manhwa",
+        "manhua": "Manhua"
+      },
+      "genres": {
+        "action": "aksyon",
+        "fantasy": "pantasya",
+        "drama": "drama",
+        "harem": "harem",
+        "martial_arts": "martial arts",
+        "apocalypse": "apocalypse",
+        "cultivation": "kultibasyon",
+        "game": "laro",
+        "hero": "bayani",
+        "mature": "pang-matanda",
+        "comedy": "komedya",
+        "genius_mc": "heniyong bida",
+        "historical": "historikal",
+        "loli": "loli",
+        "mecha": "mecha",
+        "adventure": "pakikipagsapalaran",
+        "isekai": "isekai",
+        "magic": "mahika",
+        "romance": "romansa",
+        "noble": "maharlika",
+        "time_travel": "paglalakbay sa oras",
+        "murim": "murim",
+        "rebirth": "muling pagsilang",
+        "school_life": "buhay eskwela",
+        "system": "sistema",
+        "tower": "tore",
+        "virtual_reality": "virtual reality",
+        "regression": "pagbabalik",
+        "sci_fi": "sci-fi",
+        "thriller": "thriller",
+        "tragedy": "trahedya",
+        "villain": "kontrabida",
+        "necromancer": "necromancer",
+        "post_apocalyptic": "post-apocalyptic",
+        "reincarnation": "reinkarnasyon",
+        "revenge": "paghihiganti",
+        "sport": "isport"
+      },
+      "chapter": "Kabanata",
+      "chapters": "Mga Kabanata",
+      "noChapter": "Walang kabanata"
+    },
+    "ui": {
+      "buttons": {
+        "save": "I-save",
+        "close": "Isara",
+        "submit": "Isumite",
+        "delete": "Tanggalin"
+      },
+      "timeSince": {
+        "second": "{count, plural, =1 {isang segundo} other {# segundo}} ang nakalipas",
+        "minute": "{count, plural, =1 {isang minuto} other {# minuto}} ang nakalipas",
+        "hour": "{count, plural, =1 {isang oras} other {# oras}} ang nakalipas",
+        "day": "{count, plural, =1 {isang araw} other {# araw}} ang nakalipas",
+        "week": "{count, plural, =1 {isang linggo} other {# linggo}} ang nakalipas",
+        "month": "{count, plural, =1 {isang buwan} other {# buwan}} ang nakalipas",
+        "year": "{count, plural, =1 {isang taon} other {# taon}} ang nakalipas"
+      }
+    }
+  },
+  "pages": {
+    "home": {
+      "popular": "Sikat ngayong",
+      "latestChapter": "Mga pinakabagong upload na kabanata",
+      "day": "araw",
+      "week": "linggo",
+      "month": "buwan"
+    },
+    "mangaDetails": {
+      "metadata": {
+        "keywords": "manga, basahin ang manga, basahin ang {type}, pinakamahusay na manga, libreng manga, basahin ang manga online, sikat na manga, {genres}"
+      },
+      "status": "Katayuan",
+      "type": "Uri",
+      "author": "May-akda",
+      "releasedOn": "Inilabas Noong",
+      "genres": "Mga Genre",
+      "languages": "Mga Wika",
+      "chaptersList": "Listahan ng mga Kabanata"
+    },
+    "manga": {
+      "catalog": "Katalogo",
+      "sort": "Pagbukud-bukurin",
+      "filters": "Mga Filter",
+      "filter": "Salain",
+      "descending": "Pababâ",
+      "ascending": "Pataas",
+      "clear": "Linisin",
+      "close": "Isara",
+      "sortByOptions": {
+        "views": "Mga View",
+        "likes": "Mga Gusto",
+        "rating": "Rating",
+        "bookmarks": "Mga Bookmark",
+        "chapters": "Mga Kabanata",
+        "createdAt": "Ginawa Noong"
+      },
+      "placeholders": {
+        "sortBy": "Pagbukud-bukurin Ayon Sa",
+        "search": "Maghanap ayon sa pangalan",
+        "genres": "Mga Genre",
+        "status": "Katayuan",
+        "type": "Uri",
+        "language": "Wika"
+      },
+      "metadata": {
+        "title": "Magbasa ng libreng manga sa maraming wika | {siteName}",
+        "description": "Magbasa ng mga de-kalidad na kabanata ng manga nang libre sa maraming wika.",
+        "keywords": "manga, basahin ang manga, basahin ang manhwa, basahin ang manhua, pinakamahusay na manga, libreng manga, basahin ang manga online, sikat na manga",
+        "openGraph": {
+          "title": "Magbasa ng libreng manga sa maraming wika",
+          "description": "Magbasa ng mga de-kalidad na kabanata ng manga nang libre sa maraming wika."
+        }
+      }
+    },
+    "verifyEmail": {
+      "unexpectedError": "Hindi inaasahang error!",
+      "successfulVerification": "Matagumpay na na-verify ang iyong email.",
+      "invalidLink": "Hindi wasto ang link sa pag-verify",
+      "loadingVerification": "Bine-verify ang iyong email..."
+    },
+    "resetPassword": {
+      "title": "I-reset ang Password",
+      "submit": "Isumite",
+      "successfulReset": "Matagumpay na napalitan ang password",
+      "unexpectedError": "Hindi inaasahang error!",
+      "newPassword": "Bagong password",
+      "invalidLink": "Hindi wasto ang link sa pag-verify",
+      "newPasswordPlaceholder": "Ilagay ang iyong bagong password"
+    },
+    "user": {
+      "history": {
+        "history": "Kasaysayan"
+      },
+      "bookmarks": {
+        "bookmarks": "Mga Bookmark"
+      },
+      "settings": {
+        "settings": "Mga Setting",
+        "information": "Impormasyon",
+        "security": "Seguridad",
+        "preferences": "Mga Kagustuhan",
+        "alerts": {
+          "unexpectedError": "Hindi inaasahang error!",
+          "userInfoUpdated": "Na-update ang impormasyon ng user",
+          "passwordChanged": "Napalitan ang password",
+          "preferencesChanged": "Napalitan ang mga kagustuhan"
+        }
+      }
+    },
+    "chapter": {
+      "metadata": {
+        "title": "{manga} basahin ang {chapter} | {siteName}",
+        "description": "{manga} basahin ang {chapter} nang libre sa {languages}",
+        "keywords": "{manga}, {number}, {chapter}, basahin ang manga sa {languages}, pinakamahusay na manga, libreng manga, basahin ang manga online, sikat na manga",
+        "openGraph": {
+          "title": "{manga} basahin ang {chapter} | {siteName}",
+          "description": "{manga} basahin ang {chapter} nang libre"
+        }
+      }
+    },
+    "forbidden": {
+      "title": "Ipinagbabawal na Pag-access",
+      "description": "Wala kang pahintulot na tingnan ang pahinang ito",
+      "returnHome": "Bumalik sa home page"
+    },
+    "unauthorized": {
+      "title": "Hindi Awtorisado",
+      "description": "Hindi ka awtorisadong tingnan ang pahinang ito",
+      "signIn": "Mag-sign In",
+      "returnHome": "Bumalik sa home page"
+    },
+    "notfound": {
+      "messages": {
+        "default": "Ang pahinang hinahanap mo ay hindi umiiral",
+        "manga": "Ang komiks na hinahanap mo ay hindi umiiral",
+        "chapter": "Ang kabanatang hinahanap mo ay hindi umiiral"
+      },
+      "returnHome": "Bumalik sa home page"
+    }
+  },
+  "components": {
+    "navbar": {
+      "catalog": "Katalogo",
+      "userDropdown": {
+        "bookmarks": "Mga Bookmark",
+        "history": "Kasaysayan",
+        "settings": "Mga Setting",
+        "logOut": "Mag-log Out"
+      }
+    },
+    "chaptersList": {
+      "ascending": "Pataas",
+      "descending": "Pababâ",
+      "noChapter": "Walang kabanata",
+      "languageFilter": "Filter ng wika",
+      "all": "Lahat"
+    },
+    "buttons": {
+      "bookmark": {
+        "default": "I-bookmark",
+        "reading": "Binabasa",
+        "inPlans": "Nasa Plano",
+        "favourite": "Paborito",
+        "finished": "Natapos",
+        "dropped": "Itinigil",
+        "delete": "Tanggalin ang bookmark",
+        "alerts": {
+          "error": "Error sa bookmark!"
+        }
+      },
+      "continueReading": {
+        "continue": "Ipagpatuloy",
+        "firstChapter": "Unang Kabanata"
+      },
+      "rating": {
+        "rate": "I-rate",
+        "close": "Isara",
+        "save": "I-save",
+        "delete": "Tanggalin",
+        "yourRating": "Ang iyong rating",
+        "ratings": {
+          "terrible": "Napakasama",
+          "veryBad": "Sobrang Sama",
+          "bad": "Masama",
+          "poor": "Mahina",
+          "soSo": "Katamtaman",
+          "fair": "Ayos lang",
+          "good": "Mabuti",
+          "veryGood": "Napakabuti",
+          "great": "Mahusay",
+          "excellent": "Napakahusay"
+        },
+        "alerts": {
+          "success": "Matagumpay na na-rate!",
+          "delete": "Matagumpay na natanggal!",
+          "error": "Error sa rating!"
+        }
+      },
+      "like": {
+        "alerts": {
+          "error": "Error sa pag-like!"
+        }
+      },
+      "next": "Susunod",
+      "previous": "Nakaraan"
+    },
+    "languageSelect": {
+      "labels": {
+        "default": "Wika",
+        "source": "Pinagmulang wika",
+        "target": "Target na wika"
+      },
+      "placeholders": {
+        "default": "Pumili ng wika ng kabanata",
+        "source": "Pumili ng pinagmulang wika",
+        "target": "Pumili ng target na wika"
+      },
+      "sections": {
+        "edited": "Na-edit",
+        "AI": "Ginawa ng AI"
+      }
+    },
+    "modals": {
+      "signInOut": {
+        "signIn": "Mag-sign In",
+        "signUp": "Mag-sign Up",
+        "or": "O",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "forgotPassword": "Nakalimutan ang password?",
+        "close": "Isara",
+        "errors": {
+          "unexpected": "Hindi inaasahang error!",
+          "submit": "Error sa pagsumite"
+        },
+        "placeholders": {
+          "username": "Ilagay ang iyong username",
+          "email": "Ilagay ang iyong email",
+          "password": "Ilagay ang iyong password"
+        }
+      },
+      "forgotPassword": {
+        "forgotPassword": "Nakalimutan ang Password",
+        "verifyEmail": "I-verify ang Email",
+        "tokenSent": "Naipadala ang token sa iyong email",
+        "email": "Email",
+        "errors": {
+          "unexpected": "Hindi inaasahang error!",
+          "submit": "Error sa pagsumite"
+        },
+        "placeholders": {
+          "email": "Ilagay ang iyong email",
+          "token": "Ilagay ang iyong token",
+          "newPassword": "Bagong password"
+        },
+        "close": "Isara",
+        "submit": "Isumite"
+      },
+      "verifyEmail": {
+        "header": "I-verify ang Email",
+        "message": "Isang mensahe na may link ang naipadala sa iyong email <email></email>. Mangyaring i-access ang link na iyon.",
+        "close": "Isara",
+        "resendButton": "Ipadala muli ang email{seconds, plural, =0 {} other { pagkatapos ng # segundo}}"
+      }
+    }
+  },
+  "server": {
+    "user": {
+      "unexpectedError": "Hindi inaasahang error!",
+      "tokenSentIfExists": "Kung umiiral ang email, naipadala na ang token.",
+      "wrongPasswordOrEmail": "Mali ang email o password!",
+      "existingEmail": "May user na gamit ang email na ito",
+      "existingName": "May user na gamit ang pangalang ito",
+      "incorrectToken": "Hindi wasto o nag-expire na ang token na ito!",
+      "userNotFound": "Hindi nahanap ang user!",
+      "expiredEmailToken": "Nag-expire na ang token sa email!",
+      "incorrectPassword": "Maling password!"
+    }
+  },
+  "htmlTemplates": {
+    "emailVerification": {
+      "title": "I-verify ang Iyong Email Address",
+      "greeting": "Kumusta",
+      "instructions": "Mangyaring kumpirmahin na nais mong gamitin ang email address na ito para sa iyong {brandName} account.",
+      "cta": "I-verify ang Email Address",
+      "note": "Kung hindi ikaw ang gumawa ng account na ito, maaari mong balewalain ang email na ito."
+    },
+    "passwordReset": {
+      "title": "Kahilingan sa Pag-reset ng Password",
+      "greeting": "Kumusta",
+      "instructions": "Nakatanggap kami ng kahilingan na i-reset ang iyong password para sa {brandName}. I-click ang button sa ibaba para pumili ng bagong password:",
+      "cta": "I-reset ang Password",
+      "note": "Mag-e-expire ang link na ito sa loob ng 15 minuto. Kung hindi ikaw ang humiling ng pag-reset ng password, maaari mong balewalain ang email na ito."
+    }
+  },
+  "form": {
+    "name": "Username",
+    "password": "Password",
+    "email": "Email",
+    "newPassword": "Bagong password",
+    "oldPassword": "Lumang password",
+    "profileImage": "Larawan sa profile",
+    "language": "Wika",
+    "sourceLanguage": "Mas gustong pinagmulang wika",
+    "targetLanguage": "Mas gustong target na wika",
+    "placeholders": {
+      "email": "Ilagay ang iyong email",
+      "name": "Ilagay ang iyong username",
+      "password": "Ilagay ang iyong password",
+      "newPassword": "Ilagay ang iyong bagong password",
+      "oldPassword": "Ilagay ang iyong lumang password",
+      "profileImage": {
+        "fileTypes": "(Tanging *.jpeg, *.jpg, at *.png na mga imahe lamang ang tatanggapin)",
+        "maxSize": "Hindi lalaki sa 1MB"
+      }
+    },
+    "customErrors": {
+      "passwordRegex": "Ang {path, select, missingTranslation {String} other {{path}}} ay dapat maglaman ng hindi bababa sa isang malaking titik, isang maliit na titik, isang numero, at isang espesyal na karakter"
+    }
+  }
+}

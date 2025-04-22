@@ -1,0 +1,392 @@
+{
+  "common": {
+    "badges": {
+      "languageAvailability": {
+        "available": "Có sẵn",
+        "unavailable": "Không có sẵn",
+        "items": {
+          "chapter": "chương",
+          "manga": "manga"
+        },
+        "tooltips": {
+          "available": "{item} này có sẵn bằng ngôn ngữ của bạn",
+          "unavailable": "{item} này không có sẵn bằng ngôn ngữ của bạn"
+        }
+      }
+    },
+    "manga": {
+      "status": {
+        "ONGOING": "Đang tiến hành",
+        "FINISHED": "Đã hoàn thành",
+        "PAUSED": "Tạm dừng",
+        "DROPPED": "Đã bỏ"
+      },
+      "type": {
+        "manga": "Manga",
+        "manhwa": "Manhwa",
+        "manhua": "Manhua"
+      },
+      "genres": {
+        "action": "hành động",
+        "fantasy": "giả tưởng",
+        "drama": "drama",
+        "harem": "harem",
+        "martial_arts": "võ thuật",
+        "apocalypse": "tận thế",
+        "cultivation": "tu luyện",
+        "game": "trò chơi",
+        "hero": "anh hùng",
+        "mature": "trưởng thành",
+        "comedy": "hài hước",
+        "genius_mc": "nhân vật chính thiên tài",
+        "historical": "lịch sử",
+        "loli": "loli",
+        "mecha": "mecha",
+        "adventure": "phiêu lưu",
+        "isekai": "isekai",
+        "magic": "phép thuật",
+        "romance": "lãng mạn",
+        "noble": "quý tộc",
+        "time_travel": "du hành thời gian",
+        "murim": "murim",
+        "rebirth": "tái sinh",
+        "school_life": "đời sống học đường",
+        "system": "hệ thống",
+        "tower": "tháp",
+        "virtual_reality": "thực tế ảo",
+        "regression": "hồi quy",
+        "sci_fi": "khoa học viễn tưởng",
+        "thriller": "kinh dị",
+        "tragedy": "bi kịch",
+        "villain": "phản diện",
+        "necromancer": "pháp sư gọi hồn",
+        "post_apocalyptic": "hậu tận thế",
+        "reincarnation": "chuyển sinh",
+        "revenge": "trả thù",
+        "sport": "thể thao"
+      },
+      "chapter": "Chương",
+      "chapters": "Chương",
+      "noChapter": "Không có chương"
+    },
+    "ui": {
+      "buttons": {
+        "save": "Lưu",
+        "close": "Đóng",
+        "submit": "Gửi",
+        "delete": "Xóa"
+      },
+      "timeSince": {
+        "second": "{count, plural, =1 {một giây} other {# giây}} trước",
+        "minute": "{count, plural, =1 {một phút} other {# phút}} trước",
+        "hour": "{count, plural, =1 {một giờ} other {# giờ}} trước",
+        "day": "{count, plural, =1 {một ngày} other {# ngày}} trước",
+        "week": "{count, plural, =1 {một tuần} other {# tuần}} trước",
+        "month": "{count, plural, =1 {một tháng} other {# tháng}} trước",
+        "year": "{count, plural, =1 {một năm} other {# năm}} trước"
+      }
+    }
+  },
+  "pages": {
+    "home": {
+      "popular": "Phổ biến",
+      "latestChapter": "Chương mới nhất được tải lên",
+      "day": "hôm nay",
+      "week": "tuần này",
+      "month": "tháng này"
+    },
+    "mangaDetails": {
+      "metadata": {
+        "keywords": "manga, đọc manga, đọc {type}, manga hay nhất, manga miễn phí, đọc manga online, manga phổ biến, {genres}"
+      },
+      "status": "Trạng thái",
+      "type": "Loại",
+      "author": "Tác giả",
+      "releasedOn": "Phát hành vào",
+      "genres": "Thể loại",
+      "languages": "Ngôn ngữ",
+      "chaptersList": "Danh sách chương"
+    },
+    "manga": {
+      "catalog": "Danh mục",
+      "sort": "Sắp xếp",
+      "filters": "Bộ lọc",
+      "filter": "Lọc",
+      "descending": "Giảm dần",
+      "ascending": "Tăng dần",
+      "clear": "Xóa",
+      "close": "Đóng",
+      "sortByOptions": {
+        "views": "Lượt xem",
+        "likes": "Lượt thích",
+        "rating": "Đánh giá",
+        "bookmarks": "Dấu trang",
+        "chapters": "Số chương",
+        "createdAt": "Tạo vào lúc"
+      },
+      "placeholders": {
+        "sortBy": "Sắp xếp theo",
+        "search": "Tìm kiếm theo tên",
+        "genres": "Thể loại",
+        "status": "Trạng thái",
+        "type": "Loại",
+        "language": "Ngôn ngữ"
+      },
+      "metadata": {
+        "title": "Đọc manga đa ngôn ngữ miễn phí | {siteName}",
+        "description": "Đọc các chương manga chất lượng cao miễn phí bằng nhiều ngôn ngữ.",
+        "keywords": "manga, đọc manga, đọc manhwa, đọc manhua, manga hay nhất, manga miễn phí, đọc manga online, manga phổ biến",
+        "openGraph": {
+          "title": "Đọc manga đa ngôn ngữ miễn phí",
+          "description": "Đọc các chương manga chất lượng cao miễn phí bằng nhiều ngôn ngữ."
+        }
+      }
+    },
+    "verifyEmail": {
+      "unexpectedError": "Lỗi không mong đợi!",
+      "successfulVerification": "Email của bạn đã được xác minh thành công.",
+      "invalidLink": "Liên kết xác minh không hợp lệ",
+      "loadingVerification": "Email của bạn đang được xác minh..."
+    },
+    "resetPassword": {
+      "title": "Đặt lại mật khẩu",
+      "submit": "Gửi",
+      "successfulReset": "Mật khẩu đã được thay đổi thành công",
+      "unexpectedError": "Lỗi không mong đợi!",
+      "newPassword": "Mật khẩu mới",
+      "invalidLink": "Liên kết xác minh không hợp lệ",
+      "newPasswordPlaceholder": "Nhập mật khẩu mới của bạn"
+    },
+    "user": {
+      "history": {
+        "history": "Lịch sử"
+      },
+      "bookmarks": {
+        "bookmarks": "Dấu trang"
+      },
+      "settings": {
+        "settings": "Cài đặt",
+        "information": "Thông tin",
+        "security": "Bảo mật",
+        "preferences": "Tùy chọn",
+        "alerts": {
+          "unexpectedError": "Lỗi không mong đợi!",
+          "userInfoUpdated": "Thông tin người dùng đã được cập nhật",
+          "passwordChanged": "Mật khẩu đã được thay đổi",
+          "preferencesChanged": "Tùy chọn đã được thay đổi"
+        }
+      }
+    },
+    "chapter": {
+      "metadata": {
+        "title": "{manga} đọc {chapter} | {siteName}",
+        "description": "{manga} đọc {chapter} miễn phí bằng {languages}",
+        "keywords": "{manga}, {number}, {chapter}, đọc manga bằng {languages}, manga hay nhất, manga miễn phí, đọc manga online, manga phổ biến",
+        "openGraph": {
+          "title": "{manga} đọc {chapter} | {siteName}",
+          "description": "{manga} đọc {chapter} miễn phí"
+        }
+      }
+    },
+    "forbidden": {
+      "title": "Truy cập bị cấm",
+      "description": "Bạn không có quyền xem trang này",
+      "returnHome": "Trở về trang chủ"
+    },
+    "unauthorized": {
+      "title": "Không được phép",
+      "description": "Bạn không được phép xem trang này",
+      "signIn": "Đăng nhập",
+      "returnHome": "Trở về trang chủ"
+    },
+    "notfound": {
+      "messages": {
+        "default": "Trang bạn đang tìm kiếm không tồn tại",
+        "manga": "Truyện bạn đang tìm kiếm không tồn tại",
+        "chapter": "Chương bạn đang tìm kiếm không tồn tại"
+      },
+      "returnHome": "Trở về trang chủ"
+    }
+  },
+  "components": {
+    "navbar": {
+      "catalog": "Danh mục",
+      "userDropdown": {
+        "bookmarks": "Dấu trang",
+        "history": "Lịch sử",
+        "settings": "Cài đặt",
+        "logOut": "Đăng xuất"
+      }
+    },
+    "chaptersList": {
+      "ascending": "Tăng dần",
+      "descending": "Giảm dần",
+      "noChapter": "Không có chương",
+      "languageFilter": "Bộ lọc ngôn ngữ",
+      "all": "Tất cả"
+    },
+    "buttons": {
+      "bookmark": {
+        "default": "Đánh dấu",
+        "reading": "Đang đọc",
+        "inPlans": "Dự định đọc",
+        "favourite": "Yêu thích",
+        "finished": "Đã đọc xong",
+        "dropped": "Đã bỏ",
+        "delete": "Xóa dấu trang",
+        "alerts": {
+          "error": "Lỗi đánh dấu!"
+        }
+      },
+      "continueReading": {
+        "continue": "Đọc tiếp",
+        "firstChapter": "Chương đầu tiên"
+      },
+      "rating": {
+        "rate": "Đánh giá",
+        "close": "Đóng",
+        "save": "Lưu",
+        "delete": "Xóa",
+        "yourRating": "Đánh giá của bạn",
+        "ratings": {
+          "terrible": "Tệ hại",
+          "veryBad": "Rất tệ",
+          "bad": "Tệ",
+          "poor": "Kém",
+          "soSo": "Tàm tạm",
+          "fair": "Khá",
+          "good": "Tốt",
+          "veryGood": "Rất tốt",
+          "great": "Tuyệt vời",
+          "excellent": "Xuất sắc"
+        },
+        "alerts": {
+          "success": "Đánh giá thành công!",
+          "delete": "Xóa thành công!",
+          "error": "Lỗi đánh giá!"
+        }
+      },
+      "like": {
+        "alerts": {
+          "error": "Lỗi thích!"
+        }
+      },
+      "next": "Tiếp",
+      "previous": "Trước"
+    },
+    "languageSelect": {
+      "labels": {
+        "default": "Ngôn ngữ",
+        "source": "Ngôn ngữ gốc",
+        "target": "Ngôn ngữ đích"
+      },
+      "placeholders": {
+        "default": "Chọn ngôn ngữ chương",
+        "source": "Chọn ngôn ngữ gốc",
+        "target": "Chọn ngôn ngữ đích"
+      },
+      "sections": {
+        "edited": "Đã chỉnh sửa",
+        "AI": "Tạo bởi AI"
+      }
+    },
+    "modals": {
+      "signInOut": {
+        "signIn": "Đăng nhập",
+        "signUp": "Đăng ký",
+        "or": "Hoặc",
+        "username": "Tên người dùng",
+        "email": "Email",
+        "password": "Mật khẩu",
+        "forgotPassword": "Quên mật khẩu?",
+        "close": "Đóng",
+        "errors": {
+          "unexpected": "Lỗi không mong đợi!",
+          "submit": "Lỗi gửi"
+        },
+        "placeholders": {
+          "username": "Nhập tên người dùng của bạn",
+          "email": "Nhập email của bạn",
+          "password": "Nhập mật khẩu của bạn"
+        }
+      },
+      "forgotPassword": {
+        "forgotPassword": "Quên Mật khẩu",
+        "verifyEmail": "Xác minh Email",
+        "tokenSent": "Mã xác nhận đã được gửi đến email của bạn",
+        "email": "Email",
+        "errors": {
+          "unexpected": "Lỗi không mong đợi!",
+          "submit": "Lỗi gửi"
+        },
+        "placeholders": {
+          "email": "Nhập email của bạn",
+          "token": "Nhập mã xác nhận của bạn",
+          "newPassword": "Mật khẩu mới"
+        },
+        "close": "Đóng",
+        "submit": "Gửi"
+      },
+      "verifyEmail": {
+        "header": "Xác minh Email",
+        "message": "Một tin nhắn chứa liên kết đã được gửi đến email <email></email> của bạn. Vui lòng truy cập liên kết đó.",
+        "close": "Đóng",
+        "resendButton": "Gửi lại email{seconds, plural, =0 {} other { sau # giây}}"
+      }
+    }
+  },
+  "server": {
+    "user": {
+      "unexpectedError": "Lỗi không mong đợi!",
+      "tokenSentIfExists": "Nếu email tồn tại, một mã xác nhận đã được gửi.",
+      "wrongPasswordOrEmail": "Email hoặc mật khẩu không chính xác!",
+      "existingEmail": "Người dùng với email này đã tồn tại",
+      "existingName": "Người dùng với tên này đã tồn tại",
+      "incorrectToken": "Mã xác nhận này không hợp lệ hoặc đã hết hạn!",
+      "userNotFound": "Không tìm thấy người dùng!",
+      "expiredEmailToken": "Mã xác nhận email đã hết hạn!",
+      "incorrectPassword": "Mật khẩu không chính xác!"
+    }
+  },
+  "htmlTemplates": {
+    "emailVerification": {
+      "title": "Xác minh Địa chỉ Email của bạn",
+      "greeting": "Xin chào",
+      "instructions": "Vui lòng xác nhận rằng bạn muốn sử dụng địa chỉ email này cho tài khoản {brandName} của bạn.",
+      "cta": "Xác minh Địa chỉ Email",
+      "note": "Nếu bạn không tạo tài khoản này, bạn có thể bỏ qua email này một cách an toàn."
+    },
+    "passwordReset": {
+      "title": "Yêu cầu Đặt lại Mật khẩu",
+      "greeting": "Xin chào",
+      "instructions": "Chúng tôi đã nhận được yêu cầu đặt lại mật khẩu cho tài khoản {brandName} của bạn. Nhấp vào nút bên dưới để chọn mật khẩu mới:",
+      "cta": "Đặt lại Mật khẩu",
+      "note": "Liên kết này sẽ hết hạn sau 15 phút. Nếu bạn không yêu cầu đặt lại mật khẩu, bạn có thể bỏ qua email này một cách an toàn."
+    }
+  },
+  "form": {
+    "name": "Tên người dùng",
+    "password": "Mật khẩu",
+    "email": "Email",
+    "newPassword": "Mật khẩu mới",
+    "oldPassword": "Mật khẩu cũ",
+    "profileImage": "Ảnh đại diện",
+    "language": "Ngôn ngữ",
+    "sourceLanguage": "Ngôn ngữ gốc ưu tiên",
+    "targetLanguage": "Ngôn ngữ đích ưu tiên",
+    "placeholders": {
+      "email": "Nhập email của bạn",
+      "name": "Nhập tên người dùng của bạn",
+      "password": "Nhập mật khẩu của bạn",
+      "newPassword": "Nhập mật khẩu mới của bạn",
+      "oldPassword": "Nhập mật khẩu cũ của bạn",
+      "profileImage": {
+        "fileTypes": "(Chỉ chấp nhận ảnh *.jpeg, *.jpg và *.png)",
+        "maxSize": "Không lớn hơn 1 MB"
+      }
+    },
+    "customErrors": {
+      "passwordRegex": "{path, select, missingTranslation {Chuỗi} other {{path}}} phải chứa ít nhất một chữ hoa, một chữ thường, một chữ số và một ký tự đặc biệt"
+    }
+  }
+}

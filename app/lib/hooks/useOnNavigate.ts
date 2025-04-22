@@ -20,7 +20,7 @@ export function useOnNavigate(): boolean {
 
     const onMessage = ({ data }: MessageEvent) => {
       if (Date.now() - clickTime > 1000) return;
-      console.log(data.method)
+
       const url = toURL(data.fetchUrl);
       if (
         url?.pathname !== pathWhenClicked &&

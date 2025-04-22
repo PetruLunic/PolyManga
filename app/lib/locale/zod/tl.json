@@ -1,0 +1,132 @@
+{
+  "zod": {
+    "errors": {
+      "invalid_type": "Inaasahan {expected}, natanggap {received}",
+      "invalid_type_received_undefined": "Kinakailangan",
+      "invalid_literal": "Di-wastong literal na halaga, inaasahan {expected}",
+      "unrecognized_keys": "Hindi nakilalang (mga) key sa object: {keys}",
+      "invalid_union": "Di-wastong input",
+      "invalid_union_discriminator": "Di-wastong halaga ng discriminator. Inaasahan {options}",
+      "invalid_enum_value": "Di-wastong halaga ng enum. Inaasahan {options}, natanggap {received}",
+      "invalid_arguments": "Di-wastong mga argumento ng function",
+      "invalid_return_type": "Di-wastong uri ng return ng function",
+      "invalid_date": "Di-wastong petsa",
+      "custom": "Di-wastong input",
+      "invalid_intersection_types": "Hindi ma-merge ang mga resulta ng intersection",
+      "not_multiple_of": "Ang numero ay dapat multiple ng {multipleOf}",
+      "not_finite": "Ang numero ay dapat may hangganan",
+      "invalid_string": {
+        "email": "Di-wastong {validation}",
+        "emoji": "Di-wastong {validation}",
+        "url": "Di-wastong {validation}",
+        "uuid": "Di-wastong {validation}",
+        "ulid": "Di-wastong {validation}",
+        "ip": "Di-wastong {validation}",
+        "cuid": "Di-wastong {validation}",
+        "cuid2": "Di-wastong {validation}",
+        "regex": "Di-wasto",
+        "datetime": "Di-wastong {validation}",
+        "startsWith": "Di-wastong input: dapat magsimula sa \"{startsWith}\"",
+        "endsWith": "Di-wastong input: dapat magtapos sa \"{endsWith}\""
+      },
+      "too_small": {
+        "array": {
+          "exact": "Ang {path, select, missingTranslation {Array} other {{path}}} ay dapat maglaman ng eksaktong {minimum} (mga) elemento",
+          "inclusive": "Ang {path, select, missingTranslation {Array} other {{path}}} ay dapat maglaman ng hindi bababa sa {minimum} (mga) elemento",
+          "not_inclusive": "Ang {path, select, missingTranslation {Array} other {{path}}} ay dapat maglaman ng higit sa {minimum} (mga) elemento"
+        },
+        "string": {
+          "exact": "Ang {path, select, missingTranslation {String} other {{path}}} ay dapat maglaman ng eksaktong {minimum} (mga) karakter",
+          "inclusive": "Ang {path, select, missingTranslation {String} other {{path}}} ay dapat maglaman ng hindi bababa sa {minimum} (mga) karakter",
+          "not_inclusive": "Ang {path, select, missingTranslation {String} other {{path}}} ay dapat maglaman ng higit sa {minimum} (mga) karakter"
+        },
+        "number": {
+          "exact": "Ang {path, select, missingTranslation {Numero} other {{path}}} ay dapat eksaktong {minimum}",
+          "inclusive": "Ang {path, select, missingTranslation {Numero} other {{path}}} ay dapat mas malaki o katumbas ng {minimum}",
+          "not_inclusive": "Ang {path, select, missingTranslation {Numero} other {{path}}} ay dapat mas malaki sa {minimum}"
+        },
+        "bigint": {
+          "exact": "Ang {path, select, missingTranslation {Numero} other {{path}}} ay dapat eksaktong {minimum}",
+          "inclusive": "Ang {path, select, missingTranslation {Numero} other {{path}}} ay dapat mas malaki o katumbas ng {minimum}",
+          "not_inclusive": "Ang {path, select, missingTranslation {Numero} other {{path}}} ay dapat mas malaki sa {minimum}"
+        },
+        "set": {
+          "exact": "Di-wastong input",
+          "inclusive": "Di-wastong input",
+          "not_inclusive": "Di-wastong input"
+        },
+        "date": {
+          "exact": "Ang petsa ay dapat eksaktong {minimum, date, short}",
+          "inclusive": "Ang petsa ay dapat mas malaki o katumbas ng {minimum, date, short}",
+          "not_inclusive": "Ang petsa ay dapat mas malaki sa {minimum, date, short}"
+        }
+      },
+      "too_big": {
+        "array": {
+          "exact": "Ang {path, select, missingTranslation {Array} other {{path}}} ay dapat maglaman ng eksaktong {maximum} (mga) elemento",
+          "inclusive": "Ang {path, select, missingTranslation {Array} other {{path}}} ay dapat maglaman ng hindi hihigit sa {maximum} (mga) elemento",
+          "not_inclusive": "Ang {path, select, missingTranslation {Array} other {{path}}} ay dapat maglaman ng mas mababa sa {maximum} (mga) elemento"
+        },
+        "string": {
+          "exact": "Ang {path, select, missingTranslation {String} other {{path}}} ay dapat maglaman ng eksaktong {maximum} (mga) karakter",
+          "inclusive": "Ang {path, select, missingTranslation {String} other {{path}}} ay dapat maglaman ng hindi hihigit sa {maximum} (mga) karakter",
+          "not_inclusive": "Ang {path, select, missingTranslation {String} other {{path}}} ay dapat maglaman ng mas mababa sa {maximum} (mga) karakter"
+        },
+        "number": {
+          "exact": "Ang {path, select, missingTranslation {Numero} other {{path}}} ay dapat eksaktong {maximum}",
+          "inclusive": "Ang {path, select, missingTranslation {Numero} other {{path}}} ay dapat mas mababa o katumbas ng {maximum}",
+          "not_inclusive": "Ang {path, select, missingTranslation {Numero} other {{path}}} ay dapat mas mababa sa {maximum}"
+        },
+        "bigint": {
+          "exact": "Ang {path, select, missingTranslation {Numero} other {{path}}} ay dapat eksaktong {maximum}",
+          "inclusive": "Ang {path, select, missingTranslation {Numero} other {{path}}} ay dapat mas mababa o katumbas ng {maximum}",
+          "not_inclusive": "Ang {path, select, missingTranslation {Numero} other {{path}}} ay dapat mas mababa sa {maximum}"
+        },
+        "set": {
+          "exact": "Di-wastong input",
+          "inclusive": "Di-wastong input",
+          "not_inclusive": "Di-wastong input"
+        },
+        "date": {
+          "exact": "Ang petsa ay dapat eksaktong {maximum, date, short}",
+          "inclusive": "Ang petsa ay dapat mas mababa o katumbas ng {maximum, date, short}",
+          "not_inclusive": "Ang petsa ay dapat mas mababa sa {maximum, date, short}"
+        }
+      }
+    },
+    "validations": {
+      "email": "email",
+      "emoji": "emoji",
+      "url": "url",
+      "uuid": "uuid",
+      "ulid": "ulid",
+      "ip": "ip",
+      "cuid": "cuid",
+      "cuid2": "cuid2",
+      "regex": "regex",
+      "datetime": "datetime"
+    },
+    "types": {
+      "function": "function",
+      "number": "numero",
+      "string": "string",
+      "nan": "nan",
+      "integer": "integer",
+      "float": "float",
+      "boolean": "boolean",
+      "date": "petsa",
+      "bigint": "bigint",
+      "undefined": "hindi natukoy",
+      "symbol": "simbolo",
+      "null": "null",
+      "array": "array",
+      "object": "object",
+      "unknown": "hindi alam",
+      "promise": "promise",
+      "void": "void",
+      "never": "hindi kailanman",
+      "map": "map",
+      "set": "set"
+    }
+  }
+}

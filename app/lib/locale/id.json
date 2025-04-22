@@ -1,0 +1,392 @@
+{
+  "common": {
+    "badges": {
+      "languageAvailability": {
+        "available": "Tersedia",
+        "unavailable": "Tidak Tersedia",
+        "items": {
+          "chapter": "bab",
+          "manga": "manga"
+        },
+        "tooltips": {
+          "available": "{item} ini tersedia dalam bahasa Anda",
+          "unavailable": "{item} ini tidak tersedia dalam bahasa Anda"
+        }
+      }
+    },
+    "manga": {
+      "status": {
+        "ONGOING": "Sedang Berlangsung",
+        "FINISHED": "Selesai",
+        "PAUSED": "Dijeda",
+        "DROPPED": "Dihentikan"
+      },
+      "type": {
+        "manga": "Manga",
+        "manhwa": "Manhwa",
+        "manhua": "Manhua"
+      },
+      "genres": {
+        "action": "aksi",
+        "fantasy": "fantasi",
+        "drama": "drama",
+        "harem": "harem",
+        "martial_arts": "seni bela diri",
+        "apocalypse": "kiamat",
+        "cultivation": "kultivasi",
+        "game": "permainan",
+        "hero": "pahlawan",
+        "mature": "dewasa",
+        "comedy": "komedi",
+        "genius_mc": "MC jenius",
+        "historical": "historis",
+        "loli": "loli",
+        "mecha": "mecha",
+        "adventure": "petualangan",
+        "isekai": "isekai",
+        "magic": "sihir",
+        "romance": "romansa",
+        "noble": "bangsawan",
+        "time_travel": "perjalanan waktu",
+        "murim": "murim",
+        "rebirth": "kelahiran kembali",
+        "school_life": "kehidupan sekolah",
+        "system": "sistem",
+        "tower": "menara",
+        "virtual_reality": "realitas virtual",
+        "regression": "regresi",
+        "sci_fi": "sci-fi",
+        "thriller": "thriller",
+        "tragedy": "tragedi",
+        "villain": "penjahat",
+        "necromancer": "necromancer",
+        "post_apocalyptic": "pasca-apokaliptik",
+        "reincarnation": "reinkarnasi",
+        "revenge": "balas dendam",
+        "sport": "olahraga"
+      },
+      "chapter": "Bab",
+      "chapters": "Bab",
+      "noChapter": "Tidak ada bab"
+    },
+    "ui": {
+      "buttons": {
+        "save": "Simpan",
+        "close": "Tutup",
+        "submit": "Kirim",
+        "delete": "Hapus"
+      },
+      "timeSince": {
+        "second": "{count, plural, =1 {satu detik} other {# detik}} yang lalu",
+        "minute": "{count, plural, =1 {satu menit} other {# menit}} yang lalu",
+        "hour": "{count, plural, =1 {satu jam} other {# jam}} yang lalu",
+        "day": "{count, plural, =1 {satu hari} other {# hari}} yang lalu",
+        "week": "{count, plural, =1 {satu minggu} other {# minggu}} yang lalu",
+        "month": "{count, plural, =1 {satu bulan} other {# bulan}} yang lalu",
+        "year": "{count, plural, =1 {satu tahun} other {# tahun}} yang lalu"
+      }
+    }
+  },
+  "pages": {
+    "home": {
+      "popular": "Populer ",
+      "latestChapter": "Unggahan bab terbaru",
+      "day": "hari ini",
+      "week": "minggu ini",
+      "month": "bulan ini"
+    },
+    "mangaDetails": {
+      "metadata": {
+        "keywords": "manga, baca manga, baca {type}, manga terbaik, manga gratis, baca manga online, manga populer, {genres}"
+      },
+      "status": "Status",
+      "type": "Tipe",
+      "author": "Pengarang",
+      "releasedOn": "Dirilis pada",
+      "genres": "Genre",
+      "languages": "Bahasa",
+      "chaptersList": "Daftar Bab"
+    },
+    "manga": {
+      "catalog": "Katalog",
+      "sort": "Urutkan",
+      "filters": "Filter",
+      "filter": "Filter",
+      "descending": "Menurun",
+      "ascending": "Menaik",
+      "clear": "Bersihkan",
+      "close": "Tutup",
+      "sortByOptions": {
+        "views": "Dilihat",
+        "likes": "Suka",
+        "rating": "Peringkat",
+        "bookmarks": "Markah",
+        "chapters": "Bab",
+        "createdAt": "Dibuat pada"
+      },
+      "placeholders": {
+        "sortBy": "Urutkan Berdasarkan",
+        "search": "Cari berdasarkan nama",
+        "genres": "Genre",
+        "status": "Status",
+        "type": "Tipe",
+        "language": "Bahasa"
+      },
+      "metadata": {
+        "title": "Baca manga multi-bahasa gratis | {siteName}",
+        "description": "Baca bab manga berkualitas tinggi secara gratis dalam berbagai bahasa.",
+        "keywords": "manga, baca manga, baca manhwa, baca manhua, manga terbaik, manga gratis, baca manga online, manga populer",
+        "openGraph": {
+          "title": "Baca manga multi-bahasa gratis",
+          "description": "Baca bab manga berkualitas tinggi secara gratis dalam berbagai bahasa."
+        }
+      }
+    },
+    "verifyEmail": {
+      "unexpectedError": "Kesalahan tak terduga!",
+      "successfulVerification": "Email Anda berhasil diverifikasi.",
+      "invalidLink": "Tautan verifikasi tidak valid",
+      "loadingVerification": "Email Anda sedang diverifikasi..."
+    },
+    "resetPassword": {
+      "title": "Atur Ulang Kata Sandi",
+      "submit": "Kirim",
+      "successfulReset": "Kata sandi berhasil diubah",
+      "unexpectedError": "Kesalahan tak terduga!",
+      "newPassword": "Kata sandi baru",
+      "invalidLink": "Tautan verifikasi tidak valid",
+      "newPasswordPlaceholder": "Masukkan kata sandi baru Anda"
+    },
+    "user": {
+      "history": {
+        "history": "Riwayat"
+      },
+      "bookmarks": {
+        "bookmarks": "Markah"
+      },
+      "settings": {
+        "settings": "Pengaturan",
+        "information": "Informasi",
+        "security": "Keamanan",
+        "preferences": "Preferensi",
+        "alerts": {
+          "unexpectedError": "Kesalahan tak terduga!",
+          "userInfoUpdated": "Info pengguna diperbarui",
+          "passwordChanged": "Kata sandi diubah",
+          "preferencesChanged": "Preferensi diubah"
+        }
+      }
+    },
+    "chapter": {
+      "metadata": {
+        "title": "{manga} baca {chapter} | {siteName}",
+        "description": "{manga} baca {chapter} gratis dalam {languages}",
+        "keywords": "{manga}, {number}, {chapter}, baca manga dalam {languages}, manga terbaik, manga gratis, baca manga online, manga populer",
+        "openGraph": {
+          "title": "{manga} baca {chapter} | {siteName}",
+          "description": "{manga} baca {chapter} gratis"
+        }
+      }
+    },
+    "forbidden": {
+      "title": "Akses Dilarang",
+      "description": "Anda tidak memiliki izin untuk melihat halaman ini",
+      "returnHome": "Kembali ke halaman utama"
+    },
+    "unauthorized": {
+      "title": "Tidak Sah",
+      "description": "Anda tidak berwenang untuk melihat halaman ini",
+      "signIn": "Masuk",
+      "returnHome": "Kembali ke halaman utama"
+    },
+    "notfound": {
+      "messages": {
+        "default": "Halaman yang Anda cari tidak ada",
+        "manga": "Komik yang Anda cari tidak ada",
+        "chapter": "Bab yang Anda cari tidak ada"
+      },
+      "returnHome": "Kembali ke halaman utama"
+    }
+  },
+  "components": {
+    "navbar": {
+      "catalog": "Katalog",
+      "userDropdown": {
+        "bookmarks": "Markah",
+        "history": "Riwayat",
+        "settings": "Pengaturan",
+        "logOut": "Keluar"
+      }
+    },
+    "chaptersList": {
+      "ascending": "Menaik",
+      "descending": "Menurun",
+      "noChapter": "Tidak ada bab",
+      "languageFilter": "Filter bahasa",
+      "all": "Semua"
+    },
+    "buttons": {
+      "bookmark": {
+        "default": "Markah",
+        "reading": "Sedang Dibaca",
+        "inPlans": "Dalam Rencana",
+        "favourite": "Favorit",
+        "finished": "Selesai Dibaca",
+        "dropped": "Dihentikan",
+        "delete": "Hapus markah",
+        "alerts": {
+          "error": "Kesalahan markah!"
+        }
+      },
+      "continueReading": {
+        "continue": "Lanjutkan",
+        "firstChapter": "Bab Pertama"
+      },
+      "rating": {
+        "rate": "Beri Peringkat",
+        "close": "Tutup",
+        "save": "Simpan",
+        "delete": "Hapus",
+        "yourRating": "Peringkat Anda",
+        "ratings": {
+          "terrible": "Sangat Buruk",
+          "veryBad": "Buruk Sekali",
+          "bad": "Buruk",
+          "poor": "Kurang",
+          "soSo": "Biasa Saja",
+          "fair": "Cukup",
+          "good": "Bagus",
+          "veryGood": "Sangat Bagus",
+          "great": "Hebat",
+          "excellent": "Luar Biasa"
+        },
+        "alerts": {
+          "success": "Berhasil memberi peringkat!",
+          "delete": "Berhasil dihapus!",
+          "error": "Kesalahan peringkat!"
+        }
+      },
+      "like": {
+        "alerts": {
+          "error": "Kesalahan suka!"
+        }
+      },
+      "next": "Berikutnya",
+      "previous": "Sebelumnya"
+    },
+    "languageSelect": {
+      "labels": {
+        "default": "Bahasa",
+        "source": "Bahasa sumber",
+        "target": "Bahasa target"
+      },
+      "placeholders": {
+        "default": "Pilih bahasa bab",
+        "source": "Pilih bahasa sumber",
+        "target": "Pilih bahasa Target"
+      },
+      "sections": {
+        "edited": "Diedit",
+        "AI": "Dihasilkan AI"
+      }
+    },
+    "modals": {
+      "signInOut": {
+        "signIn": "Masuk",
+        "signUp": "Daftar",
+        "or": "Atau",
+        "username": "Nama pengguna",
+        "email": "Email",
+        "password": "Kata Sandi",
+        "forgotPassword": "Lupa kata sandi?",
+        "close": "Tutup",
+        "errors": {
+          "unexpected": "Kesalahan tak terduga!",
+          "submit": "Kesalahan pengiriman"
+        },
+        "placeholders": {
+          "username": "Masukkan nama pengguna Anda",
+          "email": "Masukkan email Anda",
+          "password": "Masukkan kata sandi Anda"
+        }
+      },
+      "forgotPassword": {
+        "forgotPassword": "Lupa Kata Sandi",
+        "verifyEmail": "Verifikasi Email",
+        "tokenSent": "Token telah dikirim ke email Anda",
+        "email": "Email",
+        "errors": {
+          "unexpected": "Kesalahan tak terduga!",
+          "submit": "Kesalahan pengiriman"
+        },
+        "placeholders": {
+          "email": "Masukkan email Anda",
+          "token": "Masukkan token Anda",
+          "newPassword": "Kata sandi baru"
+        },
+        "close": "Tutup",
+        "submit": "Kirim"
+      },
+      "verifyEmail": {
+        "header": "Verifikasi Email",
+        "message": "Pesan berisi tautan telah dikirim ke email <email></email> Anda. Silakan akses tautan tersebut.",
+        "close": "Tutup",
+        "resendButton": "Kirim ulang email{seconds, plural, =0 {} other { setelah # detik}}"
+      }
+    }
+  },
+  "server": {
+    "user": {
+      "unexpectedError": "Kesalahan tak terduga!",
+      "tokenSentIfExists": "Jika email ada, token telah dikirim.",
+      "wrongPasswordOrEmail": "Email atau kata sandi salah!",
+      "existingEmail": "Pengguna dengan email ini sudah ada",
+      "existingName": "Pengguna dengan nama ini sudah ada",
+      "incorrectToken": "Token ini tidak valid atau kedaluwarsa!",
+      "userNotFound": "Pengguna tidak ditemukan!",
+      "expiredEmailToken": "Token email telah kedaluwarsa!",
+      "incorrectPassword": "Kata sandi salah!"
+    }
+  },
+  "htmlTemplates": {
+    "emailVerification": {
+      "title": "Verifikasi Alamat Email Anda",
+      "greeting": "Halo",
+      "instructions": "Harap konfirmasi bahwa Anda ingin menggunakan alamat email ini untuk akun {brandName} Anda.",
+      "cta": "Verifikasi Alamat Email",
+      "note": "Jika Anda tidak membuat akun ini, Anda dapat mengabaikan email ini dengan aman."
+    },
+    "passwordReset": {
+      "title": "Permintaan Pengaturan Ulang Kata Sandi",
+      "greeting": "Halo",
+      "instructions": "Kami menerima permintaan untuk mengatur ulang kata sandi Anda untuk {brandName}. Klik tombol di bawah untuk memilih kata sandi baru:",
+      "cta": "Atur Ulang Kata Sandi",
+      "note": "Tautan ini akan kedaluwarsa dalam 15 menit. Jika Anda tidak meminta pengaturan ulang kata sandi, Anda dapat mengabaikan email ini dengan aman."
+    }
+  },
+  "form": {
+    "name": "Nama pengguna",
+    "password": "Kata Sandi",
+    "email": "Email",
+    "newPassword": "Kata sandi baru",
+    "oldPassword": "Kata sandi lama",
+    "profileImage": "Gambar profil",
+    "language": "Bahasa",
+    "sourceLanguage": "Bahasa sumber pilihan",
+    "targetLanguage": "Bahasa target pilihan",
+    "placeholders": {
+      "email": "Masukkan email Anda",
+      "name": "Masukkan nama pengguna Anda",
+      "password": "Masukkan kata sandi Anda",
+      "newPassword": "Masukkan kata sandi baru Anda",
+      "oldPassword": "Masukkan kata sandi lama Anda",
+      "profileImage": {
+        "fileTypes": "(Hanya gambar *.jpeg, *.jpg, dan *.png yang akan diterima)",
+        "maxSize": "Tidak lebih besar dari 1 MB"
+      }
+    },
+    "customErrors": {
+      "passwordRegex": "{path, select, missingTranslation {String} other {{path}}} harus berisi setidaknya satu huruf besar, satu huruf kecil, satu angka, dan satu karakter khusus"
+    }
+  }
+}

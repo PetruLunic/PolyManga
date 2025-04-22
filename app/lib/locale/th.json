@@ -1,0 +1,392 @@
+{
+  "common": {
+    "badges": {
+      "languageAvailability": {
+        "available": "มีให้บริการ",
+        "unavailable": "ไม่มีให้บริการ",
+        "items": {
+          "chapter": "ตอน",
+          "manga": "มังงะ"
+        },
+        "tooltips": {
+          "available": "{item} นี้มีให้บริการในภาษาของคุณ",
+          "unavailable": "{item} นี้ไม่มีให้บริการในภาษาของคุณ"
+        }
+      }
+    },
+    "manga": {
+      "status": {
+        "ONGOING": "กำลังดำเนินเรื่อง",
+        "FINISHED": "จบแล้ว",
+        "PAUSED": "พัก",
+        "DROPPED": "เลิกทำ"
+      },
+      "type": {
+        "manga": "มังงะ",
+        "manhwa": "มันฮวา",
+        "manhua": "มันฮัว"
+      },
+      "genres": {
+        "action": "แอ็คชั่น",
+        "fantasy": "แฟนตาซี",
+        "drama": "ดราม่า",
+        "harem": "ฮาเร็ม",
+        "martial_arts": "ศิลปะการต่อสู้",
+        "apocalypse": "หายนะ",
+        "cultivation": "ฝึกตน",
+        "game": "เกม",
+        "hero": "ฮีโร่",
+        "mature": "ผู้ใหญ่",
+        "comedy": "คอมเมดี้",
+        "genius_mc": "ตัวเอกอัจฉริยะ",
+        "historical": "ประวัติศาสตร์",
+        "loli": "โลลิ",
+        "mecha": "เมะกะ",
+        "adventure": "ผจญภัย",
+        "isekai": "ต่างโลก",
+        "magic": "เวทมนตร์",
+        "romance": "โรแมนติก",
+        "noble": "ขุนนาง",
+        "time_travel": "เดินทางข้ามเวลา",
+        "murim": "มูริม",
+        "rebirth": "เกิดใหม่",
+        "school_life": "ชีวิตในโรงเรียน",
+        "system": "ระบบ",
+        "tower": "หอคอย",
+        "virtual_reality": "ความเป็นจริงเสมือน",
+        "regression": "ย้อนเวลา",
+        "sci_fi": "ไซไฟ",
+        "thriller": "ระทึกขวัญ",
+        "tragedy": "โศกนาฏกรรม",
+        "villain": "ตัวร้าย",
+        "necromancer": "เนโครแมนเซอร์",
+        "post_apocalyptic": "หลังวันสิ้นโลก",
+        "reincarnation": "กลับชาติมาเกิด",
+        "revenge": "แก้แค้น",
+        "sport": "กีฬา"
+      },
+      "chapter": "ตอนที่",
+      "chapters": "ตอน",
+      "noChapter": "ไม่มีตอน"
+    },
+    "ui": {
+      "buttons": {
+        "save": "บันทึก",
+        "close": "ปิด",
+        "submit": "ส่ง",
+        "delete": "ลบ"
+      },
+      "timeSince": {
+        "second": "{count, plural, =1 {หนึ่งวินาที} other {# วินาที}}ที่แล้ว",
+        "minute": "{count, plural, =1 {หนึ่งนาที} other {# นาที}}ที่แล้ว",
+        "hour": "{count, plural, =1 {หนึ่งชั่วโมง} other {# ชั่วโมง}}ที่แล้ว",
+        "day": "{count, plural, =1 {หนึ่งวัน} other {# วัน}}ที่แล้ว",
+        "week": "{count, plural, =1 {หนึ่งสัปดาห์} other {# สัปดาห์}}ที่แล้ว",
+        "month": "{count, plural, =1 {หนึ่งเดือน} other {# เดือน}}ที่แล้ว",
+        "year": "{count, plural, =1 {หนึ่งปี} other {# ปี}}ที่แล้ว"
+      }
+    }
+  },
+  "pages": {
+    "home": {
+      "popular": "ยอดนิยมใน",
+      "latestChapter": "ตอนล่าสุดที่อัปโหลด",
+      "day": "วันนี้",
+      "week": "สัปดาห์นี้",
+      "month": "เดือนนี้"
+    },
+    "mangaDetails": {
+      "metadata": {
+        "keywords": "มังงะ, อ่านมังงะ, อ่าน {type}, มังงะที่ดีที่สุด, มังงะฟรี, อ่านมังงะออนไลน์, มังงะยอดนิยม, {genres}"
+      },
+      "status": "สถานะ",
+      "type": "ประเภท",
+      "author": "ผู้แต่ง",
+      "releasedOn": "เผยแพร่เมื่อ",
+      "genres": "ประเภท",
+      "languages": "ภาษา",
+      "chaptersList": "รายการตอน"
+    },
+    "manga": {
+      "catalog": "แคตตาล็อก",
+      "sort": "จัดเรียง",
+      "filters": "ตัวกรอง",
+      "filter": "กรอง",
+      "descending": "จากมากไปน้อย",
+      "ascending": "จากน้อยไปมาก",
+      "clear": "ล้าง",
+      "close": "ปิด",
+      "sortByOptions": {
+        "views": "ยอดเข้าชม",
+        "likes": "ถูกใจ",
+        "rating": "คะแนน",
+        "bookmarks": "บุ๊กมาร์ก",
+        "chapters": "จำนวนตอน",
+        "createdAt": "สร้างเมื่อ"
+      },
+      "placeholders": {
+        "sortBy": "จัดเรียงตาม",
+        "search": "ค้นหาด้วยชื่อ",
+        "genres": "ประเภท",
+        "status": "สถานะ",
+        "type": "ชนิด",
+        "language": "ภาษา"
+      },
+      "metadata": {
+        "title": "อ่านมังงะหลายภาษาฟรี | {siteName}",
+        "description": "อ่านตอนมังงะคุณภาพสูงฟรีในหลายภาษา",
+        "keywords": "มังงะ, อ่านมังงะ, อ่านมันฮวา, อ่านมันฮัว, มังงะที่ดีที่สุด, มังงะฟรี, อ่านมังงะออนไลน์, มังงะยอดนิยม",
+        "openGraph": {
+          "title": "อ่านมังงะหลายภาษาฟรี",
+          "description": "อ่านตอนมังงะคุณภาพสูงฟรีในหลายภาษา"
+        }
+      }
+    },
+    "verifyEmail": {
+      "unexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด!",
+      "successfulVerification": "ยืนยันอีเมลของคุณสำเร็จแล้ว",
+      "invalidLink": "ลิงก์ยืนยันไม่ถูกต้อง",
+      "loadingVerification": "กำลังยืนยันอีเมลของคุณ..."
+    },
+    "resetPassword": {
+      "title": "รีเซ็ตรหัสผ่าน",
+      "submit": "ส่ง",
+      "successfulReset": "เปลี่ยนรหัสผ่านสำเร็จแล้ว",
+      "unexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด!",
+      "newPassword": "รหัสผ่านใหม่",
+      "invalidLink": "ลิงก์ยืนยันไม่ถูกต้อง",
+      "newPasswordPlaceholder": "ป้อนรหัสผ่านใหม่ของคุณ"
+    },
+    "user": {
+      "history": {
+        "history": "ประวัติการอ่าน"
+      },
+      "bookmarks": {
+        "bookmarks": "บุ๊กมาร์ก"
+      },
+      "settings": {
+        "settings": "การตั้งค่า",
+        "information": "ข้อมูล",
+        "security": "ความปลอดภัย",
+        "preferences": "ค่ากำหนด",
+        "alerts": {
+          "unexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด!",
+          "userInfoUpdated": "อัปเดตข้อมูลผู้ใช้แล้ว",
+          "passwordChanged": "เปลี่ยนรหัสผ่านแล้ว",
+          "preferencesChanged": "เปลี่ยนค่ากำหนดแล้ว"
+        }
+      }
+    },
+    "chapter": {
+      "metadata": {
+        "title": "{manga} อ่าน {chapter} | {siteName}",
+        "description": "{manga} อ่าน {chapter} ฟรีใน {languages}",
+        "keywords": "{manga}, {number}, {chapter}, อ่านมังงะใน {languages}, มังงะที่ดีที่สุด, มังงะฟรี, อ่านมังงะออนไลน์, มังงะยอดนิยม",
+        "openGraph": {
+          "title": "{manga} อ่าน {chapter} | {siteName}",
+          "description": "{manga} อ่าน {chapter} ฟรี"
+        }
+      }
+    },
+    "forbidden": {
+      "title": "การเข้าถึงถูกปฏิเสธ",
+      "description": "คุณไม่มีสิทธิ์ดูหน้านี้",
+      "returnHome": "กลับไปที่หน้าแรก"
+    },
+    "unauthorized": {
+      "title": "ไม่ได้รับอนุญาต",
+      "description": "คุณไม่ได้รับอนุญาตให้ดูหน้านี้",
+      "signIn": "เข้าสู่ระบบ",
+      "returnHome": "กลับไปที่หน้าแรก"
+    },
+    "notfound": {
+      "messages": {
+        "default": "ไม่พบหน้าที่คุณกำลังค้นหา",
+        "manga": "ไม่พบการ์ตูนที่คุณกำลังค้นหา",
+        "chapter": "ไม่พบตอนที่คุณกำลังค้นหา"
+      },
+      "returnHome": "กลับไปที่หน้าแรก"
+    }
+  },
+  "components": {
+    "navbar": {
+      "catalog": "แคตตาล็อก",
+      "userDropdown": {
+        "bookmarks": "บุ๊กมาร์ก",
+        "history": "ประวัติการอ่าน",
+        "settings": "การตั้งค่า",
+        "logOut": "ออกจากระบบ"
+      }
+    },
+    "chaptersList": {
+      "ascending": "จากน้อยไปมาก",
+      "descending": "จากมากไปน้อย",
+      "noChapter": "ไม่มีตอน",
+      "languageFilter": "ตัวกรองภาษา",
+      "all": "ทั้งหมด"
+    },
+    "buttons": {
+      "bookmark": {
+        "default": "บุ๊กมาร์ก",
+        "reading": "กำลังอ่าน",
+        "inPlans": "วางแผนจะอ่าน",
+        "favourite": "รายการโปรด",
+        "finished": "อ่านจบแล้ว",
+        "dropped": "เลิกอ่าน",
+        "delete": "ลบบุ๊กมาร์ก",
+        "alerts": {
+          "error": "เกิดข้อผิดพลาดในการบุ๊กมาร์ก!"
+        }
+      },
+      "continueReading": {
+        "continue": "อ่านต่อ",
+        "firstChapter": "ตอนแรก"
+      },
+      "rating": {
+        "rate": "ให้คะแนน",
+        "close": "ปิด",
+        "save": "บันทึก",
+        "delete": "ลบ",
+        "yourRating": "คะแนนของคุณ",
+        "ratings": {
+          "terrible": "แย่มาก",
+          "veryBad": "แย่สุดๆ",
+          "bad": "แย่",
+          "poor": "พอใช้",
+          "soSo": "งั้นๆ",
+          "fair": "ปานกลาง",
+          "good": "ดี",
+          "veryGood": "ดีมาก",
+          "great": "ยอดเยี่ยม",
+          "excellent": "สุดยอด"
+        },
+        "alerts": {
+          "success": "ให้คะแนนสำเร็จ!",
+          "delete": "ลบสำเร็จ!",
+          "error": "เกิดข้อผิดพลาดในการให้คะแนน!"
+        }
+      },
+      "like": {
+        "alerts": {
+          "error": "เกิดข้อผิดพลาดในการกดถูกใจ!"
+        }
+      },
+      "next": "ถัดไป",
+      "previous": "ก่อนหน้า"
+    },
+    "languageSelect": {
+      "labels": {
+        "default": "ภาษา",
+        "source": "ภาษาต้นฉบับ",
+        "target": "ภาษาเป้าหมาย"
+      },
+      "placeholders": {
+        "default": "เลือกภาษาของตอน",
+        "source": "เลือกภาษาต้นฉบับ",
+        "target": "เลือกภาษาเป้าหมาย"
+      },
+      "sections": {
+        "edited": "แก้ไขแล้ว",
+        "AI": "สร้างโดย AI"
+      }
+    },
+    "modals": {
+      "signInOut": {
+        "signIn": "เข้าสู่ระบบ",
+        "signUp": "สมัครสมาชิก",
+        "or": "หรือ",
+        "username": "ชื่อผู้ใช้",
+        "email": "อีเมล",
+        "password": "รหัสผ่าน",
+        "forgotPassword": "ลืมรหัสผ่าน?",
+        "close": "ปิด",
+        "errors": {
+          "unexpected": "เกิดข้อผิดพลาดที่ไม่คาดคิด!",
+          "submit": "เกิดข้อผิดพลาดในการส่ง"
+        },
+        "placeholders": {
+          "username": "ป้อนชื่อผู้ใช้ของคุณ",
+          "email": "ป้อนอีเมลของคุณ",
+          "password": "ป้อนรหัสผ่านของคุณ"
+        }
+      },
+      "forgotPassword": {
+        "forgotPassword": "ลืมรหัสผ่าน",
+        "verifyEmail": "ยืนยันอีเมล",
+        "tokenSent": "โทเค็นถูกส่งไปยังอีเมลของคุณแล้ว",
+        "email": "อีเมล",
+        "errors": {
+          "unexpected": "เกิดข้อผิดพลาดที่ไม่คาดคิด!",
+          "submit": "เกิดข้อผิดพลาดในการส่ง"
+        },
+        "placeholders": {
+          "email": "ป้อนอีเมลของคุณ",
+          "token": "ป้อนโทเค็นของคุณ",
+          "newPassword": "รหัสผ่านใหม่"
+        },
+        "close": "ปิด",
+        "submit": "ส่ง"
+      },
+      "verifyEmail": {
+        "header": "ยืนยันอีเมล",
+        "message": "มีข้อความพร้อมลิงก์ถูกส่งไปยังอีเมล <email></email> ของคุณแล้ว โปรดเข้าถึงลิงก์นั้น",
+        "close": "ปิด",
+        "resendButton": "ส่งอีเมลอีกครั้ง{seconds, plural, =0 {} other { ใน # วินาที}}"
+      }
+    }
+  },
+  "server": {
+    "user": {
+      "unexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด!",
+      "tokenSentIfExists": "หากมีอีเมลนี้อยู่ โทเค็นได้ถูกส่งไปแล้ว",
+      "wrongPasswordOrEmail": "อีเมลหรือรหัสผ่านไม่ถูกต้อง!",
+      "existingEmail": "มีผู้ใช้ที่ใช้อีเมลนี้อยู่แล้ว",
+      "existingName": "มีผู้ใช้ที่ใช้ชื่อนี้อยู่แล้ว",
+      "incorrectToken": "โทเค็นนี้ไม่ถูกต้องหรือหมดอายุแล้ว!",
+      "userNotFound": "ไม่พบผู้ใช้!",
+      "expiredEmailToken": "โทเค็นอีเมลหมดอายุแล้ว!",
+      "incorrectPassword": "รหัสผ่านไม่ถูกต้อง!"
+    }
+  },
+  "htmlTemplates": {
+    "emailVerification": {
+      "title": "ยืนยันที่อยู่อีเมลของคุณ",
+      "greeting": "สวัสดี",
+      "instructions": "โปรดยืนยันว่าคุณต้องการใช้ที่อยู่อีเมลนี้สำหรับบัญชี {brandName} ของคุณ",
+      "cta": "ยืนยันที่อยู่อีเมล",
+      "note": "หากคุณไม่ได้สร้างบัญชีนี้ คุณสามารถเพิกเฉยต่ออีเมลนี้ได้อย่างปลอดภัย"
+    },
+    "passwordReset": {
+      "title": "คำขอรีเซ็ตรหัสผ่าน",
+      "greeting": "สวัสดี",
+      "instructions": "เราได้รับคำขอรีเซ็ตรหัสผ่านสำหรับ {brandName} ของคุณ คลิกปุ่มด้านล่างเพื่อเลือกรหัสผ่านใหม่:",
+      "cta": "รีเซ็ตรหัสผ่าน",
+      "note": "ลิงก์นี้จะหมดอายุใน 15 นาที หากคุณไม่ได้ขอรีเซ็ตรหัสผ่าน คุณสามารถเพิกเฉยต่ออีเมลนี้ได้อย่างปลอดภัย"
+    }
+  },
+  "form": {
+    "name": "ชื่อผู้ใช้",
+    "password": "รหัสผ่าน",
+    "email": "อีเมล",
+    "newPassword": "รหัสผ่านใหม่",
+    "oldPassword": "รหัสผ่านเก่า",
+    "profileImage": "รูปโปรไฟล์",
+    "language": "ภาษา",
+    "sourceLanguage": "ภาษาต้นฉบับที่ต้องการ",
+    "targetLanguage": "ภาษาเป้าหมายที่ต้องการ",
+    "placeholders": {
+      "email": "ป้อนอีเมลของคุณ",
+      "name": "ป้อนชื่อผู้ใช้ของคุณ",
+      "password": "ป้อนรหัสผ่านของคุณ",
+      "newPassword": "ป้อนรหัสผ่านใหม่ของคุณ",
+      "oldPassword": "ป้อนรหัสผ่านเก่าของคุณ",
+      "profileImage": {
+        "fileTypes": "(รับเฉพาะรูปภาพ *.jpeg, *.jpg และ *.png เท่านั้น)",
+        "maxSize": "ขนาดไม่เกิน 1 MB"
+      }
+    },
+    "customErrors": {
+      "passwordRegex": "{path, select, missingTranslation {สตริง} other {{path}}} ต้องมีตัวอักษรพิมพ์ใหญ่อย่างน้อยหนึ่งตัว ตัวอักษรพิมพ์เล็กหนึ่งตัว ตัวเลขหนึ่งตัว และอักขระพิเศษหนึ่งตัว"
+    }
+  }
+}

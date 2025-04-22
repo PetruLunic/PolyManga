@@ -1,0 +1,392 @@
+{
+  "common": {
+    "badges": {
+      "languageAvailability": {
+        "available": "Disponible",
+        "unavailable": "Indisponible",
+        "items": {
+          "chapter": "chapitre",
+          "manga": "manga"
+        },
+        "tooltips": {
+          "available": "Ce {item} est disponible dans votre langue",
+          "unavailable": "Ce {item} n'est pas disponible dans votre langue"
+        }
+      }
+    },
+    "manga": {
+      "status": {
+        "ONGOING": "En cours",
+        "FINISHED": "Terminé",
+        "PAUSED": "En pause",
+        "DROPPED": "Abandonné"
+      },
+      "type": {
+        "manga": "Manga",
+        "manhwa": "Manhwa",
+        "manhua": "Manhua"
+      },
+      "genres": {
+        "action": "action",
+        "fantasy": "fantaisie",
+        "drama": "drame",
+        "harem": "harem",
+        "martial_arts": "arts martiaux",
+        "apocalypse": "apocalypse",
+        "cultivation": "cultivation",
+        "game": "jeu",
+        "hero": "héros",
+        "mature": "mature",
+        "comedy": "comédie",
+        "genius_mc": "personnage principal génie",
+        "historical": "historique",
+        "loli": "loli",
+        "mecha": "mecha",
+        "adventure": "aventure",
+        "isekai": "isekai",
+        "magic": "magie",
+        "romance": "romance",
+        "noble": "noble",
+        "time_travel": "voyage dans le temps",
+        "murim": "murim",
+        "rebirth": "renaissance",
+        "school_life": "vie scolaire",
+        "system": "système",
+        "tower": "tour",
+        "virtual_reality": "réalité virtuelle",
+        "regression": "régression",
+        "sci_fi": "science-fiction",
+        "thriller": "thriller",
+        "tragedy": "tragédie",
+        "villain": "méchant",
+        "necromancer": "nécromancien",
+        "post_apocalyptic": "post-apocalyptique",
+        "reincarnation": "réincarnation",
+        "revenge": "vengeance",
+        "sport": "sport"
+      },
+      "chapter": "Chapitre",
+      "chapters": "Chapitres",
+      "noChapter": "Aucun chapitre"
+    },
+    "ui": {
+      "buttons": {
+        "save": "Enregistrer",
+        "close": "Fermer",
+        "submit": "Soumettre",
+        "delete": "Supprimer"
+      },
+      "timeSince": {
+        "second": "Il y a {count, plural, =1 {une seconde} other {# secondes}}",
+        "minute": "Il y a {count, plural, =1 {une minute} other {# minutes}}",
+        "hour": "Il y a {count, plural, =1 {une heure} other {# heures}}",
+        "day": "Il y a {count, plural, =1 {un jour} other {# jours}}",
+        "week": "Il y a {count, plural, =1 {une semaine} other {# semaines}}",
+        "month": "Il y a {count, plural, =1 {un mois} other {# mois}}",
+        "year": "Il y a {count, plural, =1 {un an} other {# ans}}"
+      }
+    }
+  },
+  "pages": {
+    "home": {
+      "popular": "Populaire ce",
+      "latestChapter": "Derniers chapitres ajoutés",
+      "day": "jour",
+      "week": "semaine",
+      "month": "mois"
+    },
+    "mangaDetails": {
+      "metadata": {
+        "keywords": "manga, lire manga, lire {type}, meilleur manga, manga gratuit, lire manga en ligne, manga populaire, {genres}"
+      },
+      "status": "Statut",
+      "type": "Type",
+      "author": "Auteur",
+      "releasedOn": "Publié le",
+      "genres": "Genres",
+      "languages": "Langues",
+      "chaptersList": "Liste des chapitres"
+    },
+    "manga": {
+      "catalog": "Catalogue",
+      "sort": "Trier",
+      "filters": "Filtres",
+      "filter": "Filtrer",
+      "descending": "Décroissant",
+      "ascending": "Croissant",
+      "clear": "Effacer",
+      "close": "Fermer",
+      "sortByOptions": {
+        "views": "Vues",
+        "likes": "J'aime",
+        "rating": "Note",
+        "bookmarks": "Signets",
+        "chapters": "Chapitres",
+        "createdAt": "Créé le"
+      },
+      "placeholders": {
+        "sortBy": "Trier par",
+        "search": "Rechercher par nom",
+        "genres": "Genres",
+        "status": "Statut",
+        "type": "Type",
+        "language": "Langue"
+      },
+      "metadata": {
+        "title": "Lire des mangas multi-langues gratuits | {siteName}",
+        "description": "Lisez gratuitement des chapitres de manga de haute qualité en plusieurs langues.",
+        "keywords": "manga, lire manga, lire manhwa, lire manhua, meilleur manga, manga gratuit, lire manga en ligne, manga populaire",
+        "openGraph": {
+          "title": "Lire des mangas multi-langues gratuits",
+          "description": "Lisez gratuitement des chapitres de manga de haute qualité en plusieurs langues."
+        }
+      }
+    },
+    "verifyEmail": {
+      "unexpectedError": "Erreur inattendue !",
+      "successfulVerification": "Votre adresse e-mail a été vérifiée avec succès.",
+      "invalidLink": "Le lien de vérification est invalide",
+      "loadingVerification": "Vérification de votre adresse e-mail en cours..."
+    },
+    "resetPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "submit": "Soumettre",
+      "successfulReset": "Le mot de passe a été changé avec succès",
+      "unexpectedError": "Erreur inattendue !",
+      "newPassword": "Nouveau mot de passe",
+      "invalidLink": "Le lien de vérification est invalide",
+      "newPasswordPlaceholder": "Entrez votre nouveau mot de passe"
+    },
+    "user": {
+      "history": {
+        "history": "Historique"
+      },
+      "bookmarks": {
+        "bookmarks": "Signets"
+      },
+      "settings": {
+        "settings": "Paramètres",
+        "information": "Informations",
+        "security": "Sécurité",
+        "preferences": "Préférences",
+        "alerts": {
+          "unexpectedError": "Erreur inattendue !",
+          "userInfoUpdated": "Informations utilisateur mises à jour",
+          "passwordChanged": "Mot de passe changé",
+          "preferencesChanged": "Préférences modifiées"
+        }
+      }
+    },
+    "chapter": {
+      "metadata": {
+        "title": "{manga} lire {chapter} | {siteName}",
+        "description": "{manga} lire {chapter} gratuitement en {languages}",
+        "keywords": "{manga}, {number}, {chapter}, lire manga en {languages}, meilleur manga, manga gratuit, lire manga en ligne, manga populaire",
+        "openGraph": {
+          "title": "{manga} lire {chapter} | {siteName}",
+          "description": "{manga} lire {chapter} gratuitement"
+        }
+      }
+    },
+    "forbidden": {
+      "title": "Accès Interdit",
+      "description": "Vous n'avez pas la permission de voir cette page",
+      "returnHome": "Retourner à la page d'accueil"
+    },
+    "unauthorized": {
+      "title": "Non autorisé",
+      "description": "Vous n'êtes pas autorisé à voir cette page",
+      "signIn": "Se connecter",
+      "returnHome": "Retourner à la page d'accueil"
+    },
+    "notfound": {
+      "messages": {
+        "default": "La page que vous recherchez n'existe pas",
+        "manga": "Le manga que vous recherchez n'existe pas",
+        "chapter": "Le chapitre que vous recherchez n'existe pas"
+      },
+      "returnHome": "Retourner à la page d'accueil"
+    }
+  },
+  "components": {
+    "navbar": {
+      "catalog": "Catalogue",
+      "userDropdown": {
+        "bookmarks": "Signets",
+        "history": "Historique",
+        "settings": "Paramètres",
+        "logOut": "Se déconnecter"
+      }
+    },
+    "chaptersList": {
+      "ascending": "Croissant",
+      "descending": "Décroissant",
+      "noChapter": "Aucun chapitre",
+      "languageFilter": "Filtre de langue",
+      "all": "Tous"
+    },
+    "buttons": {
+      "bookmark": {
+        "default": "Signet",
+        "reading": "En lecture",
+        "inPlans": "Prévu",
+        "favourite": "Favori",
+        "finished": "Terminé",
+        "dropped": "Abandonné",
+        "delete": "Supprimer le signet",
+        "alerts": {
+          "error": "Erreur de signet !"
+        }
+      },
+      "continueReading": {
+        "continue": "Continuer",
+        "firstChapter": "Premier Chapitre"
+      },
+      "rating": {
+        "rate": "Noter",
+        "close": "Fermer",
+        "save": "Enregistrer",
+        "delete": "Supprimer",
+        "yourRating": "Votre note",
+        "ratings": {
+          "terrible": "Terrible",
+          "veryBad": "Très mauvais",
+          "bad": "Mauvais",
+          "poor": "Médiocre",
+          "soSo": "Moyen",
+          "fair": "Passable",
+          "good": "Bon",
+          "veryGood": "Très bon",
+          "great": "Excellent",
+          "excellent": "Parfait"
+        },
+        "alerts": {
+          "success": "Noté avec succès !",
+          "delete": "Supprimé avec succès !",
+          "error": "Erreur de notation !"
+        }
+      },
+      "like": {
+        "alerts": {
+          "error": "Erreur de 'J'aime' !"
+        }
+      },
+      "next": "Suivant",
+      "previous": "Précédent"
+    },
+    "languageSelect": {
+      "labels": {
+        "default": "Langue",
+        "source": "Langue source",
+        "target": "Langue cible"
+      },
+      "placeholders": {
+        "default": "Sélectionnez la langue du chapitre",
+        "source": "Sélectionnez la langue source",
+        "target": "Sélectionnez la langue cible"
+      },
+      "sections": {
+        "edited": "Édité",
+        "AI": "Généré par IA"
+      }
+    },
+    "modals": {
+      "signInOut": {
+        "signIn": "Se connecter",
+        "signUp": "S'inscrire",
+        "or": "Ou",
+        "username": "Nom d'utilisateur",
+        "email": "E-mail",
+        "password": "Mot de passe",
+        "forgotPassword": "Mot de passe oublié ?",
+        "close": "Fermer",
+        "errors": {
+          "unexpected": "Erreur inattendue !",
+          "submit": "Erreur de soumission"
+        },
+        "placeholders": {
+          "username": "Entrez votre nom d'utilisateur",
+          "email": "Entrez votre e-mail",
+          "password": "Entrez votre mot de passe"
+        }
+      },
+      "forgotPassword": {
+        "forgotPassword": "Mot de passe oublié",
+        "verifyEmail": "Vérifier l'e-mail",
+        "tokenSent": "Un jeton a été envoyé à votre e-mail",
+        "email": "E-mail",
+        "errors": {
+          "unexpected": "Erreur inattendue !",
+          "submit": "Erreur de soumission"
+        },
+        "placeholders": {
+          "email": "Entrez votre e-mail",
+          "token": "Entrez votre jeton",
+          "newPassword": "Nouveau mot de passe"
+        },
+        "close": "Fermer",
+        "submit": "Soumettre"
+      },
+      "verifyEmail": {
+        "header": "Vérifier l'e-mail",
+        "message": "Un message avec un lien a été envoyé à votre adresse e-mail <email></email>. Veuillez accéder à ce lien.",
+        "close": "Fermer",
+        "resendButton": "Renvoyer l'e-mail{seconds, plural, =0 {} other { après # secondes}}"
+      }
+    }
+  },
+  "server": {
+    "user": {
+      "unexpectedError": "Erreur inattendue !",
+      "tokenSentIfExists": "Si l'e-mail existe, un jeton a été envoyé.",
+      "wrongPasswordOrEmail": "L'e-mail ou le mot de passe est incorrect !",
+      "existingEmail": "Un utilisateur avec cet e-mail existe déjà",
+      "existingName": "Un utilisateur avec ce nom existe déjà",
+      "incorrectToken": "Ce jeton est invalide ou a expiré !",
+      "userNotFound": "Utilisateur non trouvé !",
+      "expiredEmailToken": "Le jeton e-mail a expiré !",
+      "incorrectPassword": "Mot de passe incorrect !"
+    }
+  },
+  "htmlTemplates": {
+    "emailVerification": {
+      "title": "Vérifiez votre adresse e-mail",
+      "greeting": "Bonjour",
+      "instructions": "Veuillez confirmer que vous souhaitez utiliser cette adresse e-mail pour votre compte {brandName}.",
+      "cta": "Vérifier l'adresse e-mail",
+      "note": "Si vous n'avez pas créé ce compte, vous pouvez ignorer cet e-mail en toute sécurité."
+    },
+    "passwordReset": {
+      "title": "Demande de réinitialisation de mot de passe",
+      "greeting": "Bonjour",
+      "instructions": "Nous avons reçu une demande de réinitialisation de votre mot de passe pour {brandName}. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe :",
+      "cta": "Réinitialiser le mot de passe",
+      "note": "Ce lien expirera dans 15 minutes. Si vous n'avez pas demandé de réinitialisation de mot de passe, vous pouvez ignorer cet e-mail en toute sécurité."
+    }
+  },
+  "form": {
+    "name": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "email": "E-mail",
+    "newPassword": "Nouveau mot de passe",
+    "oldPassword": "Ancien mot de passe",
+    "profileImage": "Image de profil",
+    "language": "Langue",
+    "sourceLanguage": "Langue source préférée",
+    "targetLanguage": "Langue cible préférée",
+    "placeholders": {
+      "email": "Entrez votre e-mail",
+      "name": "Entrez votre nom d'utilisateur",
+      "password": "Entrez votre mot de passe",
+      "newPassword": "Entrez votre nouveau mot de passe",
+      "oldPassword": "Entrez votre ancien mot de passe",
+      "profileImage": {
+        "fileTypes": "(Seules les images *.jpeg, *.jpg et *.png seront acceptées)",
+        "maxSize": "Pas plus de 1 Mo"
+      }
+    },
+    "customErrors": {
+      "passwordRegex": "{path, select, missingTranslation {String} other {{path}}} doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial"
+    }
+  }
+}

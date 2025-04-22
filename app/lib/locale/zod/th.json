@@ -1,0 +1,132 @@
+{
+  "zod": {
+    "errors": {
+      "invalid_type": "คาดหวัง {expected}, ได้รับ {received}",
+      "invalid_type_received_undefined": "จำเป็น",
+      "invalid_literal": "ค่า Literal ไม่ถูกต้อง, คาดหวัง {expected}",
+      "unrecognized_keys": "คีย์ที่ไม่รู้จักในอ็อบเจกต์: {keys}",
+      "invalid_union": "อินพุตไม่ถูกต้อง",
+      "invalid_union_discriminator": "ค่า Discriminator ไม่ถูกต้อง คาดหวัง {options}",
+      "invalid_enum_value": "ค่า Enum ไม่ถูกต้อง คาดหวัง {options}, ได้รับ {received}",
+      "invalid_arguments": "อาร์กิวเมนต์ของฟังก์ชันไม่ถูกต้อง",
+      "invalid_return_type": "ประเภทการคืนค่าของฟังก์ชันไม่ถูกต้อง",
+      "invalid_date": "วันที่ไม่ถูกต้อง",
+      "custom": "อินพุตไม่ถูกต้อง",
+      "invalid_intersection_types": "ไม่สามารถรวมผลลัพธ์ของ Intersection ได้",
+      "not_multiple_of": "ตัวเลขต้องเป็นผลคูณของ {multipleOf}",
+      "not_finite": "ตัวเลขต้องเป็นค่าจำกัด",
+      "invalid_string": {
+        "email": "{validation} ไม่ถูกต้อง",
+        "emoji": "{validation} ไม่ถูกต้อง",
+        "url": "{validation} ไม่ถูกต้อง",
+        "uuid": "{validation} ไม่ถูกต้อง",
+        "ulid": "{validation} ไม่ถูกต้อง",
+        "ip": "{validation} ไม่ถูกต้อง",
+        "cuid": "{validation} ไม่ถูกต้อง",
+        "cuid2": "{validation} ไม่ถูกต้อง",
+        "regex": "ไม่ถูกต้อง",
+        "datetime": "{validation} ไม่ถูกต้อง",
+        "startsWith": "อินพุตไม่ถูกต้อง: ต้องขึ้นต้นด้วย \"{startsWith}\"",
+        "endsWith": "อินพุตไม่ถูกต้อง: ต้องลงท้ายด้วย \"{endsWith}\""
+      },
+      "too_small": {
+        "array": {
+          "exact": "{path, select, missingTranslation {อาร์เรย์} other {{path}}} ต้องมี {minimum} รายการพอดี",
+          "inclusive": "{path, select, missingTranslation {อาร์เรย์} other {{path}}} ต้องมีอย่างน้อย {minimum} รายการ",
+          "not_inclusive": "{path, select, missingTranslation {อาร์เรย์} other {{path}}} ต้องมีมากกว่า {minimum} รายการ"
+        },
+        "string": {
+          "exact": "{path, select, missingTranslation {สตริง} other {{path}}} ต้องมี {minimum} ตัวอักษรพอดี",
+          "inclusive": "{path, select, missingTranslation {สตริง} other {{path}}} ต้องมีอย่างน้อย {minimum} ตัวอักษร",
+          "not_inclusive": "{path, select, missingTranslation {สตริง} other {{path}}} ต้องมีมากกว่า {minimum} ตัวอักษร"
+        },
+        "number": {
+          "exact": "{path, select, missingTranslation {ตัวเลข} other {{path}}} ต้องเท่ากับ {minimum} พอดี",
+          "inclusive": "{path, select, missingTranslation {ตัวเลข} other {{path}}} ต้องมากกว่าหรือเท่ากับ {minimum}",
+          "not_inclusive": "{path, select, missingTranslation {ตัวเลข} other {{path}}} ต้องมากกว่า {minimum}"
+        },
+        "bigint": {
+          "exact": "{path, select, missingTranslation {ตัวเลข} other {{path}}} ต้องเท่ากับ {minimum} พอดี",
+          "inclusive": "{path, select, missingTranslation {ตัวเลข} other {{path}}} ต้องมากกว่าหรือเท่ากับ {minimum}",
+          "not_inclusive": "{path, select, missingTranslation {ตัวเลข} other {{path}}} ต้องมากกว่า {minimum}"
+        },
+        "set": {
+          "exact": "อินพุตไม่ถูกต้อง",
+          "inclusive": "อินพุตไม่ถูกต้อง",
+          "not_inclusive": "อินพุตไม่ถูกต้อง"
+        },
+        "date": {
+          "exact": "วันที่ต้องเป็น {minimum, date, short} พอดี",
+          "inclusive": "วันที่ต้องมากกว่าหรือเท่ากับ {minimum, date, short}",
+          "not_inclusive": "วันที่ต้องมากกว่า {minimum, date, short}"
+        }
+      },
+      "too_big": {
+        "array": {
+          "exact": "{path, select, missingTranslation {อาร์เรย์} other {{path}}} ต้องมี {maximum} รายการพอดี",
+          "inclusive": "{path, select, missingTranslation {อาร์เรย์} other {{path}}} ต้องมีไม่เกิน {maximum} รายการ",
+          "not_inclusive": "{path, select, missingTranslation {อาร์เรย์} other {{path}}} ต้องมีน้อยกว่า {maximum} รายการ"
+        },
+        "string": {
+          "exact": "{path, select, missingTranslation {สตริง} other {{path}}} ต้องมี {maximum} ตัวอักษรพอดี",
+          "inclusive": "{path, select, missingTranslation {สตริง} other {{path}}} ต้องมีไม่เกิน {maximum} ตัวอักษร",
+          "not_inclusive": "{path, select, missingTranslation {สตริง} other {{path}}} ต้องมีน้อยกว่า {maximum} ตัวอักษร"
+        },
+        "number": {
+          "exact": "{path, select, missingTranslation {ตัวเลข} other {{path}}} ต้องเท่ากับ {maximum} พอดี",
+          "inclusive": "{path, select, missingTranslation {ตัวเลข} other {{path}}} ต้องน้อยกว่าหรือเท่ากับ {maximum}",
+          "not_inclusive": "{path, select, missingTranslation {ตัวเลข} other {{path}}} ต้องน้อยกว่า {maximum}"
+        },
+        "bigint": {
+          "exact": "{path, select, missingTranslation {ตัวเลข} other {{path}}} ต้องเท่ากับ {maximum} พอดี",
+          "inclusive": "{path, select, missingTranslation {ตัวเลข} other {{path}}} ต้องน้อยกว่าหรือเท่ากับ {maximum}",
+          "not_inclusive": "{path, select, missingTranslation {ตัวเลข} other {{path}}} ต้องน้อยกว่า {maximum}"
+        },
+        "set": {
+          "exact": "อินพุตไม่ถูกต้อง",
+          "inclusive": "อินพุตไม่ถูกต้อง",
+          "not_inclusive": "อินพุตไม่ถูกต้อง"
+        },
+        "date": {
+          "exact": "วันที่ต้องเป็น {maximum, date, short} พอดี",
+          "inclusive": "วันที่ต้องน้อยกว่าหรือเท่ากับ {maximum, date, short}",
+          "not_inclusive": "วันที่ต้องน้อยกว่า {maximum, date, short}"
+        }
+      }
+    },
+    "validations": {
+      "email": "อีเมล",
+      "emoji": "อีโมจิ",
+      "url": "url",
+      "uuid": "uuid",
+      "ulid": "ulid",
+      "ip": "ip",
+      "cuid": "cuid",
+      "cuid2": "cuid2",
+      "regex": "regex",
+      "datetime": "วันเวลา"
+    },
+    "types": {
+      "function": "ฟังก์ชัน",
+      "number": "ตัวเลข",
+      "string": "สตริง",
+      "nan": "nan",
+      "integer": "จำนวนเต็ม",
+      "float": "จำนวนทศนิยม",
+      "boolean": "บูลีน",
+      "date": "วันที่",
+      "bigint": "bigint",
+      "undefined": "ไม่ได้กำหนด",
+      "symbol": "สัญลักษณ์",
+      "null": "null",
+      "array": "อาร์เรย์",
+      "object": "อ็อบเจกต์",
+      "unknown": "ไม่รู้จัก",
+      "promise": "promise",
+      "void": "void",
+      "never": "never",
+      "map": "map",
+      "set": "set"
+    }
+  }
+}

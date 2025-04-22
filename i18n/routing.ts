@@ -1,7 +1,7 @@
 import {defineRouting} from 'next-intl/routing';
 import {createNavigation} from 'next-intl/navigation';
 
-export const locales = ['en', 'ro', 'ru'] as const;
+export const locales = ['en', 'ro', 'ru', 'fr', 'es', 'de', 'it', 'th', 'id', 'vn', 'tl', 'pt'] as const;
 
 export const routing = defineRouting({
   // A list of all locales that are supported

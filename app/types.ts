@@ -24,11 +24,19 @@ export enum ComicsStatus {
   DROPPED = "DROPPED"
 }
 
-export enum ChapterLanguage {
+export enum ChapterLanguage  {
   En = "En",
-  Ru = "Ru",
   Ro = "Ro",
-  Fr = "Fr"
+  Ru = "Ru",
+  Fr = "Fr",
+  Es = "Es",
+  De = "De",
+  It = "It",
+  Th = "Th",
+  Id = "Id",
+  Vn = "Vn",
+  Tl = "Tl",
+  Pt = "Pt"
 }
 
 export type LocaleType = typeof locales[number];
@@ -56,9 +64,17 @@ export interface ChapterMetadata {
 
 export enum ChapterLanguageFull {
   En = "English",
-  Ru = "Русский",
   Ro = "Română",
-  Fr = "French"
+  Ru = "Русский",
+  Fr = "French",
+  Es = "Español",
+  De = "Deutsch",
+  It = "Italiano",
+  Th = "ไทย",
+  Id = "Bahasa Indonesia",
+  Vn = "Tiếng Việt",
+  Tl = "Filipino",
+  Pt = "Português"
 }
 
 export enum ComicsGenre {

@@ -44,7 +44,7 @@ interface Props {
   metadata: ChapterMetadata["content"];
 }
 
-const API_URL = "https://8d7b-86-106-234-28.ngrok-free.app/ws"
+const API_URL = process.env.NEXT_PUBLIC_OCR_API_URL + "/ws";
 
 export default function RedactorPage({chapter, metadata}: Props) {
   const [isSaving, setIsSaving] = useState(false);
@@ -99,6 +99,7 @@ export default function RedactorPage({chapter, metadata}: Props) {
   console.log(boxes.map(box => box.translatedTexts.en?.text ?? "Empty box"))
 
   function connectSocket() {
+    if (!API_URL) throw new Error("NEXT_PUBLIC_OCR_API_URL .env variable missing");
     if (socket) {
       socket.close()
     }

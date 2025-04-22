@@ -1,0 +1,132 @@
+{
+  "zod": {
+    "errors": {
+      "invalid_type": "Dự kiến {expected}, nhận được {received}",
+      "invalid_type_received_undefined": "Bắt buộc",
+      "invalid_literal": "Giá trị cố định không hợp lệ, dự kiến {expected}",
+      "unrecognized_keys": "Khóa không nhận dạng được trong đối tượng: {keys}",
+      "invalid_union": "Đầu vào không hợp lệ",
+      "invalid_union_discriminator": "Giá trị phân biệt không hợp lệ. Dự kiến {options}",
+      "invalid_enum_value": "Giá trị enum không hợp lệ. Dự kiến {options}, nhận được {received}",
+      "invalid_arguments": "Đối số hàm không hợp lệ",
+      "invalid_return_type": "Kiểu trả về của hàm không hợp lệ",
+      "invalid_date": "Ngày không hợp lệ",
+      "custom": "Đầu vào không hợp lệ",
+      "invalid_intersection_types": "Không thể hợp nhất kết quả giao nhau",
+      "not_multiple_of": "Số phải là bội số của {multipleOf}",
+      "not_finite": "Số phải là hữu hạn",
+      "invalid_string": {
+        "email": "{validation} không hợp lệ",
+        "emoji": "{validation} không hợp lệ",
+        "url": "{validation} không hợp lệ",
+        "uuid": "{validation} không hợp lệ",
+        "ulid": "{validation} không hợp lệ",
+        "ip": "{validation} không hợp lệ",
+        "cuid": "{validation} không hợp lệ",
+        "cuid2": "{validation} không hợp lệ",
+        "regex": "Không hợp lệ",
+        "datetime": "{validation} không hợp lệ",
+        "startsWith": "Đầu vào không hợp lệ: phải bắt đầu bằng \"{startsWith}\"",
+        "endsWith": "Đầu vào không hợp lệ: phải kết thúc bằng \"{endsWith}\""
+      },
+      "too_small": {
+        "array": {
+          "exact": "{path, select, missingTranslation {Mảng} other {{path}}} phải chứa đúng {minimum} phần tử",
+          "inclusive": "{path, select, missingTranslation {Mảng} other {{path}}} phải chứa ít nhất {minimum} phần tử",
+          "not_inclusive": "{path, select, missingTranslation {Mảng} other {{path}}} phải chứa nhiều hơn {minimum} phần tử"
+        },
+        "string": {
+          "exact": "{path, select, missingTranslation {Chuỗi} other {{path}}} phải chứa đúng {minimum} ký tự",
+          "inclusive": "{path, select, missingTranslation {Chuỗi} other {{path}}} phải chứa ít nhất {minimum} ký tự",
+          "not_inclusive": "{path, select, missingTranslation {Chuỗi} other {{path}}} phải chứa nhiều hơn {minimum} ký tự"
+        },
+        "number": {
+          "exact": "{path, select, missingTranslation {Số} other {{path}}} phải bằng đúng {minimum}",
+          "inclusive": "{path, select, missingTranslation {Số} other {{path}}} phải lớn hơn hoặc bằng {minimum}",
+          "not_inclusive": "{path, select, missingTranslation {Số} other {{path}}} phải lớn hơn {minimum}"
+        },
+        "bigint": {
+          "exact": "{path, select, missingTranslation {Số} other {{path}}} phải bằng đúng {minimum}",
+          "inclusive": "{path, select, missingTranslation {Số} other {{path}}} phải lớn hơn hoặc bằng {minimum}",
+          "not_inclusive": "{path, select, missingTranslation {Số} other {{path}}} phải lớn hơn {minimum}"
+        },
+        "set": {
+          "exact": "Đầu vào không hợp lệ",
+          "inclusive": "Đầu vào không hợp lệ",
+          "not_inclusive": "Đầu vào không hợp lệ"
+        },
+        "date": {
+          "exact": "Ngày phải là đúng {minimum, date, short}",
+          "inclusive": "Ngày phải lớn hơn hoặc bằng {minimum, date, short}",
+          "not_inclusive": "Ngày phải lớn hơn {minimum, date, short}"
+        }
+      },
+      "too_big": {
+        "array": {
+          "exact": "{path, select, missingTranslation {Mảng} other {{path}}} phải chứa đúng {maximum} phần tử",
+          "inclusive": "{path, select, missingTranslation {Mảng} other {{path}}} phải chứa tối đa {maximum} phần tử",
+          "not_inclusive": "{path, select, missingTranslation {Mảng} other {{path}}} phải chứa ít hơn {maximum} phần tử"
+        },
+        "string": {
+          "exact": "{path, select, missingTranslation {Chuỗi} other {{path}}} phải chứa đúng {maximum} ký tự",
+          "inclusive": "{path, select, missingTranslation {Chuỗi} other {{path}}} phải chứa tối đa {maximum} ký tự",
+          "not_inclusive": "{path, select, missingTranslation {Chuỗi} other {{path}}} phải chứa ít hơn {maximum} ký tự"
+        },
+        "number": {
+          "exact": "{path, select, missingTranslation {Số} other {{path}}} phải bằng đúng {maximum}",
+          "inclusive": "{path, select, missingTranslation {Số} other {{path}}} phải nhỏ hơn hoặc bằng {maximum}",
+          "not_inclusive": "{path, select, missingTranslation {Số} other {{path}}} phải nhỏ hơn {maximum}"
+        },
+        "bigint": {
+          "exact": "{path, select, missingTranslation {Số} other {{path}}} phải bằng đúng {maximum}",
+          "inclusive": "{path, select, missingTranslation {Số} other {{path}}} phải nhỏ hơn hoặc bằng {maximum}",
+          "not_inclusive": "{path, select, missingTranslation {Số} other {{path}}} phải nhỏ hơn {maximum}"
+        },
+        "set": {
+          "exact": "Đầu vào không hợp lệ",
+          "inclusive": "Đầu vào không hợp lệ",
+          "not_inclusive": "Đầu vào không hợp lệ"
+        },
+        "date": {
+          "exact": "Ngày phải là đúng {maximum, date, short}",
+          "inclusive": "Ngày phải nhỏ hơn hoặc bằng {maximum, date, short}",
+          "not_inclusive": "Ngày phải nhỏ hơn {maximum, date, short}"
+        }
+      }
+    },
+    "validations": {
+      "email": "email",
+      "emoji": "emoji",
+      "url": "url",
+      "uuid": "uuid",
+      "ulid": "ulid",
+      "ip": "ip",
+      "cuid": "cuid",
+      "cuid2": "cuid2",
+      "regex": "regex",
+      "datetime": "ngày giờ"
+    },
+    "types": {
+      "function": "hàm",
+      "number": "số",
+      "string": "chuỗi",
+      "nan": "nan",
+      "integer": "số nguyên",
+      "float": "số thực",
+      "boolean": "boolean",
+      "date": "ngày",
+      "bigint": "bigint",
+      "undefined": "không xác định",
+      "symbol": "ký hiệu",
+      "null": "null",
+      "array": "mảng",
+      "object": "đối tượng",
+      "unknown": "không biết",
+      "promise": "promise",
+      "void": "void",
+      "never": "never",
+      "map": "map",
+      "set": "set"
+    }
+  }
+}
