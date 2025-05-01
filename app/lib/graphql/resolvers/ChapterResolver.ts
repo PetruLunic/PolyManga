@@ -4,41 +4,115 @@ import ChapterModel from "@/app/lib/models/Chapter";
 import {GraphQLError} from "graphql/error";
 import {HydratedDocument} from "mongoose";
 import MangaModel from "@/app/lib/models/Manga";
-import {ChapterLanguage} from "@/app/types";
 import {deleteImage} from "@/app/lib/utils/awsUtils";
-import {LogExecutionTime} from "@/app/lib/utils/decorators";
 import ChapterMetadataModel from "@/app/lib/models/ChapterMetadata";
+import {fetchInBatches} from "@/app/lib/utils/fetchInBatches";
+import {LogExecutionTime} from "@/app/lib/utils/decorators";
+import {DEFAULT_LANGUAGE} from "@/app/lib/utils/constants";
 
 @Resolver(Chapter)
 export class ChapterResolver {
+  @Query(() => [Chapter])
+  async chapters(
+    @Arg("slug") slug: string,
+    @Arg("limit", () => Int) limit: number
+  ): Promise<Chapter[]> {
+    const result = await MangaModel.aggregate([
+      {
+        $match: { slug: slug } // Match the Manga by its slug
+      },
+      {
+        $lookup: { // Perform a left outer join with the ChapterModel
+          from: 'chapters', // The collection name of the ChapterModel
+          let: { mangaId: '$id' }, // Define a variable for the Manga's _id
+          pipeline: [
+            {
+              $match: { // Filter chapters
+                $expr: {
+                  $and: [
+                    { $eq: ['$mangaId', '$$mangaId'] }, // Match the mangaId
+                  ]
+                }
+              }
+            },
+            { $limit: limit } // Limit to 1 result
+          ],
+          as: 'chapters' // The field to store the matching chapters
+        }
+      },
+      {
+        $unwind: { // Deconstruct the chapters array
+          path: '$chapters',
+          preserveNullAndEmptyArrays: false // If no chapter is found, return null
+        }
+      },
+      {
+        $replaceRoot: { // Replace the root document with the chapter
+          newRoot: '$chapters'
+        }
+      }
+    ]).exec();
+
+    return result;
+  }
+
+  @LogExecutionTime()
   @Query(() => Chapter)
   async chapter(
     @Arg("number") number: number,
     @Arg("slug") slug: string,
   ): Promise<Chapter> {
-    const manga = await MangaModel.findOne({slug});
-
-    if (!manga) {
-      throw new GraphQLError("Manga not found", {
-        extensions: {
-          code: "BAD_USER_INPUT"
+    const result = await MangaModel.aggregate([
+      {
+        $match: { slug: slug } // Match the Manga by its slug
+      },
+      {
+        $lookup: { // Perform a left outer join with the ChapterModel
+          from: 'chapters', // The collection name of the ChapterModel
+          let: { mangaId: '$id' }, // Define a variable for the Manga's _id
+          pipeline: [
+            {
+              $match: { // Filter chapters
+                $expr: {
+                  $and: [
+                    { $eq: ['$mangaId', '$$mangaId'] }, // Match the mangaId
+                    { $eq: ['$number', number] } // Match the chapter number
+                  ]
+                }
+              }
+            },
+            { $limit: 1 } // Limit to 1 result
+          ],
+          as: 'chapters' // The field to store the matching chapters
         }
-      })
-    }
+      },
+      {
+        $unwind: { // Deconstruct the chapters array
+          path: '$chapters',
+          preserveNullAndEmptyArrays: false // If no chapter is found, return null
+        }
+      },
+      {
+        $replaceRoot: { // Replace the root document with the chapter
+          newRoot: '$chapters'
+        }
+      }
+    ]).exec();
 
-    const chapter: Chapter | null = await ChapterModel.findOne({number, mangaId: manga.id}).lean();
+    const chapter = result[0];
 
     if (!chapter) {
       throw new GraphQLError("Chapter not found", {
         extensions: {
           code: "BAD_USER_INPUT"
         }
-      })
+      });
     }
 
     return chapter;
   }
 
+  @LogExecutionTime()
   @Query(() => [Chapter])
   async latestChapters(@Args() {limit = 10, offset = 0}: GetChaptersArgs): Promise<Chapter[]> {
     return ChapterModel.aggregate([
@@ -128,23 +202,13 @@ export class ChapterResolver {
       })
     }
 
-    let promisesBatch: any[] = [];
+    const deletePromises = chapters.flatMap(chapter =>
+      chapter.images.flatMap(images =>
+        images.images.flatMap(img => deleteImage(img.src))
+      )
+    ).filter(promise => !!promise);
 
-    // Delete images from S3
-    for (const chapter of chapters) {
-      for (const version of chapter.versions) {
-        for (const image of version.images) {
-          // Pushing promise in the batch
-          promisesBatch.push(deleteImage(image.src));
-
-          // If promises length reach 50 units, then wait, resolve them, and starting next batch;
-          if (promisesBatch.length > 50) {
-            await Promise.all(promisesBatch);
-            promisesBatch = [];
-          }
-        }
-      }
-    }
+    await fetchInBatches(deletePromises, 40);
 
     // Delete every chapter document
     for (let chapter of chapters) {
@@ -176,34 +240,45 @@ export class ChapterResolver {
         )
   }
 
-  @FieldResolver(() => Chapter, {nullable: true})
+  @FieldResolver(() => Chapter, { nullable: true })
   async nextChapter(@Root() chapter: Chapter): Promise<Chapter | null> {
-    const chapters: Chapter[] = await ChapterModel.find({mangaId: chapter.mangaId}).lean();
-
-    return chapters
-        .sort((ch1, ch2) => ch1.number - ch2.number)
-        .find(ch => ch.number > chapter.number) || null
+    return ChapterModel.findOne({
+      mangaId: chapter.mangaId,
+      number: { $gt: chapter.number }
+    })
+      .sort({ number: 1 })
+      .select('number')
+      .lean();
   }
 
-  @FieldResolver(() => Chapter, {nullable: true})
+  @FieldResolver(() => Chapter, { nullable: true })
   async prevChapter(@Root() chapter: Chapter): Promise<Chapter | null> {
-    const chapters: Chapter[] = await ChapterModel.find({mangaId: chapter.mangaId}).lean();
-
-    return chapters
-        .sort((ch1, ch2) => ch2.number - ch1.number)
-        .find(ch => ch.number < chapter.number) || null
+    return ChapterModel.findOne({
+      mangaId: chapter.mangaId,
+      number: { $lt: chapter.number }
+    })
+      .sort({ number: -1 })
+      .select('number')
+      .lean();
   }
 
-  @FieldResolver(() => [ChapterLanguage])
-  async languages(@Root() chapter: Chapter): Promise<ChapterLanguage[]> {
-    return chapter.versions.map(version => version.language);
+  @FieldResolver(() => String)
+  title(
+    @Root() chapter: Chapter,
+    @Arg("locale", () => String, {defaultValue: DEFAULT_LANGUAGE}) locale: string
+  ): string {
+    return chapter.titles.find(({language}) => locale === language.toLowerCase())?.value
+      ?? chapter.titles.find(({language}) => DEFAULT_LANGUAGE === language.toLowerCase())?.value
+      ?? chapter.titles[0].value;
   }
 
+  @LogExecutionTime()
   @FieldResolver(() => Manga)
   async manga(@Root() chapter: Chapter): Promise<Manga | null> {
     return MangaModel.findOne({id: chapter.mangaId}).lean();
   }
 
+  @LogExecutionTime()
   @FieldResolver(() => ChapterMetadataRaw, {nullable: true})
   async metadata(@Root() chapter: Chapter): Promise<ChapterMetadataRaw | null> {
     return ChapterMetadataModel.findOne({chapterId: chapter.id}).lean();

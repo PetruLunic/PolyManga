@@ -9,15 +9,16 @@ interface Props {
   params: Promise<{
     id: string,
     number: string,
+    locale: string
   }>
 }
 
 export default async function Page({params}: Props) {
-  const {number: numberString, id} = await params;
+  const {number: numberString, id, locale} = await params;
   const number = Number.parseFloat(numberString);
   if (Number.isNaN(number)) notFound();
 
-  const {data} = await queryGraphql(GET_CHAPTER, {number, slug: id});
+  const {data} = await queryGraphql(GET_CHAPTER, {number, slug: id, locale});
   if (!data) notFound();
 
   const chapter = data.chapter;

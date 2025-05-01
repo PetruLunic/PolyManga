@@ -1,4 +1,4 @@
-import {GET_CHAPTERS} from "@/app/lib/graphql/queries";
+import {GET_CHAPTERS_EDIT} from "@/app/lib/graphql/queries";
 import ChapterListEdit from "@/app/_components/ChapterListEdit";
 import {notFound} from "next/navigation";
 import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
@@ -6,12 +6,12 @@ import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
 export const revalidate = 5;
 
 interface Props{
-  params: Promise<{id: string}>
+  params: Promise<{id: string, locale: string}>
 }
 
 export default async function Page({params}: Props) {
-  const {id: slug} = await params;
-  const {data} = await queryGraphql(GET_CHAPTERS, {slug});
+  const {id: slug, locale} = await params;
+  const {data} = await queryGraphql(GET_CHAPTERS_EDIT, {slug, locale, limit: 9999});
 
   if (!data?.manga) return notFound();
 

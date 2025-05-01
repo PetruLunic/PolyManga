@@ -24,19 +24,23 @@ export default async function Page({params}: Props) {
     {data: monthlyMangaData},
     {data: latestChapters}] = await Promise.all([
     queryGraphql(GET_MANGA_CARDS, {
-        limit: 10,
-        sortBy: "dailyViews"
-      }),
-    queryGraphql(GET_MANGA_CARDS, {
       limit: 10,
-      sortBy: "weeklyViews"
+      sortBy: "dailyViews",
+      locale
     }),
     queryGraphql(GET_MANGA_CARDS, {
       limit: 10,
-      sortBy: "monthlyViews"
+      sortBy: "weeklyViews",
+      locale
+    }),
+    queryGraphql(GET_MANGA_CARDS, {
+      limit: 10,
+      sortBy: "monthlyViews",
+      locale
     }),
     queryGraphql(GET_LATEST_UPLOADED_CHAPTERS, {
-      limit: 16
+      limit: 16,
+      locale
     })
   ]);
 

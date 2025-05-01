@@ -25,6 +25,7 @@ export default function LatestChaptersList({initialChapters}: Props) {
     variables: {
       limit,
       offset: initialChapters.length, // Start fetching after the initial data
+      locale
     },
     skip: true
   });

@@ -39,14 +39,14 @@ export const createManga = async (formData: FormData, mangaInput: FormType) => {
     throw new Error("Unexpected error");
   }
 
-  const languages = mangaInput.title.map(title => title.language);
+  const languages = mangaInput.titles.map(title => title.language);
 
   const manga: AddMangaInput = {
     ...mangaInput,
-    title: mangaInput.title.map(({value, language}) => ({value, language: language as ChapterLanguage})),
-    description: mangaInput.description.map(({value, language}) => ({value, language: language as ChapterLanguage})),
+    titles: mangaInput.titles.map(({value, language}) => ({value, language: language as ChapterLanguage})),
+    descriptions: mangaInput.descriptions.map(({value, language}) => ({value, language: language as ChapterLanguage})),
     id: mangaId,
-    slug: generateSlug(mangaInput.title),
+    slug: generateSlug(mangaInput.titles),
     image: imageUrl,
     uploadedBy: session.user.id,
     genres: mangaInput.genres.split(",") as ComicsGenre[],

@@ -44,7 +44,16 @@ export type LocaleType = typeof locales[number];
 export enum LocaleEnum {
   EN = "en",
   RU = "ru",
-  RO = "ro"
+  RO = "ro",
+  FR = "fr",
+  ES = "es",
+  DE = "de",
+  IT = "it",
+  TH = "th",
+  ID = "id",
+  VN = "vn",
+  TL = "tl",
+  PT = "pt"
 }
 
 export interface TextItem {

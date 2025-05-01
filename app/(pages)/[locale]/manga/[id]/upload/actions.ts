@@ -11,37 +11,39 @@ import {auth} from "@/auth";
 import sharp from "sharp";
 import dbConnect from "@/app/lib/utils/dbConnect";
 import Manga from "@/app/lib/models/Manga";
-import {ChapterImage} from "@/app/lib/graphql/schema";
+import {ChapterImage, ChapterImages} from "@/app/lib/graphql/schema";
+import {ChapterInput} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/_components/EditChapterForm";
+import {EditChapterInputSchema} from "@/app/lib/utils/zodSchemas";
+import {fetchInBatches} from "@/app/lib/utils/fetchInBatches";
 
 export interface ChapterImageBuffer extends Omit<ChapterImage, "src"> {
   buffer: ArrayBuffer
 }
 
-export async function createChapter(formData: FormData, languages: ChapterLanguage[]) {
+export async function createChapter(data: ChapterInput, formData: FormData) {
   const session = await auth();
 
   if (!session || session.user.role !== "ADMIN" && session.user.role !== "MODERATOR") {
     throw new Error("Forbidden action!");
   }
 
-  const client = createApolloClient();
 
-  const slug = formData.get("slug") as string;
-  const number = Number(formData.get("number") as string);
+  const validationResult = EditChapterInputSchema.safeParse(data);
 
-  // Extracting titles
-  const titles: Record<ChapterLanguage, string> = languages.reduce((acc, lang) => {
-    const title = formData.get(`title-${lang}`) as string;
-    if (!title) throw new Error(`No title for ${lang} language provided`);
-    return {...acc, [lang]: title};
-  }, {} as Record<ChapterLanguage, string>)
-
-  if (!slug || number < 0) {
-    return {success: false, message: "Wrong entry data"};
+  if (validationResult.error) {
+    throw new Error("Validation error: " + validationResult.error.toString());
   }
 
+  const {
+    mangaId,
+    titles,
+    number,
+  } = data
+  const languages = data.languages.split(",") as ChapterLanguage[];
+
   await dbConnect();
-  const manga = await Manga.findOne({slug}).lean();
+  const client = createApolloClient();
+  const manga = await Manga.findOne({slug: mangaId}).lean();
 
   if (!manga) {
     return {success: false, message: "Manga not found"};
@@ -110,18 +112,16 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
     })
   })
 
-  // Creating versions for chapter that are stored in DB
-  const versions: AddChapterInput["versions"] = [];
+  const processedImages: ChapterImages[] = [];
 
   languages.forEach(language => {
-    versions.push({
-      language,
-      title: titles[language],
-      images: imagesURLs[language].map((url, index) => ({
+    processedImages.push({
+      language: language,
+      images: imagesURLs[language]?.map((url, index) => ({
         src: url,
         width: imagesMap[language][index].width,
         height: imagesMap[language][index].height
-      }))
+      })) ?? []
     })
   })
 
@@ -129,8 +129,10 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
   const chapter: AddChapterInput = {
     id: chapterId,
     number,
+    titles: titles.map(title => ({...title, language: title.language as ChapterLanguage})),
     mangaId: manga.id,
-    versions
+    images: processedImages,
+    languages
   }
 
   // Fetching chapter to GraphQL resolver
@@ -146,8 +148,8 @@ export async function createChapter(formData: FormData, languages: ChapterLangua
     return {success: false, message: "Unexpected error"}
   }
 
-  // Fetching images to aws cloud
-  await Promise.all(fetchImagesPromises);
+  // Fetching images to the bucket
+  await fetchInBatches(fetchImagesPromises, 30);
 
   return {success: true, message: "Chapter created"}
 }

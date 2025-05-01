@@ -1,13 +1,13 @@
 "use client"
 
 import NextImage from "next/image";
-import {Button, Card, CardBody, Image} from "@heroui/react";
+import {Button, Card, CardBody} from "@heroui/react";
 import React, {useEffect, useState} from "react";
 import {useScreenWidth} from "@/app/lib/hooks/useScreenWidth";
 import {ChapterMetadata, LocaleType} from "@/app/types";
 import {notFound} from "next/navigation";
 import LanguageSelectNavbar from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/LanguageSelectNavbar";
-import {Link, locales, usePathname} from "@/i18n/routing";
+import {locales} from "@/i18n/routing";
 import {ChapterQuery} from "@/app/__generated__/graphql";
 import {IoLanguage} from "react-icons/io5";
 import {TbLanguageOff} from "react-icons/tb";
@@ -15,7 +15,6 @@ import {motion} from "framer-motion";
 import {useChapterLanguage} from "@/app/lib/hooks/useChapterLanguage";
 import wildWords from "@/app/lib/fonts/WildWords";
 import {ChapterImage} from "@/app/lib/graphql/schema";
-import {useSession} from "next-auth/react";
 
 const METADATA_BOX_PADDING = 0;
 const BUCKET_URL = process.env.NEXT_PUBLIC_BUCKET_URL;
@@ -26,8 +25,6 @@ interface Props {
 }
 
 export default function ChapterContent({chapter, metadata}: Props) {
-  const session = useSession();
-  const path = usePathname();
   const sourceLang = useChapterLanguage({queryName: "source_lang"});
   const targetLang = useChapterLanguage({queryName: "target_lang"});
   const [activeTargetIndex, setActiveTargetIndex] = useState<number | null>(null);
@@ -46,7 +43,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
   }
 
   // Extract the images with imagesLanguage from the chapter
-  const images = chapter.versions.find(({language}) => language.toLowerCase() === imagesLanguage)?.images;
+  const images = chapter.images.find(({language}) => language.toLowerCase() === imagesLanguage)?.images;
 
   if (!images) notFound();
 
@@ -63,7 +60,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
   })
 
   // Adjust metadata coordinates
-  const adjustedMetadataContent = metadata?.flatMap((item, index) => {
+  const adjustedMetadataContent = metadata?.flatMap((item) => {
     const scalingFactor = screenWidth < averageImageWidth ? screenWidth / averageImageWidth : 1;
     const languages = Object.keys(item.translatedTexts) as LocaleType[];
     const coordsLanguage = item.coords[imagesLanguage] ? imagesLanguage : Object.keys(item.coords)[0] as LocaleType;
@@ -107,18 +104,23 @@ export default function ChapterContent({chapter, metadata}: Props) {
       <div className="overflow-hidden flex flex-col items-center min-h-screen">
         <div className="relative">
           {calcImages.map((image, index) =>
-            <Image
-              key={image.src}
-              as={NextImage}
+            <NextImage
+              key={image.src || index}
               src={BUCKET_URL + image.src}
               alt={image.src}
               priority={index < 2}
-              width={image.width ?? images[index].width}
-              height={image.height ?? images[index].height}
-              classNames={{
-                img: "object-contain"
+              loading={index >= 2 ? "lazy" : undefined}
+              width={image.width || images[index].width}
+              height={image.height || images[index].height}
+              data-loaded='false'
+              onLoad={event => {
+                event.currentTarget.setAttribute('data-loaded', 'true')
               }}
-              radius="none"
+              className='data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-400/50'
+              style={{
+                objectFit: 'contain',
+                maxWidth: '100%',
+              }}
             />
           )}
           {imagesLanguage !== sourceLang && adjustedMetadataContent?.map((data, index) => {
@@ -239,21 +241,21 @@ export default function ChapterContent({chapter, metadata}: Props) {
         nativeLanguages={chapter.languages.map(lang => lang.toLowerCase()) as LocaleType[]}
         languages={locales}
       />
-      {(session.data?.user.role === "ADMIN" || session.data?.user.role === "MODERATOR")
-        && <div className="fixed top-40 right-5 flex flex-col gap-3 max-w-40">
-              <Button
-                as={Link}
-                href={path + "/edit"}
-              >
-                  Edit chapter
-              </Button>
-              <Button
-                  as={Link}
-                  href={path + "/edit/metadata"}
-              >
-                  Edit chapter metadata
-              </Button>
-          </div>}
+      {/*{(session.data?.user.role === "ADMIN" || session.data?.user.role === "MODERATOR")*/}
+      {/*  && <div className="fixed top-40 right-5 flex flex-col gap-3 max-w-40">*/}
+      {/*        <Button*/}
+      {/*          as={Link}*/}
+      {/*          href={path + "/edit"}*/}
+      {/*        >*/}
+      {/*            Edit chapter*/}
+      {/*        </Button>*/}
+      {/*        <Button*/}
+      {/*            as={Link}*/}
+      {/*            href={path + "/edit/metadata"}*/}
+      {/*        >*/}
+      {/*            Edit chapter metadata*/}
+      {/*        </Button>*/}
+      {/*    </div>}*/}
     </>
   )
 }

@@ -2,20 +2,25 @@ import createApolloClient from "@/app/lib/utils/apollo-client";
 import {GET_BOOKMARKS} from "@/app/lib/graphql/queries";
 import BookmarksPage from "@/app/(pages)/[locale]/user/bookmarks/_components/BookmarksPage";
 import {cookies} from "next/headers";
-import {getTranslations} from "next-intl/server";
+import {getLocale, getTranslations} from "next-intl/server";
+import {Suspense} from "react";
 
 export default async function Page() {
+  const locale = await getLocale();
   const t = await getTranslations("pages.user.bookmarks");
   const client = createApolloClient();
   const {data} = await client.query({
     query: GET_BOOKMARKS,
+    variables: {locale},
     context: {headers: {cookie: (await cookies()).toString()}}
   })
 
   return (
   <div className="flex flex-col gap-4 px-2">
    <h2 className="text-2xl">{t("bookmarks")}</h2>
-    <BookmarksPage data={data}/>
+    <Suspense>
+      <BookmarksPage data={data}/>
+    </Suspense>
   </div>
  );
 };

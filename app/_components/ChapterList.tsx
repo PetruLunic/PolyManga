@@ -1,10 +1,8 @@
 "use client"
 
-import {Button, Select, SelectItem} from "@heroui/react";
-import {Manga_ChapterQuery} from "@/app/__generated__/graphql";
+import {Button} from "@heroui/react";
+import {ChaptersListFragment} from "@/app/__generated__/graphql";
 import {useEffect, useMemo, useState} from "react";
-import {HiOutlineSortAscending, HiOutlineSortDescending} from "react-icons/hi";
-import { motion } from 'framer-motion';
 import {IoBookmark, IoBookmarkOutline} from "react-icons/io5";
 import {ADD_CHAPTER_BOOKMARK, DELETE_CHAPTER_BOOKMARK} from "@/app/lib/graphql/mutations";
 import {useMutation, useQuery} from "@apollo/client";
@@ -13,39 +11,37 @@ import {useSession} from "next-auth/react";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {GET_BOOKMARKED_CHAPTER} from "@/app/lib/graphql/queries";
 import {useLocale, useTranslations} from "next-intl";
-import {extractChapterTitle} from "@/app/lib/utils/extractionUtils";
-import {ChapterLanguage, ChapterLanguageFull, LocaleType} from "@/app/types";
 import {Link} from "@/i18n/routing";
 import {useChapterLanguage} from "@/app/lib/hooks/useChapterLanguage";
+import {LanguageSelectItem} from "@/app/_components/ChapterListWrapper";
+import {useParams} from "next/navigation";
 
-type ChapterList = Exclude<Manga_ChapterQuery["manga"], undefined | null>["chapters"]
 
 interface Props{
-  chapters?: ChapterList,
+  chapters: ChaptersListFragment[],
   mangaSlug: string,
-  selectedChapter?: string,
-  languages: ChapterLanguage[]
+  languageFilter: LanguageSelectItem
 }
 
-type LanguageSelectItem = ChapterLanguage | "all";
-
-export default function ChapterList({chapters, selectedChapter, mangaSlug, languages}: Props) {
-  const t = useTranslations("components.chaptersList");
-  const locale = useLocale();
-  const [descending, setDescending] = useState(true);
+export default function ChapterList({chapters, mangaSlug, languageFilter}: Props) {
+  const {locale, number} = useParams<{locale: string, number: string}>()
   const session = useSession();
+  const t = useTranslations("components.chaptersList");
   const {onOpen} = useModal("signIn");
   const {addAlert} = useAlert();
   const [bookmarkedChapterState, setBookmarkedChapterState] = useState<string | undefined>();
   const [addBookmark, {loading: loadingAddBookmark}] = useMutation(ADD_CHAPTER_BOOKMARK);
   const [deleteBookmark, {loading: loadingDeleteBookmark}] = useMutation(DELETE_CHAPTER_BOOKMARK);
-  const {data, error} = useQuery(GET_BOOKMARKED_CHAPTER, {variables: {slug: mangaSlug}});
-  const [languageFilter, setLanguageFilter] = useState<LanguageSelectItem>(
-    languages?.find(lang => lang.toLowerCase() === locale) ?? "all"
-  )
+  const {data} = useQuery(
+    GET_BOOKMARKED_CHAPTER,
+    {
+      variables: {slug: mangaSlug, locale},
+      skip: !locale
+    });
   const targetLang = useChapterLanguage({queryName: "target_lang"});
   const sourceLang = useChapterLanguage({queryName: "source_lang"});
   const queryString = `?source_lang=${sourceLang}&target_lang=${targetLang}`;
+
   useEffect(() => {
     if (!data?.getBookmarkedChapter) return;
 
@@ -86,7 +82,7 @@ export default function ChapterList({chapters, selectedChapter, mangaSlug, langu
     }
 
     const filteredChapters =  chapters.filter(chapter =>
-        chapter.versions.some(({language}) => language === languageFilter))
+        chapter.languages.some((language) => language === languageFilter))
 
     if (filteredChapters.length === 0) return null;
 
@@ -94,91 +90,44 @@ export default function ChapterList({chapters, selectedChapter, mangaSlug, langu
   }, [languageFilter, chapters])
 
  return (
-   <div className="flex flex-col gap-2">
-     <div className="flex gap-1 sm:gap-3 justify-between items-center">
-       <Select
-           disallowEmptySelection
-           selectedKeys={[languageFilter]}
-           label={t("languageFilter")}
-           className={`min-w-28 max-w-40 text-xs md:text-base`}
-           classNames={{
-             trigger: "bg-transparent"
-           }}
-           onSelectionChange={(keys) => setLanguageFilter(keys.currentKey as LanguageSelectItem)}
-           disabledKeys={[languageFilter]}
-       >
-         <>
-           {languages.map(lang =>
-             <SelectItem
-               key={lang}
-             >
-               {ChapterLanguageFull[lang as ChapterLanguage]}
-             </SelectItem>
-           )}
-           <SelectItem
-             key={"all"}
-           >
-             {t("all")}
-           </SelectItem>
-         </>
-       </Select>
-       <Button
-         variant="light"
-         onPress={() => setDescending(prev => !prev)}
-       >
-         {descending ? t("descending") : t("ascending")}
-         <motion.div
-           initial={{ opacity: 0, rotate: 0 }}
-           animate={{ opacity: 1, rotate: descending ? 0 : 360 }}
-           transition={{ duration: 0.2 }}
+   <div className={`flex flex-col gap-2`}>
+     {filteredChapters
+         ? filteredChapters
+         .map((chapter) =>
+         <Button
+           key={chapter.id}
+           variant={number === chapter.number.toString() ? "solid" : "flat"}
+           className="w-full justify-between px-0"
+           as="div"
          >
-           {descending
-             ? <HiOutlineSortDescending className="text-xl"/>
-             : <HiOutlineSortAscending className="text-xl"/>}
-         </motion.div>
-       </Button>
-     </div>
-     <div className={`flex flex-col gap-2 ${descending && "flex-col-reverse"}`}>
-       {filteredChapters
-           ? filteredChapters
-           .map((chapter) => {
-             const chapterTitle = extractChapterTitle(chapter.versions, locale as LocaleType);
-
-           return <Button
-             key={chapter.id}
-             variant={selectedChapter === chapter.number.toString() ? "solid" : "flat"}
-             className="w-full justify-between px-0"
-             as="div"
+           <Button
+             isIconOnly
+             radius="full"
+             isDisabled={loadingAddBookmark || loadingDeleteBookmark}
+             variant="light"
+             size="lg"
+             onPress={onChapterBookmark(chapter.id, chapter.number)}
            >
-             <Button
-               isIconOnly
-               radius="full"
-               isDisabled={loadingAddBookmark || loadingDeleteBookmark}
-               variant="light"
-               size="lg"
-               onPress={onChapterBookmark(chapter.id, chapter.number)}
-             >
-               {chapter.id === bookmarkedChapterState
-                 ? <IoBookmark/>
-                 : <IoBookmarkOutline/>}
-             </Button>
-             <Button
-               as={Link}
-               prefetch={false}
-               scroll={false}
-               className="w-full flex justify-between items-center h-full text-sm"
-               variant={selectedChapter === chapter.number.toString() ? "solid" : "light"}
-               href={`/manga/${mangaSlug}/chapter/${chapter.number}${queryString}`}
-             >
-               <span className="truncate">{chapterTitle}</span>
-               <span
-                 className="tracking-wider">{new Date(parseInt(chapter.createdAt)).toLocaleDateString(locale)}</span>
-             </Button>
+             {chapter.id === bookmarkedChapterState
+               ? <IoBookmark/>
+               : <IoBookmarkOutline/>}
            </Button>
-         })
-         : <div className="text-center text-gray-500 my-10">{t("noChapter")}</div>
-       }
-     </div>
+           <Button
+             as={Link}
+             prefetch={false}
+             scroll={false}
+             className="w-full flex justify-between items-center h-full text-sm"
+             variant={number === chapter.number.toString() ? "solid" : "light"}
+             href={`/manga/${mangaSlug}/chapter/${chapter.number}${queryString}`}
+           >
+             <span className="truncate">{chapter.title}</span>
+             <span
+               className="tracking-wider">{new Date(parseInt(chapter.createdAt)).toLocaleDateString(locale)}</span>
+           </Button>
+         </Button>
+       )
+       : <div className="text-center text-gray-500 my-10">{t("noChapter")}</div>
+     }
    </div>
  );
 };

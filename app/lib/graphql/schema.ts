@@ -76,6 +76,15 @@ export class ChapterImage {
   height: number;
 }
 
+@ObjectType("ChapterImages")
+export class ChapterImages {
+  @Field(() => [ChapterImage])
+  images: ChapterImage[];
+
+  @Field(() => ChapterLanguage)
+  language: ChapterLanguage;
+}
+
 @ObjectType("ChapterVersion")
 export class ChapterVersion {
   @Field(() => [ChapterImage])
@@ -96,11 +105,20 @@ export class Chapter {
   @Field(() => Float)
   number: number;
 
-  @Field(() => [ChapterVersion])
-  versions: ChapterVersion[]
+  @Field(() => [ChapterVersion], {deprecationReason: "Changed to images and titles"})
+  versions: ChapterVersion[];
+
+  @Field(() => [MangaTitle])
+  titles: MangaTitle[];
+
+  @Field()
+  title: string;
+
+  @Field(() => [ChapterImages])
+  images: ChapterImages[];
 
   @Field(() => [ChapterLanguage])
-  languages: ChapterLanguage[]
+  languages: ChapterLanguage[];
 
   @Field(() => ID)
   mangaId: string;
@@ -148,13 +166,19 @@ export class Manga {
   id: string;
 
   @Field(() => [MangaTitle])
-  title: MangaTitle[];
+  titles: MangaTitle[];
+
+  @Field()
+  title: string;
 
   @Field()
   slug: string;
 
   @Field(() => [MangaDescription])
-  description: MangaDescription[];
+  descriptions: MangaDescription[];
+
+  @Field()
+  description: string;
 
   @Field()
   author: string;
@@ -444,13 +468,13 @@ export class AddMangaInput implements Partial<Manga> {
   id: string;
 
   @Field(() => [MangaTitleInput])
-  title: MangaTitleInput[];
+  titles: MangaTitleInput[];
 
   @Field()
   slug: string;
 
   @Field(() => [MangaDescriptionInput])
-  description: MangaDescriptionInput[];
+  descriptions: MangaDescriptionInput[];
 
   @Field()
   author: string;
@@ -483,10 +507,10 @@ export class EditMangaInput implements Partial<Manga> {
   id: string;
 
   @Field(() => [MangaTitleInput])
-  title: MangaTitleInput[];
+  titles: MangaTitleInput[];
 
   @Field(() => [MangaDescriptionInput])
-  description: MangaDescriptionInput[];
+  descriptions: MangaDescriptionInput[];
 
   @Field()
   author: string;
@@ -522,13 +546,10 @@ export class ImageInput implements ChapterImage {
   height: number
 }
 
-@InputType("ChapterVersionInput")
-export class ChapterVersionInput implements ChapterVersion {
+@InputType("ChapterImagesInput")
+export class ChapterImagesInput implements ChapterImages {
   @Field(() => [ImageInput])
   images: ImageInput[]
-
-  @Field()
-  title: string
 
   @Field(() => ChapterLanguage)
   language: ChapterLanguage
@@ -542,11 +563,17 @@ export class AddChapterInput implements Partial<Chapter> {
   @Field(() => Float)
   number: number;
 
-  @Field(() => [ChapterVersionInput])
-  versions: ChapterVersionInput[];
+  @Field(() => [ChapterImagesInput])
+  images: ChapterImagesInput[];
+
+  @Field(() => [MangaTitleInput])
+  titles: MangaTitleInput[];
 
   @Field(() => ID)
   mangaId: string;
+
+  @Field(() => [ChapterLanguage])
+  languages: ChapterLanguage[]
 }
 
 @InputType("AddBookmarkInput")

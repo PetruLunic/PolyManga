@@ -1,24 +1,21 @@
 "use client"
 
 import {Button, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure} from "@heroui/react";
-import {Manga_ChapterQuery} from "@/app/__generated__/graphql";
-import ChapterList from "@/app/_components/ChapterList";
-import {useParams} from "next/navigation";
-import {extractChapterTitle, extractMangaTitle} from "@/app/lib/utils/extractionUtils";
-import {useLocale, useTranslations} from "next-intl";
-import {LocaleType} from "@/app/types";
+import {ChapterQuery} from "@/app/__generated__/graphql";
+import {useTranslations} from "next-intl";
+import ChapterListWrapper from "@/app/_components/ChapterListWrapper";
+import {notFound, useParams} from "next/navigation";
 
 interface Props{
-  data: Manga_ChapterQuery
+  data: ChapterQuery
 }
 
 export default function ChapterListModal({data}: Props) {
   const t = useTranslations("common.manga");
+  const {id} = useParams<{id: string}>();
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
-  const {number, id} = useParams<{id: string, number: string}>();
-  const locale = useLocale();
-  const mangaTitle = extractMangaTitle(data.manga?.title ?? [], locale as LocaleType)
-  const chapterTitle = extractChapterTitle(data.chapter.versions, locale as LocaleType);
+
+  if (!data.manga) notFound();
 
  return (
   <>
@@ -29,10 +26,10 @@ export default function ChapterListModal({data}: Props) {
         onPress={() => setTimeout(onOpen, 10)}
     >
       <div className="max-w-full truncate">
-        {mangaTitle}
+        {data.manga.title}
       </div>
       <div className="max-w-full text-xs text-gray-200 truncate">
-        {chapterTitle}
+        {data.chapter.title}
       </div>
     </Button>
     <Modal
@@ -47,11 +44,9 @@ export default function ChapterListModal({data}: Props) {
           {t("chapters")}
         </ModalHeader>
         <ModalBody className="px-4 sm:px-6">
-          <ChapterList
-            chapters={data.manga?.chapters}
-            selectedChapter={number}
-            mangaSlug={id}
-            languages={data.manga?.languages ?? []}
+          <ChapterListWrapper
+            slug={id}
+            languages={data.manga.languages}
           />
         </ModalBody>
       </ModalContent>

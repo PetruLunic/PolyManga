@@ -6,7 +6,7 @@ import z from "zod";
 import {MangaSchema} from "@/app/lib/utils/zodSchemas";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button, Image, Select, SelectItem} from "@heroui/react";
-import {ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/types";
+import {ChapterLanguage, ChapterLanguageFull, ComicsGenre, ComicsStatus, ComicsType} from "@/app/types";
 import {useDropzone} from "react-dropzone";
 import {CiImageOn} from "react-icons/ci";
 import {createManga} from "@/app/(pages)/[locale]/manga/create/actions";
@@ -32,18 +32,19 @@ export default function Page() {
   } = useForm<FormType>({
     resolver: zodResolver(MangaSchema),
     defaultValues: {
-      title: [{language: "En", value: ""}],
-      description: [{language: "En", value: ""}],
+      titles: [{language: "En", value: ""}],
+      descriptions: [{language: "En", value: ""}],
     }
   })
+
   const { fields, append: appendTitle, remove: removeTitle } = useFieldArray({
     control,
-    name: "title",
+    name: "titles",
   });
 
   const { append: appendDescription, remove: removeDescription } = useFieldArray({
     control,
-    name: "description"
+    name: "descriptions"
   });
 
   // Add new language fields (both title and description)
@@ -69,14 +70,14 @@ export default function Page() {
   }, [errors["root"]?.message]);
 
   const validateUniqueLanguage = (value: string, index: number) => {
-    clearErrors(`title`)
-    const titles = getValues('title');
+    clearErrors(`titles`)
+    const titles = getValues('titles');
     const isDuplicate = titles.some(
       (item, i) => i !== index && item.language === value
     );
 
     if (isDuplicate) {
-      setError(`title.${index}.language`, {type: "validate", message: "This language is already selected"})
+      setError(`titles.${index}.language`, {type: "validate", message: "This language is already selected"})
     }
   };
 
@@ -203,6 +204,20 @@ export default function Page() {
             isInvalid={!!errors.releaseYear}
             {...register("releaseYear", {valueAsNumber: true})}
           />
+          <Select
+            isRequired
+            label="Languages"
+            disallowEmptySelection
+            selectionMode="multiple"
+            defaultSelectedKeys={["En"]}
+            errorMessage={errors?.languages?.message}
+            isInvalid={!!errors?.languages?.message}
+            {...register(`languages`)}
+          >
+            {Object.keys(ChapterLanguage).map(lang =>
+              <SelectItem key={lang}>{ChapterLanguageFull[lang as ChapterLanguage]}</SelectItem>
+            )}
+          </Select>
         </div>
       </div>
         <div className="flex justify-between items-center mb-2">
@@ -216,14 +231,14 @@ export default function Page() {
                 label="Language"
                 className="w-[30%]"
                 defaultSelectedKeys={[field.language]}
-                errorMessage={errors?.title?.[index]?.language?.message}
-                isInvalid={!!errors?.title?.[index]?.language?.message}
-                {...register(`title.${index}.language`, )}
+                errorMessage={errors?.titles?.[index]?.language?.message}
+                isInvalid={!!errors?.titles?.[index]?.language?.message}
+                {...register(`titles.${index}.language`, )}
                 onChange={(e) => {
                   // Register the same language for both title and description
                   const value = e.target.value;
-                  setValue(`title.${index}.language`, value);
-                  setValue(`description.${index}.language`, value);
+                  setValue(`titles.${index}.language`, value);
+                  setValue(`descriptions.${index}.language`, value);
 
                   // Validate if the language is already selected
                   validateUniqueLanguage(value, index);
@@ -238,14 +253,14 @@ export default function Page() {
                 label="Title"
                 className="flex-1"
                 placeholder="Enter title"
-                {...register(`title.${index}.value`)}
-                errorMessage={errors?.title?.[index]?.value?.message}
+                {...register(`titles.${index}.value`)}
+                errorMessage={errors?.titles?.[index]?.value?.message}
               />
               {index > 0 && (
                 <Button
                   isIconOnly
                   color="danger"
-                  onClick={() => removeLanguageFields(index)}
+                  onPress={() => removeLanguageFields(index)}
                 >
                   ✕
                 </Button>
@@ -256,14 +271,14 @@ export default function Page() {
               label="Description"
               className="w-full"
               placeholder="Enter description"
-              {...register(`description.${index}.value`)}
-              errorMessage={errors?.description?.[index]?.value?.message}
+              {...register(`descriptions.${index}.value`)}
+              errorMessage={errors?.descriptions?.[index]?.value?.message}
             />
           </div>
         ))}
       <Button
         className="self-end"
-        onClick={addLanguageFields}
+        onPress={addLanguageFields}
       >
         Add Language
       </Button>

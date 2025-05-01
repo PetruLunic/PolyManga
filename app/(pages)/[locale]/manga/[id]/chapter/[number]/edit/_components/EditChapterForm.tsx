@@ -1,7 +1,7 @@
 "use client"
 
-import {useRef, useState} from "react";
-import {Button, SelectItem} from "@heroui/react";
+import {useState} from "react";
+import {Button, Select, SelectItem} from "@heroui/react";
 import {Input} from "@heroui/input";
 import {ChapterEditQuery, ChapterLanguage} from "@/app/__generated__/graphql";
 import {ChapterLanguageFull} from "@/app/types";
@@ -10,10 +10,11 @@ import {nanoid} from "nanoid";
 import {HiOutlinePlus} from "react-icons/hi";
 import ImagesInputSection from "@/app/(pages)/[locale]/manga/[id]/upload/_components/ImagesInputSection";
 import z from "zod";
-import {useForm} from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import {useFieldArray, useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
 import {editChapter} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/actions";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
+import {EditChapterInputSchema} from "@/app/lib/utils/zodSchemas";
 
 interface Props{
   chapter: ChapterEditQuery["chapter"]
@@ -27,26 +28,21 @@ export interface SelectItem {
 export interface ImageInputSection {
   [key: string]: {
     language: ChapterLanguage,
-    title: string,
     images: File[]
   }
 }
-
-const ChapterInputSchema = z.object({
-  number: z
-      .number({required_error: "Chapter number is required", invalid_type_error: "Chapter number must be a number"})
-      .int("Chapter number must be integer")
-      .nonnegative("Chapter number must be positive")
-})
 
 const languagesMap: SelectItem[] = Object.keys(ChapterLanguage)
     .map((language ) => ({key: language as ChapterLanguage, value: ChapterLanguageFull[language as ChapterLanguage]}));
 
 const languagesLimit = languagesMap.length;
 
-type ChapterInputType = z.infer<typeof ChapterInputSchema>;
+export interface ChapterInput extends z.infer<typeof EditChapterInputSchema> {
+  id: string,
+  mangaId: string
+}
 
-interface FormData extends ChapterInputType {
+interface FormData extends ChapterInput {
   images: ImageInputSection
 }
 
@@ -54,14 +50,14 @@ export default function EditChapterForm({chapter}: Props) {
   // Setting first input section default with first language, and empty images
   const [imageInputSections, setImageInputSections] =
       useState<ImageInputSection>(
-        chapter.versions.reduce((acc, version) =>
+        chapter.images.reduce((acc, version) =>
             ({...acc, [nanoid()]: {...version, images: []}}) // Filling the form with existing chapter data
         , {})
       );
-  const formRef = useRef<HTMLFormElement | null>(null);
   const {
     register,
     handleSubmit,
+    control,
     formState: {
       errors ,
       isSubmitting,
@@ -69,43 +65,58 @@ export default function EditChapterForm({chapter}: Props) {
     setError,
     clearErrors
   } = useForm<FormData>({
-    resolver: zodResolver(ChapterInputSchema),
+    resolver: zodResolver(EditChapterInputSchema),
+    defaultValues: {
+      titles: chapter.titles,
+      number: chapter.number,
+      languages: chapter.languages.join(",")
+    }
+  });
+
+  const { fields, append: appendTitle, remove: removeTitle } = useFieldArray({
+    control,
+    name: "titles",
   });
   const {addAlert} = useAlert();
 
-  const onSubmit = handleSubmit(async () => {
+  const onSubmit = handleSubmit(async (data) => {
     try {
-      if (!formRef.current) return;
       clearErrors("root");
 
       // Create FormData object from the current form
-      const formData = new FormData(formRef.current);
-
-      // Append additional data to FormData
-      formData.append("mangaId", chapter.mangaId);
-      formData.append("id", chapter.id);
+      const formData = new FormData();
 
       // Append images to formData
       for (let id in imageInputSections) {
-        // Append title to form data
-        formData.append(`title-${imageInputSections[id].language}`, imageInputSections[id].title);
+        // Validate new images sections
+        if (!chapter.images.find(img => imageInputSections[id].language === img.language)) {
+          if (imageInputSections[id].images.length === 0) {
+            setError(`images.${id}`, {type: "custom", message: "In new image sections must be at least 1 image"})
+            return;
+          }
+        }
+
+        // Validate unique language
+        const repeatedLanguageSection = Object.entries(imageInputSections)
+          .find(([currId, {language}]) => currId !== id && language === imageInputSections[id].language);
+        if (repeatedLanguageSection) {
+          setError(`images.${id}`, {type: "custom", message: `The language ${imageInputSections[id].language} is not unique`});
+          setError(`images.${repeatedLanguageSection[0]}`, {type: "custom", message: `The language ${imageInputSections[id].language} is not unique`});
+          return;
+        }
 
         for (let image of imageInputSections[id].images) {
           formData.append(`images-${imageInputSections[id].language}`, image);
         }
       }
 
-      // Getting array of chapter languages
-      const languages = Object.values(imageInputSections).map(({language}) => language);
-
-      // Every language should be unique. Invalidating it
-      if (new Set(languages).size !== languages.length) {
-        setError("root.languages", {type: "custom", message: "Languages must be unique"})
-        return;
+      const input: ChapterInput = {
+        ...data,
+        id: chapter.id,
+        mangaId: chapter.mangaId
       }
 
-      // Call server action
-       await editChapter(formData, languages);
+      await editChapter(input, formData);
 
       addAlert({type: "success", message: "Chapter successfully updated"});
     } catch (e) {
@@ -119,7 +130,7 @@ export default function EditChapterForm({chapter}: Props) {
 
   return (
       <div className="flex flex-col gap-5 px-2">
-        <form ref={formRef} className="flex flex-col gap-3" onSubmit={onSubmit}>
+        <form className="flex flex-col gap-6" onSubmit={onSubmit}>
           <div className="flex flex-col gap-3 md:flex-row">
             <Input
                 label="Chapter number"
@@ -130,32 +141,102 @@ export default function EditChapterForm({chapter}: Props) {
                 defaultValue={chapter.number.toString()}
                 {...register("number", {valueAsNumber: true})}
             />
+            <Select
+              isRequired
+              label="Languages"
+              disallowEmptySelection
+              selectionMode="multiple"
+              defaultSelectedKeys={chapter.languages}
+              errorMessage={errors?.languages?.message}
+              isInvalid={!!errors?.languages?.message}
+              {...register(`languages`)}
+            >
+              {Object.keys(ChapterLanguage).map(lang =>
+                <SelectItem key={lang}>{ChapterLanguageFull[lang as ChapterLanguage]}</SelectItem>
+              )}
+            </Select>
           </div>
           <div className="flex flex-col gap-3">
-            {Object.keys(imageInputSections).map((id) =>
-              <ImagesInputSection
+            <h2>
+              Images
+            </h2>
+            {Object.keys(imageInputSections).map((id) => {
+                const error = errors.images && errors.images[id];
+
+                return <ImagesInputSection
                   key={id}
                   id={id}
                   setImageInputSections={setImageInputSections}
                   imageInputSections={imageInputSections}
                   languagesMap={languagesMap}
-              />
+                  errorMessage={error?.message}
+                />
+              }
             )}
             <Divider/>
             {Object.keys(imageInputSections).length < languagesLimit &&
                 <div className="flex justify-end">
                     <Button
-                        isIconOnly
-                        radius="full"
+                        startContent={<HiOutlinePlus className="text-xl"/>}
+                        color="primary"
                         onPress={() =>
                             setImageInputSections(prev => {
-                              return {...prev, [nanoid()]: {language: languagesMap[0].key, images: [], title: ""}}
+                              return {...prev, [nanoid()]: {language: languagesMap[0].key, images: []}}
                             })
                         }
                     >
-                        <HiOutlinePlus className="text-xl"/>
+                        Add section
                     </Button>
                 </div>}
+          </div>
+          <h2>
+            Titles
+          </h2>
+          <div className="flex flex-col gap-2">
+            {fields.map((field, index) => (
+              <div key={field.id} className="mb-4">
+                <div className="flex gap-3 items-center">
+                  <Select
+                    isRequired
+                    label="Language"
+                    className="w-[30%]"
+                    defaultSelectedKeys={[field.language]}
+                    errorMessage={errors?.titles?.[index]?.language?.message}
+                    isInvalid={!!errors?.titles?.[index]?.language?.message}
+                    {...register(`titles.${index}.language`)}
+                  >
+                    {Object.keys(ChapterLanguage).map(lang =>
+                      <SelectItem key={lang}>{ChapterLanguageFull[lang as ChapterLanguage]}</SelectItem>
+                    )}
+                  </Select>
+                  <Input
+                    isRequired
+                    label="Title"
+                    className="flex-1"
+                    placeholder="Enter title"
+                    {...register(`titles.${index}.value`)}
+                    errorMessage={errors?.titles?.[index]?.value?.message}
+                  />
+                  {index > 0 && (
+                    <Button
+                      isIconOnly
+                      color="danger"
+                      onPress={() => removeTitle(index)}
+                    >
+                      ✕
+                    </Button>
+                  )}
+                </div>
+              </div>))}
+            <Divider />
+            <Button
+              startContent={<HiOutlinePlus className="text-xl"/>}
+              className="self-end"
+              color="primary"
+              onPress={() => appendTitle({ language: '', value: '' })}
+            >
+              Add section
+            </Button>
           </div>
           <Button className="w-12" type="submit" isLoading={isSubmitting}>Submit</Button>
         </form>

@@ -31,7 +31,7 @@ export async function saveMetadata (metadataContent: Box[], chapterId: string) {
   const rawContent: ContentItemRaw[] = metadataContent.map(item => ({
     translatedTexts: Object.entries(item.translatedTexts).map(([language, text]) => ({
       language: language as LocaleEnum,
-      text: text?.text || "Empty text",
+      text: text?.text?.toUpperCase() || "Empty text",
       fontSize: text.fontSize ?? 26
     })),
     coords: Object.entries(item.coords).map(([language, coord]) => ({
@@ -96,7 +96,6 @@ export async function scanOCR(id: string, language: LocaleType) {
   })
 
   const result = await response.json();
-  console.log(result);
 }
 
 function cleanAIJsonResponse(response: string): any | null {
@@ -222,9 +221,10 @@ export async function translateWithGemini(
       1.  **Sequential Context:** Maintain narrative flow, character relationships, and plot progression *between* consecutive strings in the input array. Treat the array as panels in order.
       2.  **Tone Detection:** Adapt tone based on implicit cues (e.g., exclamation points for dialogue excitement, lack of quotes for narrative/thoughts). Use conversational tone for dialogue, formal for narration.
       3.  **Formatting:**
-          *   RENDER ALL OUTPUT TEXT IN UPPERCASE.
           *   Accurately translate technical terms, character names (keep original if no standard translation), and onomatopoeia (prioritize target language equivalents if they exist, otherwise keep original). Use [*TL Note: explanation*] for essential untranslatable cultural concepts or technical terms ONLY when absolutely necessary for understanding.
-      4.  **Output Structure:** Respond ONLY with a valid JSON array containing the translated strings, matching the exact order and number of elements as the input array. Each element in the output array corresponds to the translated version of the element at the same index in the input array.`
+      4.  **Output Structure:** Respond ONLY with a valid JSON array containing the translated strings. CRITICAL: The output JSON array MUST contain exactly the same number of elements as the input JSON array (${originalTexts.length} elements). Do NOT skip, merge, or add elements.. Each element in the output array corresponds to the translated version of the element at the same index in the input array.
+      5. **Repeating Strings:** CRITICAL: Don't remove the repeating strings, keep it, so the order of the strings remain intact.
+      `
     }],
   };
 
@@ -248,7 +248,7 @@ export async function translateWithGemini(
   const generationConfig: GenerateContentConfig = {
     responseMimeType: "application/json", // Request JSON output
     responseSchema: schema, // Enforce the defined schema
-    temperature: 0.3, // Lower temperature for more deterministic translation
+    temperature: 0.1, // Lower temperature for more deterministic translation
     safetySettings,
     systemInstruction
   };

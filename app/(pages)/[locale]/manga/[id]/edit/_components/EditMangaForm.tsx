@@ -52,8 +52,6 @@ export default function EditMangaForm({manga}: Props) {
   })
   const disclosure = useDisclosure();
 
-  console.log(manga);
-
   const {acceptedFiles, getRootProps, getInputProps} = useDropzone({
     accept: {
       'image/*': ['.jpeg', '.png', '.jpg']
@@ -69,13 +67,13 @@ export default function EditMangaForm({manga}: Props) {
         formData.append("image", acceptedFiles[0]);
       }
 
-      const description = data.description.map(({language, value}) => ({value, language: language as ChapterLanguage}));
-      const title = data.title.map(({language, value}) => ({value, language: language as ChapterLanguage}))
+      const descriptions = data.descriptions.map(({language, value}) => ({value, language: language as ChapterLanguage}));
+      const titles = data.titles.map(({language, value}) => ({value, language: language as ChapterLanguage}))
 
       const mangaInput: EditMangaInput = {
         ...data,
-        description,
-        title,
+        descriptions,
+        titles,
         id: manga.id,
         image: manga.image,
         genres: data.genres.split(",") as ComicsGenre[],
@@ -94,12 +92,12 @@ export default function EditMangaForm({manga}: Props) {
 
   const { fields, append: appendTitle, remove: removeTitle } = useFieldArray({
     control,
-    name: "title",
+    name: "titles",
   });
 
   const { append: appendDescription, remove: removeDescription } = useFieldArray({
     control,
-    name: "description"
+    name: "descriptions"
   });
 
   // Add new language fields (both title and description)
@@ -120,20 +118,20 @@ export default function EditMangaForm({manga}: Props) {
   }, [errors["root"]?.message]);
 
   const validateUniqueLanguage = (value: string, index: number) => {
-    clearErrors(`title`)
-    const titles = getValues('title');
+    clearErrors(`titles`)
+    const titles = getValues('titles');
     const isDuplicate = titles.some(
       (item, i) => i !== index && item.language === value
     );
 
     if (isDuplicate) {
-      setError(`title.${index}.language`, {type: "validate", message: "This language is already selected"})
+      setError(`titles.${index}.language`, {type: "validate", message: "This language is already selected"})
     }
   };
 
   return (
     <>
-      <h2 className="text-xl pb-3">Edit {manga.title[0].value}</h2>
+      <h2 className="text-xl pb-3">Edit {manga.titles[0].value}</h2>
       <form
         onSubmit={onSubmit}
         className="flex flex-col gap-3 pb-10"
@@ -259,14 +257,14 @@ export default function EditMangaForm({manga}: Props) {
                 label="Language"
                 className="w-[30%]"
                 defaultSelectedKeys={[field.language]}
-                errorMessage={errors?.title?.[index]?.language?.message}
-                isInvalid={!!errors?.title?.[index]?.language?.message}
-                {...register(`title.${index}.language`,)}
+                errorMessage={errors?.titles?.[index]?.language?.message}
+                isInvalid={!!errors?.titles?.[index]?.language?.message}
+                {...register(`titles.${index}.language`,)}
                 onChange={(e) => {
                   // Register the same language for both title and description
                   const value = e.target.value;
-                  setValue(`title.${index}.language`, value);
-                  setValue(`description.${index}.language`, value);
+                  setValue(`titles.${index}.language`, value);
+                  setValue(`descriptions.${index}.language`, value);
 
                   // Validate if the language is already selected
                   validateUniqueLanguage(value, index);
@@ -281,8 +279,8 @@ export default function EditMangaForm({manga}: Props) {
                 label="Title"
                 className="flex-1"
                 placeholder="Enter title"
-                {...register(`title.${index}.value`)}
-                errorMessage={errors?.title?.[index]?.value?.message}
+                {...register(`titles.${index}.value`)}
+                errorMessage={errors?.titles?.[index]?.value?.message}
               />
               {index > 0 && (
                 <Button
@@ -299,8 +297,8 @@ export default function EditMangaForm({manga}: Props) {
               label="Description"
               className="w-full"
               placeholder="Enter description"
-              {...register(`description.${index}.value`)}
-              errorMessage={errors?.description?.[index]?.value?.message}
+              {...register(`descriptions.${index}.value`)}
+              errorMessage={errors?.descriptions?.[index]?.value?.message}
             />
           </div>
         ))}

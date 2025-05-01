@@ -1,4 +1,3 @@
-import {Divider} from "@heroui/divider";
 import ImageInput from "@/app/(pages)/[locale]/manga/[id]/upload/_components/ImageInput";
 import {Button, Image, Select, SelectItem, useDisclosure} from "@heroui/react";
 import {FaTrashAlt} from "react-icons/fa";
@@ -6,8 +5,6 @@ import {Dispatch, SetStateAction} from "react";
 import {ImageInputSection, SelectItem as ISelectItem} from "@/app/(pages)/[locale]/manga/[id]/upload/_components/UploadChapterForm";
 import {Modal, ModalBody, ModalContent} from "@heroui/react";
 import {ChapterLanguage} from "@/app/__generated__/graphql";
-import {Input} from "@heroui/input";
-import z from "zod";
 
 interface Props{
   id: string,
@@ -19,28 +16,11 @@ interface Props{
 
 export default function ImagesInputSection({id, setImageInputSections, imageInputSections, languagesMap, errorMessage}: Props) {
   const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure();
-
-  const titleValidate = (value: string) => {
-    if (value.length < 2) return "Title must be longer than 2 characters";
-    if (value.length > 50) return "Title must be shorter than 50 characters";
-    return true;
-  }
-
  return (
      <>
        <div key={id} className="flex flex-col gap-3">
-         <Divider/>
-         <Input
-           label="Chapter title"
-           type="text"
-           placeholder="Enter chapter title"
-           validate={titleValidate}
-           value={imageInputSections[id].title}
-           onValueChange={(value) =>
-             setImageInputSections({...imageInputSections, [id]: {...imageInputSections[id], title: value}})}
-         />
          <div className="flex flex-col-reverse justify-between gap-3 md:flex-row md:gap-5">
-           <ImageInput id={id} setImageInputSections={setImageInputSections} isInvalid={!!(errorMessage && imageInputSections[id].images.length === 0)}/>
+           <ImageInput id={id} setImageInputSections={setImageInputSections} isInvalid={!!errorMessage}/>
            <div className="flex justify-between items-center md:justify-start md:flex-col md:gap-5">
              <Select
                  className="w-36"
@@ -85,7 +65,6 @@ export default function ImagesInputSection({id, setImageInputSections, imageInpu
            </div>
          </div>
          {errorMessage
-             && imageInputSections[id].images.length === 0
              && <div className="text-tiny text-danger">{errorMessage}</div>}
          <Modal
              size="full"
@@ -108,7 +87,6 @@ export default function ImagesInputSection({id, setImageInputSections, imageInpu
                              radius="none"
                              key={image.name}
                              src={URL.createObjectURL(image)}
-                             style={{width: "700px"}}
                              alt={`Image ${image.name}`}
                          />
                      )}

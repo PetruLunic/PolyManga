@@ -1,41 +1,42 @@
 "use server";
 
-import {combineAndCropImagesVertically} from "@/app/lib/utils/compositeImages";
 import {nanoid} from "nanoid";
-import {AddChapterInput, ChapterLanguage} from "@/app/__generated__/graphql";
-import {ChapterLanguage as ChapterLanguageEnum} from "@/app/types";
+import {ChapterLanguage} from "@/app/__generated__/graphql";
 import {getImageURLs} from "@/app/lib/utils/getImageURL";
-import {AWS_BUCKET_URL, deleteImage, getSignedURLs} from "@/app/lib/utils/awsUtils";
-import {CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT} from "@/app/lib/utils/constants";
+import {deleteImage, getSignedURLs} from "@/app/lib/utils/awsUtils";
 import {auth} from "@/auth";
 import ChapterModel from "@/app/lib/models/Chapter";
 import {HydratedDocument} from "mongoose";
-import {Chapter, ChapterVersion} from "@/app/lib/graphql/schema";
+import {Chapter, ChapterImages} from "@/app/lib/graphql/schema";
 import sharp from "sharp";
 import dbConnect from "@/app/lib/utils/dbConnect";
 import {ChapterImageBuffer} from "@/app/(pages)/[locale]/manga/[id]/upload/actions";
+import {
+  ChapterInput
+} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/_components/EditChapterForm";
+import {EditChapterInputSchema} from "@/app/lib/utils/zodSchemas";
+import {fetchInBatches} from "@/app/lib/utils/fetchInBatches";
 
-export async function editChapter(formData: FormData, languages: ChapterLanguage[]) {
+export async function editChapter(data: ChapterInput, formData: FormData) {
   const session = await auth();
 
   if (!session || session.user.role !== "ADMIN" && session.user.role !== "MODERATOR") {
     throw new Error("Forbidden action!");
   }
 
-  const mangaId = formData.get("mangaId") as string;
-  const number = Number(formData.get("number") as string);
-  const id = formData.get("id") as string;
+  const validationResult = EditChapterInputSchema.safeParse(data);
 
-  // Extracting titles
-  const titles: Record<ChapterLanguage, string> = languages.reduce((acc, lang) => {
-    const title = formData.get(`title-${lang}`) as string;
-    if (!title) throw new Error(`No title for ${lang} language provided`);
-    return {...acc, [lang]: title};
-  }, {} as Record<ChapterLanguage, string>);
-
-  if (!mangaId || !Number.isInteger(number) || number < 0 || !id) {
-    return {success: false, message: "Wrong entry data"};
+  if (validationResult.error) {
+    throw new Error("Validation error: " + validationResult.error.toString());
   }
+
+  const {
+    id,
+    mangaId,
+    titles,
+    number,
+  } = data
+  const languages = data.languages.split(",") as ChapterLanguage[];
 
   await dbConnect();
   const chapter: HydratedDocument<Chapter> | null = await ChapterModel.findOne({id});
@@ -52,24 +53,6 @@ export async function editChapter(formData: FormData, languages: ChapterLanguage
     }
   }
 
-  // Cropping images into slices of MAX_HEIGHT and WIDTH
-  // const croppedImages: Record<ChapterLanguage, {images: Buffer[], width: number}> = {} as Record<ChapterLanguage, {images: Buffer[], width: number}>;
-  //
-  // await Promise.all(languages.map(async language => {
-  //   const images = formData.getAll(`images-${language}`) as File[];
-  //
-  //   if (images.length > 0) {
-  //     croppedImages[language] = {
-  //       width: CHAPTER_IMAGE_WIDTH,
-  //       images: []
-  //     }
-  //
-  //     // Extracting first image width
-  //     const firstImageWidth = await sharp(await images[0].arrayBuffer()).metadata().then(res => res.width);
-  //     croppedImages[language].width = firstImageWidth ?? CHAPTER_IMAGE_WIDTH;
-  //     croppedImages[language].images = await combineAndCropImagesVertically(images, firstImageWidth ?? CHAPTER_IMAGE_WIDTH, MAX_CHAPTER_IMAGE_HEIGHT) || [];
-  //   }
-  //  }));
   const imagesMap: Record<ChapterLanguage, ChapterImageBuffer[]> = {} as Record<ChapterLanguage, ChapterImageBuffer[]>;
 
   await Promise.all(languages.map(async language => {
@@ -93,58 +76,47 @@ export async function editChapter(formData: FormData, languages: ChapterLanguage
     }
   }))
 
-  const languagesWithNewImages = Object.keys(imagesMap);
+  const languagesWithNewImages = Object.keys(imagesMap) as ChapterLanguage[];
 
   // Creating url for every image
   const imagesURLs: Record<ChapterLanguage, string[]> = {} as Record<ChapterLanguage, string[]>;
 
-  languages.forEach(language => {
-    if (languagesWithNewImages.includes(language)) {
+  languagesWithNewImages.forEach(language => {
       const imagesIds = Array.from({length: imagesMap[language].length}, () => nanoid());
-
       imagesURLs[language] = getImageURLs(mangaId, id, language, imagesIds);
-    }
   })
 
   // Generating signed urls for images
   const signedURLs: Record<ChapterLanguage, string[]> = {} as Record<ChapterLanguage, string[]>;
 
-  for (const language of languages) {
-    if (languagesWithNewImages.includes(language)) {
-      const urls = await getSignedURLs(imagesURLs[language]);
-
-      if ("failure" in urls) throw new Error("Unexpected error");
-
-      signedURLs[language] = urls.success;
-    }
+  for (const language of languagesWithNewImages) {
+    const urls = await getSignedURLs(imagesURLs[language]);
+    if ("failure" in urls) throw new Error("Unexpected error");
+    signedURLs[language] = urls.success;
   }
 
   // Creating promises to create each image parallel
   const fetchImagesPromises: Promise<Response>[] = [];
 
-  languages.forEach((language) => {
-    if (languagesWithNewImages.includes(language)) {
-      imagesMap[language].forEach((image, index) => {
-        const imageFile = new File([image.buffer], 'combined-image.webp', { type: 'image/webp' });
+  languagesWithNewImages.forEach((language) => {
+    imagesMap[language].forEach((image, index) => {
+      const imageFile = new File([image.buffer], 'combined-image.webp', { type: 'image/webp' });
 
-        fetchImagesPromises.push(fetch(signedURLs[language][index], {
-          method: "PUT",
-          body: imageFile,
-          headers: {
-            "Content-type": imageFile.type
-          }
-        }))
-      })
-    }
+      fetchImagesPromises.push(fetch(signedURLs[language][index], {
+        method: "PUT",
+        body: imageFile,
+        headers: {
+          "Content-type": imageFile.type
+        }
+      }))
+    })
   })
 
-  // Creating versions for chapter that are stored in DB
-  const versions: AddChapterInput["versions"] = [];
+  const processedImages: ChapterImages[] = [];
 
-  languages.forEach(language => {
-    versions.push({
+  languagesWithNewImages.forEach(language => {
+    processedImages.push({
       language: language,
-      title: titles[language],
       images: imagesURLs[language]?.map((url, index) => ({
         src: url,
         width: imagesMap[language][index].width,
@@ -156,62 +128,66 @@ export async function editChapter(formData: FormData, languages: ChapterLanguage
   // Deleting the images that are getting replaced
   for (let language of languagesWithNewImages) {
 
-    const images = chapter.versions.find(e => e.language === language)?.images;
+    const images = chapter.images.find(e => e.language === language)?.images;
     if (!images) continue;
     for (let image of images) {
       await deleteImage(image.src);
     }
   }
 
-  // Editing the number
-  chapter.number = number;
+  const imagesToDelete: string[] = [];
 
   // Assigning new values of versions to the chapter. If no image was provided, then keep the old ones.
   // It assigns versions based on array index
-  versions.forEach((version) => {
-    const noImageProvided = version.images.length === 0;
+  processedImages.forEach((images) => {
+    const noImageProvided = images.images.length === 0;
 
     // The index of the existing language, or -1 if it doesn't exist
-    const index = chapter.versions.findIndex(({language}) => version.language === language);
+    const index = chapter.images.findIndex(({language}) => images.language === language);
 
     // If added new language then push it to the end
     if (index === -1) {
       // If this is a new language and no image was provided
-      if (noImageProvided) throw new Error(`No image provided for new ${version.language} language, on index ${index}.`)
+      if (noImageProvided) throw new Error(`No image provided for new ${images.language} language, on index ${index}.`)
 
-      chapter.versions.push(version as unknown as ChapterVersion);
+      chapter.images.push(images);
     } else {
+      imagesToDelete.push(...chapter.images[index].images.map(img => img.src));
       // If there are images for this language, then replace them
-      chapter.versions[index] = {
-        ...version,
+      chapter.images[index] = {
+        ...images,
         images: noImageProvided
-          ? chapter.versions[index].images
-          : version.images
-      } as unknown as ChapterVersion;
+          ? chapter.images[index].images
+          : images.images
+      };
     }
   })
 
-  const deletedVersions = chapter.versions
-    .filter(({language: lang1}) =>
-      !versions.find(({language: lang2}) => lang1 === lang2))
+  const deletedLanguages = chapter.languages.filter(oldLang => !languages.includes(oldLang));
+  const deletedImages = chapter.images
+    .filter(({language}) => deletedLanguages.includes(language))
+    .flatMap(img => img.images.flatMap(img => img.src));
+  imagesToDelete.push(...deletedImages);
 
-  // Deleting the images of deleted versions
-  for (let {images} of deletedVersions) {
-    for (let image of images) {
-      await deleteImage(image.src);
-    }
-  }
+  // Deleting the images that are being replaced
+  const deleteFetches = imagesToDelete
+    .map(deleteImage)
+    .filter(promise => !!promise)
+  await fetchInBatches(deleteFetches, 25);
 
   // Deleting deleted versions
-  chapter.versions = chapter.versions
-    .filter(({language: lang1}) =>
-      !deletedVersions.find(({language: lang2}) => lang1 === lang2))
+  chapter.images = chapter.images
+    .filter(({language: oldLang}) => !deletedLanguages.includes(oldLang));
+
+  chapter.number = number;
+  chapter.languages = languages;
+  chapter.titles = titles;
 
   // Saving the chapter
   await chapter.save();
 
-  // Fetching images to aws cloud
-  await Promise.all(fetchImagesPromises);
+  // Fetching images to the bucket
+  await fetchInBatches(fetchImagesPromises, 30);
 
   return {success: true, message: "Chapter updated"}
 }

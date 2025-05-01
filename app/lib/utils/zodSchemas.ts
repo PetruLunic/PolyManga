@@ -2,7 +2,6 @@ import z from "zod";
 import {nanoid} from "nanoid";
 
 
-
 export const PasswordSchema =  z.string()
         .min(8)
         .max(64)
@@ -76,11 +75,11 @@ export const ComicsStatsSchema = z.object({
 })
 
 export const MangaSchema = z.object({
-  title: z.array(z.object({
+  titles: z.array(z.object({
       value: z.string().min(1).max(50),
       language: z.string()
   })),
-  description: z.array(z.object({
+  descriptions: z.array(z.object({
     value: z.string().min(1).max(2000),
     language: z.string()
   })),
@@ -109,3 +108,15 @@ export const MetadataSchema = z.array(z.array(z.object({
     text: z.string()
   }))
 })));
+
+export const EditChapterInputSchema = z.object({
+  languages: z.string(),
+  number: z
+    .number({required_error: "Chapter number is required", invalid_type_error: "Chapter number must be a number"})
+    .int("Chapter number must be integer")
+    .nonnegative("Chapter number must be positive"),
+  titles: z.array(z.object({
+    language: z.string(),
+    value: z.string()
+  }))
+})

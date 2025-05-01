@@ -6,10 +6,11 @@ import {notFound} from "next/navigation";
 interface Props {
   id: string,
   number: number,
+  locale: string
 }
 
-export async function ChapterNavbarWrapper({id, number}: Awaited<Props>) {
-  const {data} = await queryGraphql(GET_NAVBAR_CHAPTER, {slug: id, number});
+export async function ChapterNavbarWrapper({id, number, locale}: Awaited<Props>) {
+  const {data} = await queryGraphql(GET_NAVBAR_CHAPTER, {slug: id, number, locale});
   if (!data) notFound();
 
   return (

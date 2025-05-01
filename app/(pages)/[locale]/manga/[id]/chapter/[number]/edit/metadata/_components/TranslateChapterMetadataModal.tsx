@@ -44,19 +44,22 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
       const originalTexts: string[] = boxes.map(box => box.translatedTexts[sourceLang]?.text ?? "Empty box");
       const translatedTexts = await translateWithGemini(originalTexts, sourceLang, targetLang);
 
-      const newMetadata = boxes.map((box, index) => ({
-        ...box,
-        translatedTexts: {
-          ...box.translatedTexts,
-          [targetLang]: {
-            text: translatedTexts[index],
-            fontSize: box.translatedTexts[sourceLang]?.fontSize ?? 34
+      let newMetadata: Box[] = [];
+      setBoxes(prev => {
+        newMetadata = prev.map((box, index) => ({
+          ...box,
+          translatedTexts: {
+            ...box.translatedTexts,
+            [targetLang]: {
+              text: translatedTexts[index],
+              fontSize: box.translatedTexts[sourceLang]?.fontSize ?? 34
+            }
           }
-        }
-      }))
+        }))
+        return newMetadata;
+      })
 
       await saveMetadata(newMetadata, chapterId)
-      setBoxes(newMetadata);
       setIsTranslating(prev => ({...prev, [targetLang]: "finished"}));
     } catch (e) {
       console.error(e);

@@ -12,62 +12,56 @@ import {
 import {LocaleType} from "@/app/types";
 import {locales} from "@/i18n/routing";
 import React, {useState} from "react";
-import {MangaEditQuery} from "@/app/__generated__/graphql";
-import {translateManga} from "@/app/lib/translations/translateMangaTitleAndDescription";
-import {UseFormSetValue} from "react-hook-form";
-import {EditMangaForm} from "@/app/(pages)/[locale]/manga/[id]/edit/_components/EditMangaForm";
+import {ChapterList} from "@/app/_components/ChapterListEdit";
+import {translateChapterTitles} from "@/app/lib/translations/translateChapters";
+import {useAlert} from "@/app/lib/contexts/AlertContext";
+import {saveChaptersTitles} from "@/app/(pages)/[locale]/manga/[id]/edit/chapters/actions";
+import {extractMangaTitle} from "@/app/lib/utils/extractionUtils";
 
 interface Props extends Omit<ModalProps, "children"> {
-  manga: Exclude<MangaEditQuery["manga"], null | undefined>;
-  setValue: UseFormSetValue<EditMangaForm>
+  chapters?: ChapterList,
+  selectedChapters: string[]
 }
 
-export default function TranslateMangaModal({onOpenChange, isOpen, manga, setValue}: Props) {
+export default function TranslateChaptersModal({onOpenChange, isOpen, chapters, selectedChapters}: Props) {
   const [isTranslating, setIsTranslating] = useState<boolean>(false);
   const [sourceLang, setSourceLang] = useState<LocaleType>(locales[0]);
   const [targetLangs, setTargetLangs] = useState<LocaleType[]>([]);
+  const {addAlert} = useAlert();
 
   async function translate() {
+    if (!chapters) return;
+
     try {
       setIsTranslating(true);
-      const title = manga.titles.find(({language}) => language.toLowerCase() === sourceLang)?.value;
-      const description = manga.descriptions.find(({language}) => language.toLowerCase() === sourceLang)?.value;
+      let titles: string[] = [];
 
-      if (!title || !description) throw new Error(`No title and/or description for ${sourceLang} language`);
+      // Extracting the source language's titles
+      const chaptersToTranslate =  chapters.filter(chapter => selectedChapters.includes(chapter.id));
 
-      const result = await translateManga({
-        language: sourceLang,
-        title,
-        description,
+      chaptersToTranslate.forEach(chapter => {
+        const title = extractMangaTitle(chapter.titles, sourceLang);
+        if (!title) throw new Error(`Title not found for ${sourceLang} in chapter ${chapter.number}`);
+        titles.push(title);
+      })
+
+      const response = await translateChapterTitles({
+        sourceLanguage: sourceLang,
+        titles,
         targetLanguages: targetLangs
-      })
+      });
+      console.log(response);
 
-      // Transform languages from en => En
-      result.titles.forEach((_, index) => {
-        const {language} = result.titles[index];
-        result.titles[index].language = language[0].toUpperCase() + language.slice(1);
-        result.descriptions[index].language = language[0].toUpperCase() + language.slice(1);
-      })
+      const chaptersInput = chaptersToTranslate.map((chapter, index) => ({
+        id: chapter.id,
+        titles: response[index]
+      }))
 
-      // Concat old titles and descriptions that weren't translated
-      const concatenatedTitles = result.titles;
-      manga.titles.forEach(oldTitle => {
-        if (!concatenatedTitles.some(title => title.language === oldTitle.language)) {
-          concatenatedTitles.unshift(oldTitle);
-        }
-      })
-
-      const concatenatedDescriptions = result.descriptions;
-      manga.descriptions.forEach(oldDescription => {
-        if (!concatenatedDescriptions.some(description => description.language === oldDescription.language)) {
-          concatenatedDescriptions.unshift(oldDescription);
-        }
-      })
-
-      setValue("titles", concatenatedTitles);
-      setValue("descriptions", concatenatedDescriptions);
+      await saveChaptersTitles(chaptersInput);
+      addAlert({type: "success", message: "Chapters successfully translated!"});
     } catch (e) {
       console.error(e);
+      addAlert({type: "danger", message: "Error at translating!"});
     } finally {
       setIsTranslating(false);
     }
@@ -83,14 +77,14 @@ export default function TranslateMangaModal({onOpenChange, isOpen, manga, setVal
         {(onClose) => (
           <>
             <ModalHeader>
-              Translate {manga.titles[0].value}
+              Translate ({selectedChapters.length}) chapters
             </ModalHeader>
             <ModalBody className="gap-4">
               <div className="flex justify-between gap-5">
                 <Select
                   label={`Source language`}
                   className="w-full"
-                  isDisabled={Object.values(isTranslating).includes("processing")}
+                  isDisabled={isTranslating}
                   selectedKeys={[sourceLang]}
                   onSelectionChange={keys => {
                     setSourceLang(keys.currentKey as LocaleType);
@@ -106,7 +100,7 @@ export default function TranslateMangaModal({onOpenChange, isOpen, manga, setVal
                   label={`Target languages`}
                   className="w-full"
                   selectionMode="multiple"
-                  isDisabled={Object.values(isTranslating).includes("processing")}
+                  isDisabled={isTranslating}
                   selectedKeys={targetLangs}
                   onSelectionChange={keys => {
                     setTargetLangs(Array.from(keys) as LocaleType[]);
@@ -131,6 +125,7 @@ export default function TranslateMangaModal({onOpenChange, isOpen, manga, setVal
                 color="primary"
                 onPress={translate}
                 isLoading={isTranslating}
+                isDisabled={!chapters}
               >
                 Translate
               </Button>

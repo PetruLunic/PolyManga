@@ -20,13 +20,14 @@ import EditableMetadataBox
   from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/_components/EditableMetadataBox";
 import {locales} from "@/i18n/routing";
 import {
-  saveMetadata, scanOCR,
+  saveMetadata,
 } from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/actions";
 import {useScrollHeight} from "@/app/lib/hooks/useScrollHeight";
 import {transformMetadata} from "@/app/lib/utils/transformMetadata";
 import TranslateChapterMetadataModal
   from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/_components/TranslateChapterMetadataModal";
 import {MetadataSchema} from "@/app/lib/utils/zodSchemas";
+import {Input} from "@heroui/input";
 
 export interface Box {
   id: string;
@@ -44,21 +45,20 @@ interface Props {
   metadata: ChapterMetadata["content"];
 }
 
-const API_URL = process.env.NEXT_PUBLIC_OCR_API_URL + "/ws";
-
 export default function RedactorPage({chapter, metadata}: Props) {
   const [isSaving, setIsSaving] = useState(false);
   const [boxes, setBoxes] = useState<Box[]>([]);
   const [imagesLanguage, setImagesLanguage] = useState<LocaleType>(chapter.languages[0].toLowerCase() as LocaleType);
   const [textLanguage, setTextLanguage] = useState<LocaleType>(locales[0]);
-  const images = chapter.versions.find(({language: lang}) => lang.toLowerCase() === imagesLanguage)?.images;
+  const images = chapter.images.find(({language: lang}) => lang.toLowerCase() === imagesLanguage)?.images;
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketState, setSocketState] = useState({
-    connecting: true,
+    connecting: false,
     connected: false,
     processing: false
   })
   const [socketMessage, setSocketMessage] = useState<unknown>();
+  const [ocrURL, setOcrURL] = useState<string | null>(null);
   const scrollHeight = useScrollHeight();
   const {onOpenChange, onOpen, isOpen} = useDisclosure();
 
@@ -96,21 +96,20 @@ export default function RedactorPage({chapter, metadata}: Props) {
     }
   }
 
-  console.log(boxes.map(box => box.translatedTexts.en?.text ?? "Empty box"))
-
-  function connectSocket() {
-    if (!API_URL) throw new Error("NEXT_PUBLIC_OCR_API_URL .env variable missing");
+  function connectSocket(url: string | null) {
+    if (!url) return;
     if (socket) {
       socket.close()
     }
 
     setSocketState(prev => ({...prev, connecting: true}));
-    const newSocket = new WebSocket(API_URL);
+    const newSocket = new WebSocket(url + "/ws");
     setSocket(newSocket);
   }
 
   useEffect(() => {
-    connectSocket()
+    const url = localStorage.getItem("ocrURL");
+    setOcrURL(url);
   }, []);
 
   useEffect(() => {
@@ -365,8 +364,16 @@ export default function RedactorPage({chapter, metadata}: Props) {
         )}
       </div>
       <div className="fixed right-5 top-10 flex flex-col gap-3 min-w-48">
+        <Input
+          label={"OCR URL"}
+          value={ocrURL ?? ""}
+          onValueChange={value => {
+            setOcrURL(value);
+            localStorage.setItem("ocrURL", value);
+          }}
+        />
         <Button
-          onPress={() => socketState.connected ? socket?.close() : connectSocket()}
+          onPress={() => socketState.connected ? socket?.close() : connectSocket(ocrURL)}
           isLoading={socketState.connecting}
         >
           {socketState.connected ? "(Connected) Disconnect" : "(Closed) Connect"}

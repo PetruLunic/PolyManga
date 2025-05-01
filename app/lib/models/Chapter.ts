@@ -20,6 +20,44 @@ export const ChapterSchema = new Schema<Chapter>({
     type: String,
     required: [true, "Chapter must be linked to a manga"]
   },
+  languages: [{
+    type: String,
+    enum: ChapterLanguage
+  }],
+  images: [{
+    language: {
+      type: String,
+      enum: ChapterLanguage,
+      required: true
+    },
+    images: [{
+      src: {
+        type: String,
+        required: [true, "Image should have a source"],
+        maxlength: [200, "Source cannot be more than 200 characters"]
+      },
+      width: {
+        type: Number,
+        required: [true, "Image should have a width"],
+      },
+      height: {
+        type: Number,
+        required: [true, "Image should have a height"],
+      }
+    }]
+  }],
+  titles: [{
+    value: {
+      type: String,
+      required: [true, "Chapter must have a title"],
+      maxlength: [50, "Title cannot be more than 50 characters"]
+    },
+    language: {
+      type: String,
+      enum: ChapterLanguage,
+      required: true
+    },
+  }],
   versions: [{
     language: {
       type: String,

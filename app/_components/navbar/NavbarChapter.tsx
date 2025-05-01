@@ -4,7 +4,7 @@ import {Button, NavbarContent, NavbarItem} from "@heroui/react";
 import {useParams} from "next/navigation";
 import {IoArrowBackSharp } from "react-icons/io5";
 import ChapterListModal from "@/app/_components/ChapterListModal";
-import {Manga_ChapterQuery} from "@/app/__generated__/graphql";
+import {ChapterQuery} from "@/app/__generated__/graphql";
 import {createPortal} from "react-dom";
 import {useEffect, useState} from "react";
 import {FaChevronLeft, FaChevronRight} from "react-icons/fa";
@@ -13,7 +13,7 @@ import Navbar from "@/app/_components/Navbar";
 import {useChapterLanguage} from "@/app/lib/hooks/useChapterLanguage";
 
 interface Props {
-  data: Manga_ChapterQuery
+  data: ChapterQuery
 }
 
 export default function NavbarChapter({data}: Props) {
@@ -59,7 +59,7 @@ export default function NavbarChapter({data}: Props) {
            <NavbarItem className="h-full">
              {data && <Button
                  variant="light"
-                 isDisabled={data.chapter.isFirst}
+                 isDisabled={!data.chapter.prevChapter}
                  isIconOnly
                  radius="none"
                  className={`h-full w-14 md:w-[--navbar-height]`}
@@ -73,7 +73,7 @@ export default function NavbarChapter({data}: Props) {
            <NavbarItem className="h-full">
              {data && <Button
                  variant="light"
-                 isDisabled={data.chapter.isLast}
+                 isDisabled={!data.chapter.nextChapter}
                  isIconOnly
                  radius="none"
                  className={`h-full w-14 md:w-[--navbar-height]`}

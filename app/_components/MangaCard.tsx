@@ -6,15 +6,8 @@ import { FaStar } from "react-icons/fa";
 import {MangaCardFragment} from "@/app/__generated__/graphql";
 import {Link} from "@/i18n/routing";
 import {useTranslations} from "next-intl";
-import {extractChapterTitle} from "@/app/lib/utils/extractionUtils";
+import {extractMangaTitle} from "@/app/lib/utils/extractionUtils";
 import {IoLanguage} from "react-icons/io5";
-
-const comicsStatusBadgeColor = {
-  "ONGOING": "primary",
-  "FINISHED": "success",
-  "PAUSED": "warning",
-  "DROPPED": "danger"
-} as const
 
 const comicsTypeBadgeColor = {
   "manhwa": "danger",
@@ -32,10 +25,7 @@ interface Props extends CardProps{
 }
 
 export default function MangaCard({manga, type, bookmarkedChapter, chapterBookmarkCreationDate, isExtendable, locale = 'en', ...props}: Props) {
-  const hasLocale = manga.title.some(({language}) => language.toLowerCase() === locale)
-  const mangaTitle = manga.title.find(({language}) => locale === language.toLowerCase())?.value ?? manga.title[0].value;
-  // Extract the title of the latest chapter by the locale, or english, or the first language, or return No chapter
-  const latestChapterTitle = extractChapterTitle(manga.latestChapter?.versions, locale);
+  const hasLocale = manga.languages.some((language) => language.toLowerCase() === locale);
   const t = useTranslations('common.manga');
   const tBadge = useTranslations("common.badges.languageAvailability");
 
@@ -89,18 +79,18 @@ export default function MangaCard({manga, type, bookmarkedChapter, chapterBookma
              <Image
                shadow="sm"
                width="100%"
-               alt={mangaTitle}
+               alt={manga.title}
                className={`object-cover ${isExtendable ? "w-full aspect-[3/4]" : "w-36 h-44 sm:w-44 sm:h-[210px]"} `}
                src={process.env.NEXT_PUBLIC_BUCKET_URL + manga.image}
              />
            </Badge>
            <div className="flex flex-col justify-between h-full">
-             <p className="block font-medium p-2 text-xs sm:text-sm">{mangaTitle}</p>
+             <p className="block font-medium p-2 text-xs sm:text-sm line-clamp-2">{manga.title}</p>
              <div className="flex justify-between px-2 pb-2">
-           <span className="text-default-500 text-xs sm:text-sm">
+           <span className="text-default-500 text-xs sm:text-sm line-clamp-2">
              {type === "history"
                ? bookmarkedChapter
-               : latestChapterTitle
+               : manga.latestChapter?.title ?? t("noChapter")
              }
            </span>
                <span className="flex gap-1 items-center">

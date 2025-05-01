@@ -13,18 +13,20 @@ import {
 import {motion} from "framer-motion";
 import {HiOutlineSortAscending, HiOutlineSortDescending} from "react-icons/hi";
 import {useState} from "react";
-import {ChaptersQuery} from "@/app/__generated__/graphql";
+import {ChaptersEditQuery, ChaptersQuery} from "@/app/__generated__/graphql";
 import {FaRegEdit} from "react-icons/fa";
 import {FaRegTrashCan} from "react-icons/fa6";
 import {useMutation} from "@apollo/client";
 import {DELETE_CHAPTERS} from "@/app/lib/graphql/mutations";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
-import {extractChapterTitle} from "@/app/lib/utils/extractionUtils";
 import {useLocale} from "next-intl";
 import {LocaleType} from "@/app/types";
 import {Link} from "@/i18n/routing";
+import {IoLanguage} from "react-icons/io5";
+import TranslateChaptersModal from "@/app/(pages)/[locale]/manga/[id]/edit/_components/TranslateChaptersModal";
+import {extractMangaTitle} from "@/app/lib/utils/extractionUtils";
 
-type ChapterList = Exclude<ChaptersQuery["manga"], undefined | null>["chapters"]
+export type ChapterList = Exclude<ChaptersEditQuery["manga"], undefined | null>["chapters"]
 
 interface Props{
   chapters?: ChapterList,
@@ -33,7 +35,8 @@ interface Props{
 
 export default function ChapterListEdit({chapters, slug}: Props) {
   const locale = useLocale();
-  const {isOpen, onOpen, onClose, onOpenChange} = useDisclosure();
+  const deleteDisclosure = useDisclosure();
+  const translateDisclosure = useDisclosure();
   const [currentChapters, setCurrentChapters] = useState<ChapterList | undefined>(chapters);
   const [descending, setDescending] = useState(true);
   const [selectedChapters, setSelectedChapters] = useState<string[]>([]);
@@ -50,7 +53,7 @@ export default function ChapterListEdit({chapters, slug}: Props) {
       setSelectedChapters([]);
 
       // Close the modal
-      onClose();
+      deleteDisclosure.onClose();
     } catch (e) {
       console.error(e);
       addAlert({type: "danger", message: "Unexpected error!"});
@@ -60,7 +63,7 @@ export default function ChapterListEdit({chapters, slug}: Props) {
   const onDeleteOne = (selectedChapter: ChapterList[number]) => async () => {
     try {
       await deleteChapters({variables: {slug, ids: [selectedChapter.id]}});
-      const title = extractChapterTitle(selectedChapter.versions, locale as LocaleType);
+      const title = extractMangaTitle(selectedChapter.titles, locale as LocaleType);
       addAlert({type: "success", message: `${title} was deleted!`});
 
       // Delete the chapter from the current chapters
@@ -98,10 +101,19 @@ export default function ChapterListEdit({chapters, slug}: Props) {
            color={selectedChapters.length ? "danger" : "default"}
            isDisabled={!selectedChapters.length}
            startContent={<FaRegTrashCan/>}
-           onPress={onOpen}
+           onPress={deleteDisclosure.onOpen}
            isLoading={loading}
          >
            Delete selected ({selectedChapters.length})
+         </Button>
+         <Button
+           color={selectedChapters.length ? "primary" : "default"}
+           isDisabled={!selectedChapters.length}
+           startContent={<IoLanguage/>}
+           onPress={translateDisclosure.onOpen}
+           isLoading={loading}
+         >
+           Translate selected ({selectedChapters.length})
          </Button>
        </div>
        <CheckboxGroup
@@ -120,7 +132,7 @@ export default function ChapterListEdit({chapters, slug}: Props) {
                  className="w-full justify-start h-auto flex max-w-full gap-2 py-1"
                >
                  <div className="flex gap-3">
-                   <span>Chapter {chapter.number}</span>
+                   <span>{extractMangaTitle(chapter.titles, locale as LocaleType)}</span>
                  </div>
                  <div className="flex gap-1 items-center">
                    <span>{new Date(parseInt(chapter.createdAt)).toLocaleDateString(locale)}</span>
@@ -178,7 +190,7 @@ export default function ChapterListEdit({chapters, slug}: Props) {
          }
        </CheckboxGroup>
      </div>
-     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+     <Modal isOpen={deleteDisclosure.isOpen} onOpenChange={deleteDisclosure.onOpenChange}>
        <ModalContent>
          {(onClose) => (
            <>
@@ -200,6 +212,11 @@ export default function ChapterListEdit({chapters, slug}: Props) {
          )}
        </ModalContent>
      </Modal>
+     <TranslateChaptersModal
+       chapters={chapters}
+       selectedChapters={selectedChapters}
+       {...translateDisclosure}
+     />
    </>
  );
 };

@@ -4,7 +4,6 @@ import {GetLatestUploadedChaptersQuery} from "@/app/__generated__/graphql";
 import {Badge, Card, Image, Tooltip} from "@heroui/react";
 import {LocaleType} from "@/app/types";
 import {useTimeSince} from "@/app/lib/hooks/useTimeSince";
-import {extractChapterTitle} from "@/app/lib/utils/extractionUtils";
 import {IoLanguage} from "react-icons/io5";
 import {Link} from "@/i18n/routing";
 import {useTranslations} from "next-intl";
@@ -18,9 +17,7 @@ interface Props{
 export default function ChapterUpdateCard({chapter, locale = 'en'}: Props) {
   const t = useTranslations("common.badges.languageAvailability");
   const hasLocale = chapter.languages.some(lang => lang.toLowerCase() === locale);
-  const mangaTitle = chapter.manga.title.find(({language, value}) => locale === language.toLowerCase())?.value ?? chapter.manga.title[0].value;
   const timeSince = useTimeSince(new Date(Number(chapter.createdAt)));
-  const chapterTitle = extractChapterTitle(chapter.versions, locale);
 
  return (
   <Card
@@ -61,16 +58,16 @@ export default function ChapterUpdateCard({chapter, locale = 'en'}: Props) {
      <div className="flex gap-2 sm:gap-5 items-center w-full h-full justify-between">
        <Image
            src={process.env.NEXT_PUBLIC_BUCKET_URL + chapter.manga.image}
-           alt={mangaTitle}
+           alt={chapter.manga.title}
            className="object-cover h-24 w-20"
        />
        <div className="flex flex-col gap-2 items-start justify-between flex-1">
          <p className="text-sm sm:text-base">
-           {mangaTitle}
+           {chapter.manga.title}
          </p>
          <div className="flex gap-2 sm:gap-5 items-center justify-between w-full">
            <p className="text-xs sm:text-sm">
-             {chapterTitle}
+             {chapter.title}
            </p>
            <p className="text-xs px-4">
              {timeSince}

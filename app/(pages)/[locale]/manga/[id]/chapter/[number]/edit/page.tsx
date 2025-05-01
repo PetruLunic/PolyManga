@@ -4,11 +4,15 @@ import {notFound} from "next/navigation";
 import EditChapterForm from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/_components/EditChapterForm";
 
 interface Props{
-  params: Promise<{number: string, id: string}>
+  params: Promise<{
+    number: string,
+    id: string,
+    locale: string
+  }>
 }
 
 export default async function Page({params}: Props) {
-  const {id: slug, number: numberStr} = await params;
+  const {id: slug, number: numberStr, locale} = await params;
   const number = Number.parseFloat(numberStr);
   if (Number.isNaN(number)) notFound();
 

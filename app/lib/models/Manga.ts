@@ -19,7 +19,7 @@ const MangaSchema = new Schema<Manga>({
     unique: true,
     index: true // for faster lookups
   },
-  title: [{
+  titles: [{
     language: {
       type: String,
       required: true,
@@ -31,7 +31,7 @@ const MangaSchema = new Schema<Manga>({
       maxlength: [50, "Title cannot be more than 50 characters"]
     }
   }],
-  description: [{
+  descriptions: [{
     language: {
       type: String,
       required: true,
@@ -136,6 +136,6 @@ const MangaSchema = new Schema<Manga>({
       timestamps: true
     })
 
-MangaSchema.index({ 'title.language': 1, 'title.value': 1 });
+MangaSchema.index({ 'titles.language': 1, 'titles.value': 1 });
 
 export default mongoose.models["Manga"] as MangaModel || model<Manga, MangaModel>("Manga", MangaSchema);

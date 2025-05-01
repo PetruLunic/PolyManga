@@ -50,7 +50,7 @@ function EditableMetadataBox({
     <>
       <Rnd
         bounds="parent"
-        className="z-50"
+        className="z-50 border-1 border-black border-solid"
         size={{
           width: coords.x2 - coords.x1,
           height: coords.y2 - coords.y1,

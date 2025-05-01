@@ -54,7 +54,8 @@ export default function MangaPage() {
           sort: sort,
           sortBy: sortBy,
           languages: languages as ChapterLanguage[],
-          limit
+          limit,
+          locale
         },
         notifyOnNetworkStatusChange: true, // Allows tracking loading states during fetchMore
         fetchPolicy: "cache-and-network", // Fetch from cache first, then update with network result

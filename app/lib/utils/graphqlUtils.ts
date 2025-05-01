@@ -2,7 +2,6 @@ import {execute, parse, print} from 'graphql';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import dbConnect from "@/app/lib/utils/dbConnect";
 import {schema} from "@/app/lib/graphql/resolvers";
-import {auth} from "@/auth";
 import {GraphQLError} from "graphql/error";
 import {cache} from "react";
 
@@ -16,12 +15,8 @@ export const queryGraphql = cache(
   }
 ): Promise<{data: TData | null, errors: readonly GraphQLError[] | undefined}> {
   try {
+    const startTime = Date.now();
     await dbConnect(); // Connecting to mongoDB
-
-    // const contextValue = options?.withSession ? {
-    //     user: (await auth())?.user
-    //   }
-    //   : null
 
     const result = await execute({
       schema,

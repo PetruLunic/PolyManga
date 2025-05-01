@@ -1,7 +1,6 @@
 import {Button, Card, CardBody, Image, Divider} from "@heroui/react";
 import {IoBookmarksOutline, IoEyeOutline} from "react-icons/io5";
-import {GET_MANGA, GET_MANGA_METADATA, GET_STATIC_MANGAS} from "@/app/lib/graphql/queries";
-import ChapterList from "@/app/_components/ChapterList";
+import {CHAPTERS_LIST, GET_MANGA, GET_MANGA_METADATA, GET_STATIC_MANGAS} from "@/app/lib/graphql/queries";
 import BookmarkButton from "@/app/(pages)/[locale]/manga/[id]/_components/BookmarkButton";
 import LikeButton from "@/app/(pages)/[locale]/manga/[id]/_components/LikeButton";
 import RatingButton from "@/app/(pages)/[locale]/manga/[id]/_components/RatingButton";
@@ -9,39 +8,36 @@ import IncrementViews from "@/app/(pages)/[locale]/manga/[id]/_components/Increm
 import MangaSettingsDropdown from "@/app/(pages)/[locale]/manga/[id]/_components/MangaSettingsDropdown";
 import {Metadata} from "next";
 import {domain, seoMetaData, siteName, type} from "@/app/lib/seo/metadata";
-import {getMangaIdFromURL} from "@/app/lib/utils/URLFormating";
 import {formatNumber} from "@/app/lib/utils/formatNumber";
 import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
 import ContinueReadingButton from "@/app/_components/ContinueReadingButton";
 import {notFound} from "next/navigation";
 import {getTranslations, setRequestLocale} from "next-intl/server";
 import {routing} from "@/i18n/routing";
-import {extractMangaTitle} from "@/app/lib/utils/extractionUtils";
-import {LocaleType} from "@/app/types";
 import LinkButton from "@/app/_components/LinkButton";
+import ChapterListWrapper from "@/app/_components/ChapterListWrapper";
+import {getFragmentData} from "@/app/__generated__";
 
 export async function generateMetadata({ params}: Props): Promise<Metadata> {
   const {id, locale} = await params;
-  const {data} = await queryGraphql(GET_MANGA_METADATA, {id});
+  const {data} = await queryGraphql(GET_MANGA_METADATA, {id, locale});
   const mangaT = await getTranslations({locale, namespace: "common.manga"});
   const metadataT = await getTranslations({locale, namespace: "pages.mangaDetails.metadata"});
 
   if (!data?.manga) return await seoMetaData.manga(locale);
 
   const {manga} = data;
-  const title = extractMangaTitle(manga?.title, locale as LocaleType);
-  const description = manga.description.find(({language}) => locale === language.toLowerCase())?.value ?? manga.description[0].value;
 
   const genres = manga.genres.slice(0, 4).map(genre => mangaT(`genres.${genre}`)).join(", ");
 
   return {
-    title: `${title} | ${siteName}`,
-    description: description.substring(0, 250), // Optimal meta description length,
+    title: `${manga.title} | ${siteName}`,
+    description: manga.description.substring(0, 250), // Optimal meta description length,
     keywords: metadataT("keywords", {type: mangaT(`type.${manga?.type}`), genres}),
 
     openGraph: {
-      title,
-      description: description.substring(0, 160),
+      title: manga.title,
+      description: manga.description.substring(0, 160),
       url: `${domain}/${locale}/manga/${id}`,
       type,
       images: [manga.image],
@@ -77,7 +73,7 @@ export const revalidate = 7200;
 export default async function Page({params}: Props) {
   const {id, locale} = await params;
   setRequestLocale(locale);
-  const {data} = await queryGraphql(GET_MANGA, {id});
+  const {data} = await queryGraphql(GET_MANGA, {id, offset: 0, limit: 30});
 
   if (!data) notFound();
   const mangaT = await getTranslations({locale, namespace:"common.manga"});
@@ -86,9 +82,6 @@ export default async function Page({params}: Props) {
   const {manga} = data;
 
   if (!manga) notFound();
-
-  const title = manga?.title.find(({language}) => locale === language.toLowerCase())?.value ?? manga?.title[0].value;
-  const description = manga?.description.find(({language}) => locale === language.toLowerCase())?.value ?? manga?.description[0].value;
 
   return (
   <div className="md:px-4 flex flex-col gap-3">
@@ -103,7 +96,7 @@ export default async function Page({params}: Props) {
                 src={process.env.NEXT_PUBLIC_BUCKET_URL + manga?.image}
                 width={250}
                 height={350}
-                alt={title}
+                alt={manga.title}
                 isBlurred
             />
             <ContinueReadingButton mangaSlug={id} firstChapterNumber={manga?.firstChapter?.number}/>
@@ -138,13 +131,13 @@ export default async function Page({params}: Props) {
           {/*Right column of the card*/}
           <div className="gap-3 flex flex-col w-full md:w-2/3">
             <h2 className="text-xl font-bold text-center md:text-left">
-              {title}
+              {manga.title}
             </h2>
             <Divider/>
             <div className="flex justify-center md:justify-start items-center text-sm flex-wrap">
               <RatingButton
-                slug={getMangaIdFromURL(id)}
-                mangaTitle={title}
+                slug={id}
+                mangaTitle={manga.title}
                 rating={manga?.stats.rating.value}
                 nrVotes={manga?.stats.rating.nrVotes}
               />
@@ -167,7 +160,7 @@ export default async function Page({params}: Props) {
               </Button>
             </div>
             <p className="text-default-600 text-sm">
-              {description}
+              {manga.description}
             </p>
             <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-1 md:flex-row md:gap-6">
@@ -229,7 +222,11 @@ export default async function Page({params}: Props) {
       <CardBody className="p-2 md:p-4">
         <div className="flex flex-col gap-4">
           <h3 className="text-center text-lg font-bold md:text-left">{pageT("chaptersList")}</h3>
-            <ChapterList chapters={JSON.parse(JSON.stringify(manga?.chapters))} mangaSlug={id} languages={manga.languages}/>
+          <ChapterListWrapper
+            slug={id}
+            languages={manga.languages}
+            initialChapters={JSON.parse(JSON.stringify(getFragmentData(CHAPTERS_LIST, manga.chapters)))}
+          />
         </div>
       </CardBody>
     </Card>
@@ -237,63 +234,3 @@ export default async function Page({params}: Props) {
   </div>
  );
 };
-
-// import {GET_LATEST_UPLOADED_CHAPTERS, GET_MANGA_CARDS, MANGA_CARD} from "@/app/lib/graphql/queries";
-// import {getFragmentData} from "@/app/__generated__";
-// import PopularMangaList from "@/app/_components/PopularMangaList";
-// import LatestChaptersList from "@/app/_components/LatestChaptersList";
-// import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
-// import {LocaleType} from "@/app/types";
-// import {locales} from "@/i18n/routing";
-// import {setRequestLocale} from "next-intl/server";
-//
-// export const dynamicParams = true;
-//
-// // 1 hours revalidation
-// export const revalidate = 7;
-//
-// interface Props {
-//   params: Promise<{
-//     locale: string,
-//     id: string
-//   }>
-// }
-//
-// export default async function Page({params}: Props) {
-//   const {locale, id} = await params;
-//   console.log(`rendering ${id} page chapter`);
-//   setRequestLocale(locale);
-//   const [{data: dailyMangaData},
-//     {data: weeklyMangaData},
-//     {data: monthlyMangaData},
-//     {data: latestChapters}] = await Promise.all([
-//     queryGraphql(GET_MANGA_CARDS, {
-//       limit: 10,
-//       sortBy: "dailyViews"
-//     }),
-//     queryGraphql(GET_MANGA_CARDS, {
-//       limit: 10,
-//       sortBy: "weeklyViews"
-//     }),
-//     queryGraphql(GET_MANGA_CARDS, {
-//       limit: 10,
-//       sortBy: "monthlyViews"
-//     }),
-//     queryGraphql(GET_LATEST_UPLOADED_CHAPTERS, {
-//       limit: 16
-//     })
-//   ]);
-//
-//   return (
-//     <div className="flex flex-col gap-3 mx-3">
-//       <PopularMangaList
-//         locale={locale as LocaleType}
-//         daily={JSON.parse(JSON.stringify(getFragmentData(MANGA_CARD, dailyMangaData?.mangas) ?? []))}
-//         weekly={JSON.parse(JSON.stringify(getFragmentData(MANGA_CARD, weeklyMangaData?.mangas) ?? []))}
-//         monthly={JSON.parse(JSON.stringify(getFragmentData(MANGA_CARD, monthlyMangaData?.mangas) ?? []))}
-//       />
-//       <LatestChaptersList initialChapters={JSON.parse(JSON.stringify(latestChapters?.latestChapters ?? []))}/>
-//     </div>
-//
-//   );
-// };

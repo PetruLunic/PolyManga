@@ -1,7 +1,7 @@
 "use client"
 
 import {Button} from "@heroui/react";
-import {cleanAwsBucket} from "@/app/(pages)/[locale]/admin/actions";
+import {cleanAwsBucket, migrate} from "@/app/(pages)/[locale]/admin/actions";
 export default function Page() {
 
  return (
@@ -11,6 +11,11 @@ export default function Page() {
    }}>
     Clean aws bucket
    </Button>
+    <Button
+      onPress={migrate}
+    >
+      migrate
+    </Button>
   </div>
  );
 };

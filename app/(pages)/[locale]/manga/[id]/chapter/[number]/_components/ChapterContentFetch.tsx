@@ -4,19 +4,17 @@ import {Suspense} from "react";
 import NavigationButtons from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/NavigationButtons";
 import ChapterBookmarkFetch from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/ChapterBookmarkFetch";
 import {notFound} from "next/navigation";
-import {CoordsItem} from "@/app/lib/graphql/schema";
-import {ChapterMetadata, ContentItem, LocaleType} from "@/app/types";
 import ChapterContent from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/_components/ChapterContent";
-import {ChapterQuery} from "@/app/__generated__/graphql";
 import {transformMetadata} from "@/app/lib/utils/transformMetadata";
 
 interface Props {
   id: string,
   number: number,
+  locale: string
 }
 
-export async function ChapterContentFetch({id, number}: Props) {
-  const {data} = await queryGraphql(GET_CHAPTER, {number, slug: id});
+export async function ChapterContentFetch({id, number, locale}: Props) {
+  const {data} = await queryGraphql(GET_CHAPTER, {number, slug: id, locale});
   if (!data) notFound();
 
   const chapter = data.chapter;
@@ -24,6 +22,7 @@ export async function ChapterContentFetch({id, number}: Props) {
 
   return (
     <>
+
       <div className="flex flex-col gap-6 min-h-screen pb-10">
         <Suspense>
           <ChapterContent chapter={JSON.parse(JSON.stringify(chapter))} metadata={JSON.parse(JSON.stringify(metadata))}/>
@@ -34,7 +33,7 @@ export async function ChapterContentFetch({id, number}: Props) {
           mangaId={id}
         />
       </div>
-      <ChapterBookmarkFetch slug={id} number={chapter.number}/>
+      <ChapterBookmarkFetch slug={id} number={chapter.number} locale={locale}/>
     </>
   );
 }

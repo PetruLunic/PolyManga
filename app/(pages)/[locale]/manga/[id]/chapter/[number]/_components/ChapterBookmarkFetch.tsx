@@ -9,12 +9,13 @@ import {GET_BOOKMARKED_CHAPTER} from "@/app/lib/graphql/queries";
 interface Props{
   slug: string;
   number: number;
+  locale: string;
 }
 
-export default function ChapterBookmarkFetch({slug, number}: Props) {
+export default function ChapterBookmarkFetch({slug, number, locale}: Props) {
   const session = useSession();
   const [addBookmark] = useMutation(ADD_CHAPTER_BOOKMARK);
-  const {data} = useQuery(GET_BOOKMARKED_CHAPTER, {variables: {slug}});
+  const {data} = useQuery(GET_BOOKMARKED_CHAPTER, {variables: {slug, locale}});
   const firstFetchRef = useRef(false);
 
   // On mount add bookmark on this chapter if the user is logged in, and it's number is bigger than the previous one
