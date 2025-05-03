@@ -13,11 +13,13 @@ export const seoMetaData: Readonly<{ [key: string]: (locale: string) => Promise<
       title: siteName,
       description: t('description'),
       keywords: t('keywords'),
+      metadataBase: domain ? new URL(domain) : null,
       openGraph: {
         title: t("openGraph.title"),
         description: t("openGraph.description"),
         type,
-        url: `${domain}/${locale}`
+        url: `${domain}/${locale}`,
+        siteName
       }
     }
   },
@@ -28,11 +30,13 @@ export const seoMetaData: Readonly<{ [key: string]: (locale: string) => Promise<
       title: t('title', { siteName }),
       description: t('description'),
       keywords: t('keywords'),
+      metadataBase: domain ? new URL(domain) : null,
       openGraph: {
         title: t("openGraph.title"),
         description: t("openGraph.description"),
         type,
-        url: `${domain}/${locale}/manga`
+        url: `${domain}/${locale}/manga`,
+        siteName
       }
     }
   }

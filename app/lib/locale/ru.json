@@ -67,7 +67,8 @@
       },
       "chapter": "Глава",
       "chapters": "Главы",
-      "noChapter": "Нет глав"
+      "noChapter": "Нет глав",
+      "noManga": "Нет манги"
     },
     "ui": {
       "buttons": {

@@ -67,7 +67,8 @@
       },
       "chapter": "Chapitre",
       "chapters": "Chapitres",
-      "noChapter": "Aucun chapitre"
+      "noChapter": "Aucun chapitre",
+      "noManga": "Il n'y a pas de manga"
     },
     "ui": {
       "buttons": {

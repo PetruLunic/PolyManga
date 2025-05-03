@@ -67,7 +67,8 @@
       },
       "chapter": "Chương",
       "chapters": "Chương",
-      "noChapter": "Không có chương"
+      "noChapter": "Không có chương",
+      "noManga": "Không có manga"
     },
     "ui": {
       "buttons": {

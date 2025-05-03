@@ -1,4 +1,4 @@
-import {ApolloLink, FieldFunctionOptions, HttpLink} from "@apollo/client";
+import {ApolloLink, HttpLink} from "@apollo/client";
 import {
   ApolloClient,
   InMemoryCache,
@@ -43,9 +43,6 @@ const createApolloClient = () => {
     credentials: 'same-origin', // Ensure cookies are included in requests
     fetchOptions: {
       credentials: "include",
-      next: {
-        revalidate: 3600
-      }
     }
   });
 
@@ -57,7 +54,6 @@ const createApolloClient = () => {
             mangas: { // Caching mechanism for mangas pagination
               keyArgs: ["search", "statuses", "genres", "types", "sort", "sortBy", "languages", "locale"], // Cache based on these arguments
               merge(existing = [], incoming, { args }) {
-                console.log({existing, incoming, args});
                 const { offset = 0 } = args || {};
                 const merged = existing ? existing.slice(0) : [];
                 for (let i = 0; i < incoming.length; ++i) {
@@ -73,7 +69,6 @@ const createApolloClient = () => {
             chapters: { // FieldPolicy for Manga.chapters
               keyArgs: ["isDescending"], // Correct properties for a FieldPolicy
               merge(existing: any[] = [], incoming: any[] = [], { args }) {
-                console.log({existing, incoming, args});
                 const { offset = 0 } = args || {};
                 const merged = existing ? existing.slice(0) : [];
                 const itemsToMerge = Array.isArray(incoming) ? incoming : [];

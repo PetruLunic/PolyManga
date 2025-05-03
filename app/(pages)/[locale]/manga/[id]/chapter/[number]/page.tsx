@@ -52,6 +52,7 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
       chapter: chapter.title.toLowerCase(),
       languages: languagesList
     }),
+    metadataBase: domain ? new URL(domain) : null,
     openGraph: {
       title: t("openGraph.title", {
         manga: manga.title,
@@ -64,7 +65,8 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
       }),
       url: `${domain}/${locale}/manga/${id}/chapter/${number}`,
       type,
-      images: [chapter.manga.image],
+      images: [process.env.NEXT_PUBLIC_BUCKET_URL + chapter.manga.image],
+      siteName
     },
   };
 }

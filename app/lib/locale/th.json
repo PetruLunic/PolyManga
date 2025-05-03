@@ -67,7 +67,8 @@
       },
       "chapter": "ตอนที่",
       "chapters": "ตอน",
-      "noChapter": "ไม่มีตอน"
+      "noChapter": "ไม่มีตอน",
+      "noManga": "ไม่มีมังงะ"
     },
     "ui": {
       "buttons": {

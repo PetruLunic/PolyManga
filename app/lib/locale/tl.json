@@ -67,7 +67,8 @@
       },
       "chapter": "Kabanata",
       "chapters": "Mga Kabanata",
-      "noChapter": "Walang kabanata"
+      "noChapter": "Walang kabanata",
+      "noManga": "Walang manga"
     },
     "ui": {
       "buttons": {

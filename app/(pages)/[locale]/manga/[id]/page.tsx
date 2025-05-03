@@ -34,13 +34,14 @@ export async function generateMetadata({ params}: Props): Promise<Metadata> {
     title: `${manga.title} | ${siteName}`,
     description: manga.description.substring(0, 250), // Optimal meta description length,
     keywords: metadataT("keywords", {type: mangaT(`type.${manga?.type}`), genres}),
-
+    metadataBase: domain ? new URL(domain) : null,
     openGraph: {
       title: manga.title,
       description: manga.description.substring(0, 160),
       url: `${domain}/${locale}/manga/${id}`,
       type,
       images: [manga.image],
+      siteName
     },
   }
 }
@@ -73,7 +74,7 @@ export const revalidate = 7200;
 export default async function Page({params}: Props) {
   const {id, locale} = await params;
   setRequestLocale(locale);
-  const {data} = await queryGraphql(GET_MANGA, {id, offset: 0, limit: 30});
+  const {data} = await queryGraphql(GET_MANGA, {id, offset: 0, limit: 30, locale});
 
   if (!data) notFound();
   const mangaT = await getTranslations({locale, namespace:"common.manga"});

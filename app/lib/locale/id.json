@@ -67,7 +67,8 @@
       },
       "chapter": "Bab",
       "chapters": "Bab",
-      "noChapter": "Tidak ada bab"
+      "noChapter": "Tidak ada bab",
+      "noManga": "Tidak ada manga"
     },
     "ui": {
       "buttons": {

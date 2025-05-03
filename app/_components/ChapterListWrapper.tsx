@@ -27,8 +27,8 @@ export default function ChapterListWrapper({ initialChapters, languages, slug }:
  const [isDescending, setIsDescending] = useState(true);
  const [languageFilter, setLanguageFilter] = useState<LanguageSelectItem>("all");
  const limit = 30; // Number of items per page
- // const [chapters, setChapters] = useState(initialChapters); // REMOVED - Rely on Apollo cache
- const [hasMore, setHasMore] = useState(true); // Still needed for infinite scroll logic
+ const [hasMore, setHasMore] = useState(true);
+ const areChaptersUnderLimit = initialChapters && initialChapters?.length < limit;
 
  // --- Apollo Query ---
  const { loading, error, data, fetchMore } = useQuery(GET_CHAPTERS, {
@@ -40,17 +40,23 @@ export default function ChapterListWrapper({ initialChapters, languages, slug }:
    isDescending,
   },
   notifyOnNetworkStatusChange: true, // Useful for showing loading state during fetchMore
-  skip: initialChapters && initialChapters?.length < limit
+  skip: areChaptersUnderLimit
  });
 
  // Extract chapters from cached data using useMemo for stability
  const chaptersToDisplay = useMemo(() => {
   const chaptersData = data?.manga?.chapters;
-  // Use getFragmentData if chaptersData exists, otherwise default to initialChapters or empty array
-  return chaptersData
+  
+  let chapters = chaptersData
     ? getFragmentData(CHAPTERS_LIST, chaptersData)
     : initialChapters; // Use initialChapters as fallback while loading/if data undefined
- }, [data, initialChapters]);
+
+  if (areChaptersUnderLimit && !isDescending) {
+   chapters = chapters?.toReversed();
+  }
+  
+  return chapters
+ }, [areChaptersUnderLimit, data?.manga?.chapters, initialChapters, isDescending]);
 
  // --- Infinite Scroll Logic ---
  const loadMore = async () => {

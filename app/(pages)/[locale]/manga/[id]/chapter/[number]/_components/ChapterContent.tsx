@@ -30,6 +30,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
   const [activeTargetIndex, setActiveTargetIndex] = useState<number | null>(null);
   const [hiddenSourceIndex, setHiddenSourceIndex] = useState<number | null>(null);
   const [showAllTargetLang, setShowAllTargetLang] = useState(false);
+  const [calculatedImages, setCalculatedImages] = useState<ChapterImage[] | null>(null);
   const screenWidth = useScreenWidth();
   let imagesLanguage = sourceLang;
 
@@ -45,19 +46,23 @@ export default function ChapterContent({chapter, metadata}: Props) {
   // Extract the images with imagesLanguage from the chapter
   const images = chapter.images.find(({language}) => language.toLowerCase() === imagesLanguage)?.images;
 
+  useEffect(() => {
+    if (!images) return;
+
+    setCalculatedImages(images.map(image => {
+      const scalingFactor = screenWidth < image.width ? screenWidth / image.width : 1;
+
+      return {
+        height: Math.round(image.height * scalingFactor),
+        width: screenWidth > image.width ? image.width : screenWidth,
+        src: image.src
+      }
+    }));
+  }, [images, screenWidth]);
+
   if (!images) notFound();
 
   const averageImageWidth = images.reduce((acc, {width}) => acc + width, 0) / images.length;
-
-  const calcImages: ChapterImage[] = images.map(image => {
-    const scalingFactor = screenWidth < image.width ? screenWidth / image.width : 1;
-
-    return {
-      height: Math.round(image.height * scalingFactor),
-      width: screenWidth > image.width ? image.width : screenWidth,
-      src: image.src
-    }
-  })
 
   // Adjust metadata coordinates
   const adjustedMetadataContent = metadata?.flatMap((item) => {
@@ -103,23 +108,29 @@ export default function ChapterContent({chapter, metadata}: Props) {
     <>
       <div className="overflow-hidden flex flex-col items-center min-h-screen">
         <div className="relative">
-          {calcImages.map((image, index) =>
+          {calculatedImages?.map((image, index) =>
             <NextImage
               key={image.src || index}
               src={BUCKET_URL + image.src}
               alt={image.src}
               priority={index < 2}
               loading={index >= 2 ? "lazy" : undefined}
-              width={image.width || images[index].width}
-              height={image.height || images[index].height}
+              width={image.width}
+              height={image.height}
               data-loaded='false'
+              data-error='false'
               onLoad={event => {
                 event.currentTarget.setAttribute('data-loaded', 'true')
               }}
-              className='data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-400/50'
+              onError={event => {
+                event.currentTarget.setAttribute('data-error', 'true');
+                event.currentTarget.setAttribute('data-loaded', 'true')
+              }}
+              className='data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-400/50 data-[error=true]:bg-red-400/50'
               style={{
                 objectFit: 'contain',
                 maxWidth: '100%',
+                height: image.height || images[index].height
               }}
             />
           )}

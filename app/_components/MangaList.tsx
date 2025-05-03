@@ -3,6 +3,7 @@
 import React, {JSX} from "react";
 import {ScrollShadow, Spinner} from "@heroui/react";
 import {useInfiniteScroll} from "@/app/lib/hooks/useInfiniteScroll";
+import {useTranslations} from "next-intl";
 
 type DivProps = JSX.IntrinsicElements["div"];
 
@@ -30,7 +31,9 @@ export default function MangaList({
                                     onLoadMore,
                                     ...props
                                   }: Props) {
+
   const childrenArray = React.Children.toArray(children);
+  const t = useTranslations("common.manga");
 
   // Infinite scroll hook
   const [loaderRef] = useInfiniteScroll({
@@ -53,7 +56,7 @@ export default function MangaList({
             childrenArray
           ) : (
             <>
-              {!isLoading && <div className="text-gray-400">There is no manga...</div>}
+              {!isLoading && <div className="text-gray-400">{t("noManga")}</div>}
             </>
           )}
         </div>

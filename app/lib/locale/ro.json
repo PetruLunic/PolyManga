@@ -67,7 +67,8 @@
       },
       "chapter": "Capitol",
       "chapters": "Capitole",
-      "noChapter": "Fără capitole"
+      "noChapter": "Fără capitole",
+      "noManga": "Nu-i manga"
     },
     "ui": {
       "buttons": {
