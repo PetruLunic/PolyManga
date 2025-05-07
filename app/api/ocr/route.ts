@@ -1,6 +1,7 @@
 import {headers} from "next/headers";
 import ChapterMetadataModel from "@/app/lib/models/ChapterMetadata";
 import {MetadataSchema} from "@/app/lib/utils/zodSchemas";
+import dbConnect from "@/app/lib/utils/dbConnect";
 
 const OCR_API_KEY = process.env.OCR_API_TOKEN;
 
@@ -27,6 +28,7 @@ export async function POST(req: Request) {
 
     const processedData = result.data.flat();
 
+    await dbConnect();
     const existingMetadata = await ChapterMetadataModel.findOne({chapterId});
 
     // Edit the existing metadata or create new one of there wasn't

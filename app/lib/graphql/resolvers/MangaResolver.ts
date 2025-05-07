@@ -251,7 +251,7 @@ export class MangaResolver {
   @Mutation(() => ID)
   async deleteManga(@Arg("id") id: string): Promise<string> {
     // Mark the manga as deleted
-    const manga: HydratedDocument<Manga> | null = await MangaModel.findOne({id});
+    const manga: HydratedDocument<Manga> | null = await MangaModel.findOne({slug: id});
 
     if (!manga) {
       throw new GraphQLError("Manga not found", {
@@ -273,7 +273,7 @@ export class MangaResolver {
     await manga.save();
 
     // Delete chapters from database
-    await ChapterModel.deleteMany({ mangaId: id });
+    await ChapterModel.deleteMany({ mangaId: manga.id });
 
     return id;
   }
