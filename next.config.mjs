@@ -11,6 +11,7 @@ const nextConfig = {
         },
     },
     images: {
+        unoptimized: true, // Handle optimization through cloudflare
         remotePatterns: [
             {
                 protocol: 'https',
@@ -26,7 +27,7 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
-                hostname: `${process.env.AWS_BUCKET_NAME}.${process.env.AWS_BUCKET_ENDPOINT}`, // Backblaze Bucket Cloud
+                hostname: `${new URL(process.env.NEXT_PUBLIC_BUCKET_URL).hostname}`, // Backblaze Bucket Cloud
             },
         ],
     },

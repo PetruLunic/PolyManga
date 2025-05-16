@@ -8,7 +8,7 @@ import createApolloClient from "@/app/lib/utils/apollo-client";
 import {CREATE_MANGA} from "@/app/lib/graphql/mutations";
 import {AddMangaInput, ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} from "@/app/__generated__/graphql";
 import {cookies} from "next/headers";
-import {AWS_BUCKET_URL, getSignedURLs} from "@/app/lib/utils/awsUtils";
+import {getSignedURLs} from "@/app/lib/utils/awsUtils";
 import {generateSlug} from "@/app/lib/utils/generateSlug";
 
 export const createManga = async (formData: FormData, mangaInput: FormType) => {

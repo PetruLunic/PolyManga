@@ -1,6 +1,6 @@
 "use client"
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {RndDragCallback, RndResizeCallback} from 'react-rnd';
 import {ChapterLanguage, ChapterLanguageFull, ChapterMetadata, LocaleType, TextItem} from "@/app/types";
 import {ChapterQuery} from "@/app/__generated__/graphql";
@@ -10,7 +10,6 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Image,
   Select,
   SelectItem, useDisclosure
 } from "@heroui/react";
@@ -18,7 +17,7 @@ import {nanoid} from "nanoid";
 import {CoordsItem} from "@/app/lib/graphql/schema";
 import EditableMetadataBox
   from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/_components/EditableMetadataBox";
-import {locales} from "@/i18n/routing";
+import {Link, locales} from "@/i18n/routing";
 import {
   saveMetadata,
 } from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/actions";
@@ -28,16 +27,22 @@ import TranslateChapterMetadataModal
   from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/_components/TranslateChapterMetadataModal";
 import {MetadataSchema} from "@/app/lib/utils/zodSchemas";
 import {Input} from "@heroui/input";
+import {useMutation} from "@apollo/client";
+import {TOGGLE_CHAPTER_AI_PROCESSED} from "@/app/lib/graphql/mutations";
+import {FaEye, FaEyeSlash, FaPlus} from "react-icons/fa";
+import {MdAutoFixHigh} from "react-icons/md";
+import {useParams} from "next/navigation";
 
 export interface Box {
   id: string;
   coords: Partial<Record<LocaleType, CoordsItem>>,
   translatedTexts: Partial<Record<LocaleType, TextItem>>,
+  style?: React.CSSProperties
 }
 
 const BUCKET_URL = process.env.NEXT_PUBLIC_BUCKET_URL;
 const FONT_SIZES = Array.from({length: 30}, (_, index) => 10 + index * 2);
-const BOX_SIZES = Array.from({length: 20}, (_, index) => -50 + index * 5);
+const BOX_SIZES = Array.from({length: 20}, (_, index) => -20 + index * 2);
 const SCROLL_OFFSET = 1000;
 
 interface Props {
@@ -46,6 +51,9 @@ interface Props {
 }
 
 export default function RedactorPage({chapter, metadata}: Props) {
+  const {id: slug} = useParams<{id: string}>();
+  const [toggleIsAIProcessed, {loading: isLoadingToggleAIProcessed}] = useMutation(TOGGLE_CHAPTER_AI_PROCESSED,
+    {variables: {id: chapter.id}});
   const [isSaving, setIsSaving] = useState(false);
   const [boxes, setBoxes] = useState<Box[]>([]);
   const [imagesLanguage, setImagesLanguage] = useState<LocaleType>(chapter.languages[0].toLowerCase() as LocaleType);
@@ -61,6 +69,14 @@ export default function RedactorPage({chapter, metadata}: Props) {
   const [ocrURL, setOcrURL] = useState<string | null>(null);
   const scrollHeight = useScrollHeight();
   const {onOpenChange, onOpen, isOpen} = useDisclosure();
+  const imagesRefs = useRef<(HTMLImageElement | null)[]>([]);
+  const [boxAutoresize, setBoxAutoresize] = useState(false);
+  const [isAllBoxesHidden, setIsAllBoxesHidden] = useState(false);
+
+  const handleTriggerResizeAll = useCallback(() => {
+    setBoxAutoresize(true);
+    setTimeout(() => setBoxAutoresize(false), 0);
+  }, []);
 
   function scanOCR() {
     if (!socketState.connected) return;
@@ -163,6 +179,35 @@ export default function RedactorPage({chapter, metadata}: Props) {
     setBoxes(metadata?.map(item => ({...item, id: nanoid()})))
   }, [metadata]);
 
+  useEffect(() => {
+    const mouseHandler = (event: MouseEvent) => {
+      if (event.button === 4 || event.button === 3 || event.button === 2) {
+        event.preventDefault();
+        setIsAllBoxesHidden(prev => !prev);
+      }
+    }
+
+    const contextHandler = (event: MouseEvent) => {
+      event.preventDefault();
+    }
+
+    const keyboardHandler = (event: KeyboardEvent) => {
+      if (event.altKey) {
+        setIsAllBoxesHidden(prev => !prev);
+      }
+    }
+
+    document.addEventListener("mousedown", mouseHandler);
+    document.addEventListener("contextmenu", contextHandler);
+    document.addEventListener("keydown", keyboardHandler);
+
+    return () => {
+      document.removeEventListener("mousedown", mouseHandler);
+      document.removeEventListener("contextmenu", contextHandler);
+      document.removeEventListener("keydown", keyboardHandler);
+    }
+  }, []);
+
   // Handle drag stop event
   const handleDragStop: (id: string) => RndDragCallback = useCallback((id: string) => (e, d) => {
     setBoxes((prevBoxes) =>
@@ -207,6 +252,22 @@ export default function RedactorPage({chapter, metadata}: Props) {
       )
     );
   }, []);
+
+  const handleBoxChange = (id: string, newX1: number, newY1: number, newX2: number, newY2: number) => {
+    setBoxes((prevBoxes) =>
+      prevBoxes.map((box) =>
+        box.id === id
+          ? {
+            ...box,
+            coords: {
+              ...box.coords,
+              en: { x1: newX1, y1: newY1, x2: newX2, y2: newY2 },
+            },
+          }
+          : box
+      )
+    );
+  };
 
   // Handle text save event
   const handleTextSave = useCallback((id: string, language: LocaleType, text: string) => {
@@ -319,6 +380,16 @@ export default function RedactorPage({chapter, metadata}: Props) {
     ])
   }
 
+  const handleBoxStyleChange = useCallback((id: string, style: React.CSSProperties) => {
+    setBoxes((prevBoxes) =>
+      prevBoxes.map((box) =>
+        box.id === id
+          ? {...box, style: {...box.style, ...style}}
+          : box
+      )
+    )
+  }, [])
+
   const onDelete = useCallback((id: string) => {
     setBoxes((prevBoxes) =>
       prevBoxes.filter(box => box.id !== id)
@@ -329,38 +400,71 @@ export default function RedactorPage({chapter, metadata}: Props) {
     <>
       <div className="relative">
         {images?.map((image, index) =>
-          <Image
-            key={image.src}
-            as={NextImage}
+          <NextImage
+            key={image.src || index}
             src={BUCKET_URL + image.src}
-            alt={image.src}
-            priority={index < 2}
-            width={image.width ?? images[index].width}
-            height={image.height ?? images[index].height}
-            classNames={{
-              img: "object-contain"
+            ref={img => {
+              imagesRefs.current[index] = img
             }}
-            radius="none"
+            alt={image.src}
+            priority={true}
+            width={image.width}
+            height={image.height}
+            data-loaded='false'
+            data-error='false'
+            crossOrigin="anonymous"
+            onLoad={event => {
+              event.currentTarget.setAttribute('data-loaded', 'true')
+            }}
+            onError={event => {
+              event.currentTarget.setAttribute('data-error', 'true');
+              event.currentTarget.setAttribute('data-loaded', 'true')
+            }}
+            className='data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-400/50 data-[error=true]:bg-red-400/50'
+            style={{
+              objectFit: 'contain',
+              maxWidth: '100%',
+              height: image.height || images[index].height
+            }}
           />
         )}
-        {boxes
-          .filter(box => {
+        {!isAllBoxesHidden && boxes
+          .filter((box) => {
+            if (boxAutoresize) return true; // If is auto resizing, then show all boxes
             const coords = box.coords[imagesLanguage];
             if (!coords) return false;
             return coords.y2 > scrollHeight - SCROLL_OFFSET && coords.y1 < scrollHeight + window.innerHeight + SCROLL_OFFSET;
           })
           .map((box) =>
-          <EditableMetadataBox
-            key={box.id}
-            box={box}
-            onSave={handleTextSave}
-            handleFontSizeChange={handleFontSizeChange}
-            onDelete={onDelete}
-            defaultTextLanguage={textLanguage}
-            handleDragStop={handleDragStop(box.id)}
-            handleResizeStop={handleResizeStop(box.id, imagesLanguage)}
-            imagesLanguage={imagesLanguage}
-          />
+          {
+            let heightAccum = 0;
+            let imageIndex = 0;
+            if (!images) return;
+            if (!box.coords[imagesLanguage]) return;
+
+            for (let i = 0; i < images.length; i++) {
+              heightAccum += images[i].height;
+              imageIndex = i;
+
+              if (heightAccum > box.coords[imagesLanguage].y1) break;
+            }
+
+            return <EditableMetadataBox
+              key={box.id}
+              box={box}
+              onSave={handleTextSave}
+              handleFontSizeChange={handleFontSizeChange}
+              onDelete={onDelete}
+              defaultTextLanguage={textLanguage}
+              handleDragStop={handleDragStop(box.id)}
+              handleResizeStop={handleResizeStop(box.id, imagesLanguage)}
+              imagesLanguage={imagesLanguage}
+              imageRef={imagesRefs.current[imageIndex]}
+              needsResize={boxAutoresize}
+              onBoxChange={handleBoxChange}
+              handleBoxStyleChange={handleBoxStyleChange}
+            />
+          }
         )}
       </div>
       <div className="fixed right-5 top-10 flex flex-col gap-3 min-w-48">
@@ -399,7 +503,29 @@ export default function RedactorPage({chapter, metadata}: Props) {
           </CardBody>
         </Card>}
       </div>
-      <div className="fixed right-5 bottom-20 flex flex-col gap-3 min-w-40">
+      <div className="fixed left-5 top-10 flex flex-col gap-3 min-w-40">
+        <Button
+          as={Link}
+          href={`/manga/${slug}/edit/chapters`}
+        >
+          Edit Chapters
+        </Button>
+        <Button
+          as={Link}
+          isDisabled={!chapter.prevChapter?.number}
+          href={`/manga/${slug}/chapter/${chapter.prevChapter?.number}/edit/metadata`}
+        >
+          Prev Chapter
+        </Button>
+        <Button
+          as={Link}
+          isDisabled={!chapter.nextChapter?.number}
+          href={`/manga/${slug}/chapter/${chapter.nextChapter?.number}/edit/metadata`}
+        >
+          Next Chapter
+        </Button>
+      </div>
+      <div className="fixed left-5 bottom-20 flex flex-col gap-3 min-w-40">
         <Select
           label={`Change boxes sizes`}
           className="w-full"
@@ -439,11 +565,6 @@ export default function RedactorPage({chapter, metadata}: Props) {
             </SelectItem>
           )}
         </Select>
-        <Button
-          onPress={onNewBox}
-        >
-          New box
-        </Button>
         <Select
           selectedKeys={[imagesLanguage]}
           disallowEmptySelection
@@ -474,6 +595,36 @@ export default function RedactorPage({chapter, metadata}: Props) {
             </SelectItem>
           )}
         </Select>
+      </div>
+      <div className="fixed right-5 bottom-20 flex flex-col gap-3 min-w-40">
+        <Button
+          onPress={onNewBox}
+          size="lg"
+          startContent={<FaPlus />}
+          color="success"
+        >
+          New box
+        </Button>
+        <Button
+          onPress={handleTriggerResizeAll}
+          isLoading={boxAutoresize}
+          startContent={<MdAutoFixHigh />}
+        >
+          Auto Resize Boxes
+        </Button>
+        <Button
+          onPress={() => setIsAllBoxesHidden(prev => !prev)}
+          startContent={isAllBoxesHidden ? <FaEyeSlash /> : <FaEye />}
+        >
+          {isAllBoxesHidden ? "Show Boxes" : "Hide Boxes"}
+        </Button>
+        <Button
+          color={chapter.isAIProcessedAt ? "primary" : "default"}
+          isLoading={isLoadingToggleAIProcessed}
+          onPress={() => toggleIsAIProcessed()}
+        >
+          Toggle is AI processed
+        </Button>
         <Button
           color="primary"
           isLoading={isSaving}

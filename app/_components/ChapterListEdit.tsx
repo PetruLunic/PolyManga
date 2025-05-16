@@ -3,7 +3,7 @@
 import {
   Button,
   Checkbox,
-  CheckboxGroup,
+  CheckboxGroup, Chip,
   Modal,
   ModalBody,
   ModalContent,
@@ -13,7 +13,7 @@ import {
 import {motion} from "framer-motion";
 import {HiOutlineSortAscending, HiOutlineSortDescending} from "react-icons/hi";
 import {useState} from "react";
-import {ChaptersEditQuery, ChaptersQuery} from "@/app/__generated__/graphql";
+import {ChaptersEditQuery} from "@/app/__generated__/graphql";
 import {FaRegEdit} from "react-icons/fa";
 import {FaRegTrashCan} from "react-icons/fa6";
 import {useMutation} from "@apollo/client";
@@ -25,6 +25,7 @@ import {Link} from "@/i18n/routing";
 import {IoLanguage} from "react-icons/io5";
 import TranslateChaptersModal from "@/app/(pages)/[locale]/manga/[id]/edit/_components/TranslateChaptersModal";
 import {extractMangaTitle} from "@/app/lib/utils/extractionUtils";
+import ProcessOcrModal from "@/app/(pages)/[locale]/manga/[id]/edit/_components/ProcessOCRModal";
 
 export type ChapterList = Exclude<ChaptersEditQuery["manga"], undefined | null>["chapters"]
 
@@ -37,6 +38,7 @@ export default function ChapterListEdit({chapters, slug}: Props) {
   const locale = useLocale();
   const deleteDisclosure = useDisclosure();
   const translateDisclosure = useDisclosure();
+  const ocrDisclosure = useDisclosure();
   const [currentChapters, setCurrentChapters] = useState<ChapterList | undefined>(chapters);
   const [descending, setDescending] = useState(true);
   const [selectedChapters, setSelectedChapters] = useState<string[]>([]);
@@ -111,9 +113,16 @@ export default function ChapterListEdit({chapters, slug}: Props) {
            isDisabled={!selectedChapters.length}
            startContent={<IoLanguage/>}
            onPress={translateDisclosure.onOpen}
-           isLoading={loading}
          >
            Translate selected ({selectedChapters.length})
+         </Button>
+         <Button
+           color={selectedChapters.length ? "primary" : "default"}
+           isDisabled={!selectedChapters.length}
+           startContent={<IoLanguage/>}
+           onPress={ocrDisclosure.onOpen}
+         >
+           Process OCR selected ({selectedChapters.length})
          </Button>
        </div>
        <CheckboxGroup
@@ -135,6 +144,11 @@ export default function ChapterListEdit({chapters, slug}: Props) {
                    <span>{extractMangaTitle(chapter.titles, locale as LocaleType)}</span>
                  </div>
                  <div className="flex gap-1 items-center">
+                   <Chip
+                     color={chapter.isAIProcessedAt ? "success" : chapter.metadata ? "primary" : "default"}
+                   >
+                     {chapter.isAIProcessedAt ? "Redacted" : chapter.metadata ? "Processed OCR" : "Not Processed"}
+                   </Chip>
                    <span>{new Date(parseInt(chapter.createdAt)).toLocaleDateString(locale)}</span>
                    <Button
                      isIconOnly
@@ -147,13 +161,12 @@ export default function ChapterListEdit({chapters, slug}: Props) {
                      <FaRegEdit/>
                    </Button>
                    <Button
-                     radius="full"
                      variant="light"
                      className="z-10"
                      as={Link}
                      href={`/manga/${slug}/chapter/${chapter.number}/edit/metadata`}
                    >
-                     metadata <FaRegEdit/>
+                     Metadata <FaRegEdit/>
                    </Button>
                    <Popover placement="right">
                      <PopoverTrigger>
@@ -216,6 +229,11 @@ export default function ChapterListEdit({chapters, slug}: Props) {
        chapters={chapters}
        selectedChapters={selectedChapters}
        {...translateDisclosure}
+     />
+     <ProcessOcrModal
+       selectedChapters={selectedChapters}
+       chapters={chapters}
+       {...ocrDisclosure}
      />
    </>
  );

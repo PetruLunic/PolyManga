@@ -1,4 +1,4 @@
-import {Arg, Args, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
+import {Arg, Args, Authorized, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
 import {AddChapterInput, Chapter, ChapterMetadataRaw, GetChaptersArgs, Manga} from "@/app/lib/graphql/schema";
 import ChapterModel from "@/app/lib/models/Chapter";
 import {GraphQLError} from "graphql/error";
@@ -137,6 +137,30 @@ export class ChapterResolver {
     ]).exec();
   }
 
+  @Authorized(["MODERATOR"])
+  @Mutation(() => Boolean)
+  async toggleIsAIProcessed(@Arg("id") id: string) {
+    const chapter = await ChapterModel.findOne({id});
+
+    if (!chapter) {
+      throw new GraphQLError("Chapter not found", {
+        extensions: {
+          code: "BAD_USER_INPUT"
+        }
+      })
+    }
+
+    if (chapter.isAIProcessedAt) {
+      chapter.isAIProcessedAt = undefined;
+    } else {
+      chapter.isAIProcessedAt = new Date().toISOString();
+    }
+
+    await chapter.save();
+    return chapter.isAIProcessedAt;
+  }
+
+  @Authorized(["MODERATOR"])
   @Mutation(() => Chapter)
   async addChapter(@Arg("chapter") chapterInput: AddChapterInput): Promise<Chapter> {
     const manga = await MangaModel.findOne({id: chapterInput.mangaId});
@@ -178,6 +202,7 @@ export class ChapterResolver {
     return chapter;
   }
 
+  @Authorized(["MODERATOR"])
   @Mutation(() => String)
   async deleteChapters(
       @Arg("slug") slug: string,

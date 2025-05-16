@@ -8,6 +8,7 @@ import LocaleSelect from "@/app/_components/LocaleSelect";
 import { Link } from "@/i18n/routing";
 import Navbar from "@/app/_components/Navbar";
 import {Suspense} from "react";
+import Image from "next/image"
 
 
 export default function NavbarRoot() {
@@ -21,18 +22,24 @@ export default function NavbarRoot() {
  return (
    <Navbar
      shouldHideOnScroll
-     classNames={{ wrapper: "px-2 sm:px-4 md:px-6 gap-2 sm:gap-4" }}
+     classNames={{ wrapper: "px-4 md:px-6 gap-2 sm:gap-4" }}
    >
      <NavbarBrand className="flex gap-3">
        <Link href={"/"}>
-         <p className="font-bold text-inherit">{process.env.NEXT_PUBLIC_PROJECT_NAME ?? "MANGA"}</p>
+         <Image
+          src="/manga-babel-logo.png"
+          alt="Logo"
+          width={40}
+          height={40}
+          fetchPriority="high"
+         />
        </Link>
        <Button
-           className="text-xs tracking-wide font-semibold"
-           size="sm"
-           as={Link}
-           href="/manga"
-        variant="light"
+         className="text-xs tracking-wide font-semibold"
+         size="sm"
+         as={Link}
+         href="/manga"
+         variant="light"
        >
          {t("catalog").toUpperCase()}
        </Button>

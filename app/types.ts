@@ -64,6 +64,7 @@ export interface TextItem {
 export interface ContentItem {
   translatedTexts: Record<LocaleType, TextItem>,
   coords: Record<LocaleType, CoordsItem>;
+  style?: React.CSSProperties;
 }
 
 export interface ChapterMetadata {

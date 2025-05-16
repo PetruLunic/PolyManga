@@ -26,7 +26,10 @@ export async function POST(req: Request) {
     if (result.error)
       return new Response("Invalid data", {status: 400});
 
-    const processedData = result.data.flat();
+    // Flattening and filtering empty texts
+    const processedData = result.data
+      .flat()
+      .filter(item => (item.translatedTexts[0] && item.translatedTexts[0].text));
 
     await dbConnect();
     const existingMetadata = await ChapterMetadataModel.findOne({chapterId});

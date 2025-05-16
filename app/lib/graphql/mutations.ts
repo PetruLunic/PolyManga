@@ -114,3 +114,9 @@ export const DELETE_CHAPTER_BOOKMARK = gql(`
     }
   }
 `)
+
+export const TOGGLE_CHAPTER_AI_PROCESSED = gql(`
+  mutation toggleChapterAIProcessed($id: String!) {
+    toggleIsAIProcessed(id: $id)
+  }
+`)

@@ -17,6 +17,17 @@ export const ChapterMetadataSchema = new Schema<ChapterMetadataRaw>({
     required: true
   },
   content: [{
+    style: {
+      backgroundColor: {
+        type: String
+      },
+      color: {
+        type: String
+      },
+      fontWeight: {
+        type: Number
+      },
+    },
     translatedTexts: [{
       language: {
         type: String,

@@ -16,7 +16,8 @@ const moderatorPaths = [
   "/manga/:id/edit",
   "/manga/:id/edit/chapters",
   "/manga/:id/chapter/:number/edit",
-  "/manga/:id/chapter/:number/edit/metadata"
+  "/manga/:id/chapter/:number/edit/metadata",
+  "/manga/:id/scrap"
 ];
 
 const adminPaths = [

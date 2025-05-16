@@ -85,6 +85,9 @@ export const ChapterSchema = new Schema<Chapter>({
       maxlength: [50, "Title cannot be more than 50 characters"]
     },
   }],
+  isAIProcessedAt: {
+    type: String,
+  }
 }, {timestamps: true})
 
 ChapterSchema.index({ number: 1, mangaId: 1 }); // Unique chapter number per manga

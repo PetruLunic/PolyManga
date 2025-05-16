@@ -31,6 +31,14 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
   const [sourceLang, setSourceLang] = useState<LocaleType>(locales[0]);
   const [targetLangs, setTargetLangs] = useState<LocaleType[]>([]);
 
+  function handleSelectAllLanguages() {
+    setTargetLangs(locales.filter(locale => locale !== sourceLang));
+  }
+
+  function handleSelectMissingLanguages() {
+    setTargetLangs(locales.filter(locale => !boxes.some(box => box.translatedTexts[locale])));
+  }
+
   async function handleTranslate() {
     setIsTranslating(targetLangs.reduce((acc, lang) => ({...acc, [lang]: "pending"}), {}));
     for (const lang of targetLangs) {
@@ -58,6 +66,11 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
         }))
         return newMetadata;
       })
+
+      if (newMetadata.length !== boxes.length) {
+        setIsTranslating(prev => ({...prev, [targetLang]: "error"}));
+        return;
+      }
 
       await saveMetadata(newMetadata, chapterId)
       setIsTranslating(prev => ({...prev, [targetLang]: "finished"}));
@@ -127,6 +140,16 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
                color="danger"
              >
                Close
+             </Button>
+             <Button
+               onPress={handleSelectMissingLanguages}
+             >
+               Select missing
+             </Button>
+             <Button
+              onPress={handleSelectAllLanguages}
+             >
+               Select all
              </Button>
              <Button
                color="primary"

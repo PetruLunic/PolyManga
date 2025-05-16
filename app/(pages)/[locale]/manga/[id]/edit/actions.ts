@@ -7,19 +7,7 @@ import {nanoid} from "nanoid";
 import {EDIT_MANGA} from "@/app/lib/graphql/mutations";
 import {EditMangaInput} from "@/app/__generated__/graphql";
 import {cookies} from "next/headers";
-import {deleteImage, getAbsoluteAwsUrl, uploadImage} from "@/app/lib/utils/awsUtils";
-import {MangaDescription, MangaTitle} from "@/app/lib/graphql/schema";
-import dbConnect from "@/app/lib/utils/dbConnect";
-import {
-  Content,
-  GenerateContentConfig,
-  HarmBlockThreshold,
-  HarmCategory,
-  SafetySetting,
-  Schema,
-  Type
-} from "@google/genai";
-import {geminiModel} from "@/app/lib/AIModels";
+import {deleteImage, uploadImage} from "@/app/lib/utils/awsUtils";
 
 export const editManga = async (manga: EditMangaInput, formData?: FormData) => {
   const session = await auth();

@@ -3,7 +3,7 @@ import ChapterListEdit from "@/app/_components/ChapterListEdit";
 import {notFound} from "next/navigation";
 import {queryGraphql} from "@/app/lib/utils/graphqlUtils";
 
-export const revalidate = 5;
+export const revalidate = 0;
 
 interface Props{
   params: Promise<{id: string, locale: string}>

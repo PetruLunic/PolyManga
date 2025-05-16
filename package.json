@@ -38,6 +38,7 @@
       "next-themes": "^0.2.1",
       "node-cron": "^3.0.3",
       "nodemailer": "^6.9.13",
+      "playwright": "^1.52.0",
       "react": "^19.0.0",
       "react-dom": "^19.0.0",
       "react-dropzone": "^14.2.3",

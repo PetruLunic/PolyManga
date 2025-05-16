@@ -125,6 +125,7 @@ export const GET_CHAPTER = gql(`
       },
       mangaId,
       languages,
+      isAIProcessedAt,
       nextChapter {
         number
       },
@@ -133,6 +134,9 @@ export const GET_CHAPTER = gql(`
       },
       metadata {
         content {
+          style {
+            backgroundColor
+          },
           translatedTexts {
             language,
             text,
@@ -204,6 +208,15 @@ export const GET_CHAPTER_EDIT = gql(`
   }
 `)
 
+export const POLL_CHAPTER_METADATA = gql(`
+  query pollChapterMetadata($chapterId: ID!) {
+    metadata(chapterId: $chapterId) {
+      id,
+      version
+    }
+  }
+`)
+
 export const GET_MANGA_CARDS = gql(`
   query mangas($search: String, $genres: [ComicsGenre!], $statuses: [ComicsStatus!], $types: [ComicsType!], $sortBy: String, $sort: String, $languages: [ChapterLanguage!], $limit: Int, $offset: Int, $locale: String!) {
     mangas(search: $search, genres: $genres, statuses: $statuses, types: $types, sortBy: $sortBy, sort: $sort, languages: $languages, limit: $limit, offset: $offset) {
@@ -248,13 +261,17 @@ export const GET_CHAPTERS_EDIT = gql(`
       title(locale: $locale),
      chapters(limit: $limit) {
       id,
+      isAIProcessedAt,
       titles {
         language,
         value
       },
       mangaId,
       createdAt,
-      number
+      number,
+      metadata {
+        id
+       }
       }
     }
   }

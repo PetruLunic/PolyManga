@@ -15,6 +15,7 @@ import {ChapterImage, ChapterImages} from "@/app/lib/graphql/schema";
 import {ChapterInput} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/_components/EditChapterForm";
 import {EditChapterInputSchema} from "@/app/lib/utils/zodSchemas";
 import {fetchInBatches} from "@/app/lib/utils/fetchInBatches";
+import {cookies} from "next/headers";
 
 export interface ChapterImageBuffer extends Omit<ChapterImage, "src"> {
   buffer: ArrayBuffer
@@ -26,7 +27,6 @@ export async function createChapter(data: ChapterInput, formData: FormData) {
   if (!session || session.user.role !== "ADMIN" && session.user.role !== "MODERATOR") {
     throw new Error("Forbidden action!");
   }
-
 
   const validationResult = EditChapterInputSchema.safeParse(data);
 
@@ -137,7 +137,11 @@ export async function createChapter(data: ChapterInput, formData: FormData) {
 
   // Fetching chapter to GraphQL resolver
   try {
-    await client.mutate({mutation: CREATE_CHAPTER, variables: {chapter}});
+    await client.mutate({
+      mutation: CREATE_CHAPTER,
+      variables: {chapter},
+      context: {headers: {cookie: await cookies()}}
+    });
   } catch (e: any) {
     console.error(e);
 

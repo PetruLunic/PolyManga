@@ -7,7 +7,7 @@ import {LocaleType} from "@/app/types";
 import {setRequestLocale} from "next-intl/server";
 
 // 1 hours revalidation
-export const revalidate = 20;
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{

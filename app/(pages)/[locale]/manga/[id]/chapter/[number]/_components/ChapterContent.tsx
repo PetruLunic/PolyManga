@@ -154,6 +154,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
                   if (imagesLanguage !== targetLang) return;
                   setHiddenSourceIndex(hiddenSourceIndex === index ? null : index);
                 }}
+                disableRipple
                 isPressable={imagesLanguage === targetLang}
               >
                 <CardBody
@@ -167,9 +168,12 @@ export default function ChapterContent({chapter, metadata}: Props) {
                       className={`
                       relative 
                       [-webkit-text-stroke:0.2em_white]
+                      text-balance
+                      before:text-balance
                       before:content-[attr(data-content)]
                       before:absolute
                       before:inset-0 
+                      before:whitespace-pre-line
                       before:text-black 
                       before:[-webkit-text-fill-color:black] 
                       before:[-webkit-text-stroke:0]
@@ -199,6 +203,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
                     minHeight: `${height}px`,
                   }}
                   isPressable
+                  disableRipple
                   onPress={() => setActiveTargetIndex(activeTargetIndex === index ? null : index)}
                 >
                   <CardBody
@@ -212,9 +217,12 @@ export default function ChapterContent({chapter, metadata}: Props) {
                         className={`
                       relative 
                       [-webkit-text-stroke:0.2em_white]
+                      text-balance
+                      before:text-balance
                       before:content-[attr(data-content)]
                       before:absolute
                       before:inset-0 
+                      before:whitespace-pre-line
                       before:text-black 
                       before:[-webkit-text-fill-color:black] 
                       before:[-webkit-text-stroke:0]

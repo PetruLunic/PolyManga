@@ -9,8 +9,6 @@ import {auth} from "@/auth";
 import Chapter from "@/app/lib/models/Chapter";
 import {
   Content,
-  GenerationConfig,
-  FunctionDeclaration,
   Schema,
   Type,
   SafetySetting,
@@ -21,26 +19,32 @@ import {geminiModel} from "@/app/lib/AIModels";
 
 
 export async function saveMetadata (metadataContent: Box[], chapterId: string) {
-  await dbConnect();
   const session = await auth();
 
   if (!session || session.user.role !== "ADMIN" && session.user.role !== "MODERATOR") {
     throw new Error("Unauthorized access");
   }
 
+  if (metadataContent.length === 0) {
+    throw new Error("Empty metadata content");
+  }
+
+  await dbConnect();
+
   const rawContent: ContentItemRaw[] = metadataContent.map(item => ({
+    ...item,
     translatedTexts: Object.entries(item.translatedTexts).map(([language, text]) => ({
       language: language as LocaleEnum,
       text: text?.text?.toUpperCase() || "Empty text",
-      fontSize: text.fontSize ?? 26
+      fontSize: text.fontSize ?? 30
     })),
     coords: Object.entries(item.coords).map(([language, coord]) => ({
       language: language as LocaleEnum,
       coord: {
-        x1: coord.x1,
-        y1: coord.y1,
-        x2: coord.x2,
-        y2: coord.y2
+        x1: Math.floor(coord.x1),
+        y1: Math.floor(coord.y1),
+        x2: Math.floor(coord.x2),
+        y2: Math.floor(coord.y2)
       }
     }))
   }))
@@ -67,35 +71,40 @@ export async function saveMetadata (metadataContent: Box[], chapterId: string) {
 }
 
 const BUCKET_URL = process.env.NEXT_PUBLIC_BUCKET_URL;
-const API_URL = process.env.OCR_API_URL;
 const API_TOKEN = process.env.OCR_API_TOKEN;
 
-export async function scanOCR(id: string, language: LocaleType) {
+export async function scanOCR(ocrUrl: string, id: string, language: LocaleType) {
   if (!BUCKET_URL) throw new Error("No BUCKET_URL specified");
-  if (!API_URL) throw new Error("No API_URL specified");
   if (!API_TOKEN) throw new Error("No API_TOKEN specified");
 
+  await dbConnect();
   const chapter = await Chapter.findOne({id}).lean();
   if (!chapter) throw new Error(`Chapter ${id} not found`);
 
-  const images = chapter.versions.find(({language: lang}) => lang.toLowerCase() === language)?.images;
+  const images = chapter.images.find(({language: lang}) => lang.toLowerCase() === language)?.images;
   if (!images) throw new Error(`Images not found for language ${language} chapter ${id}`);
 
   const imagesUrls = images.map(img => BUCKET_URL + img.src);
 
-  const response = await fetch(API_URL + '/save-data', {
+  const body = JSON.stringify({
+    chapterId: id,
+    data: imagesUrls
+  });
+
+  const response = await fetch(ocrUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': API_TOKEN.toString()
     },
-    body: JSON.stringify({
-      chapterId: id,
-      data: imagesUrls
-    })
+    body
   })
 
-  const result = await response.json();
+  const data = await response.json();
+
+  if (!response.ok) throw new Error("Error at processing OCR: " + JSON.stringify(data));
+
+  return data;
 }
 
 function cleanAIJsonResponse(response: string): any | null {
@@ -213,7 +222,7 @@ export async function translateWithGemini(
   originalTexts: string[],
   sourceLang: LocaleType,
   targetLang: LocaleType
- ): Promise<string[]>  {
+ ): Promise<string[]> {
 
   const systemInstruction: Content = {
     parts: [{
@@ -230,19 +239,19 @@ export async function translateWithGemini(
 
   const userContent: Content = {
     role: "user", // Explicitly setting role is good practice
-    parts: [{ text: JSON.stringify(originalTexts) }], // Send the input array as a JSON string
+    parts: [{text: JSON.stringify(originalTexts)}], // Send the input array as a JSON string
   };
 
   const schema: Schema = {
     type: Type.ARRAY, // Expect an array
-    items: { type: Type.STRING } // ...of strings
+    items: {type: Type.STRING} // ...of strings
   };
 
   const safetySettings: SafetySetting[] = [
-    { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-    { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-    { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-    { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+    {category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE},
+    {category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE},
+    {category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE},
+    {category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE},
   ];
 
   const generationConfig: GenerateContentConfig = {
@@ -344,137 +353,4 @@ export async function translateWithGemini(
       throw new Error(`Gemini translation failed with an unknown error: ${String(error)}`);
     }
   }
-
-  // const prompt = [
-  //   {
-  //     "role": "system",
-  //     "content": `COMIC LOCALIZATION ENGINEER. Translate ${sourceLang}→${targetLang} text arrays sequentially following these rules:\n\n1. **Text Type Detection**:\n- Dialogue: Use conversational tone\n- Narrative: Formal register\n\n2. **Context Rules**:\n- Maintain character relationships from previous strings\n- Track plot progression between array entries\n- Preserve cliffhanger positioning\n\n3. **Format Enforcement**:\n- ALL CHARACTERS/WORDS TO UPPERCASE \n- Technical terms: [*TL Note] explanations\n- Genre adaptation (auto-detect from content)\n\n4. **Output Requirements**:\n- JSON array matching input order\n- No omitted entries\n\n5. **Validation**:\n- Verify sequential logic\n- Confirm cultural adaptation\n\nProcess strings as sequential comic panels with panel-to-panel continuity. **Gemini 2.5 Flash Settings**:\n- thinking_budget: LOW\n- escape_mode: SINGLE\n- json_format: RAW_STRING`
-  //   },
-  //   {
-  //     "role": "user",
-  //     "content": JSON.stringify(originalTexts)
-  //   }
-  // ]
-  //
-  // const response = await geminiModel.models.generateContent({
-  //   model: "gemini-2.5-flash-preview-04-17",
-  //   contents: JSON.stringify(prompt),
-  // });
-  //
-  // if (!response.text) throw new Error("No response got from the ai model");
-  //
-  // console.log(response.text);
-  //
-  // return cleanAIJsonResponse(response.text);
 }
-
-// async function translateGeminiChunk(
-//   texts: string[],
-//   sourceLang: LocaleType,
-//   targetLang: LocaleType
-// ): Promise<string[]> {
-//   if (!AI_API_KEY) throw new Error("No AI_API_KEY env variable found.");
-//
-//   const prompt = [
-//     {
-//       "role": "system",
-//       "content": `COMIC LOCALIZATION ENGINEER. Translate ${sourceLang}→${targetLang} text arrays sequentially following these rules:\n\n1. **Text Type Detection**:\n- Dialogue: Use conversational tone\n- Narrative: Formal register\n\n2. **Context Rules**:\n- Maintain character relationships from previous strings\n- Track plot progression between array entries\n- Preserve cliffhanger positioning\n\n3. **Format Enforcement**:\n- ALL CHARACTERS/WORDS TO UPPERCASE \n- Technical terms: [*TL Note] explanations\n- Genre adaptation (auto-detect from content)\n\n4. **Output Requirements**:\n- JSON array matching input order\n- No omitted entries\n\n5. **Validation**:\n- Verify sequential logic\n- Confirm cultural adaptation\n\nProcess strings as sequential comic panels with panel-to-panel continuity. **Gemini 2.5 Flash Settings**:\n- thinking_budget: LOW\n- escape_mode: SINGLE\n- json_format: RAW_STRING`
-//     },
-//     {
-//       "role": "user",
-//       "content": JSON.stringify(texts)
-//     }
-//   ]
-//
-//   const response = await geminiModel.models.generateContent({
-//     model: "gemini-2.5-flash-preview-04-17",
-//     contents: JSON.stringify(prompt),
-//   });
-//
-//   if (!response.text) throw new Error("No response got from the ai model");
-//
-//   console.log(response.text)
-//
-//   const cleanedResponse = cleanAIJsonResponse(response.text);
-//
-//   // Verify the response length matches the input length
-//   if (Array.isArray(cleanedResponse) && cleanedResponse.length === texts.length) {
-//     return cleanedResponse;
-//   } else {
-//     throw new Error('Translation response length mismatch');
-//   }
-// }
-
-
-// export async function translateStringArray(
-//   originalTexts: string[],
-//   sourceLang: LocaleType,
-//   targetLang: LocaleType,
-//   parallelRequests = 5
-// ): Promise<string[] | null> {
-//   // Calculate chunk size based on the number of parallel requests
-//   const chunkSize = Math.ceil(originalTexts.length / parallelRequests);
-//
-//   // Split the original array into the specified number of chunks
-//   const chunks: string[][] = [];
-//   for (let i = 0; i < originalTexts.length; i += chunkSize) {
-//     chunks.push(originalTexts.slice(i, i + chunkSize));
-//   }
-//
-//   try {
-//     // Process all chunks in parallel
-//     const translationPromises = chunks.map(chunk => translateChunk(chunk, sourceLang, targetLang));
-//
-//     // Wait for all translations to complete
-//     const translatedChunks = await Promise.all(translationPromises);
-//
-//     // Flatten the results back into a single array
-//     return translatedChunks.flat();
-//   } catch (error) {
-//     console.error('Translation failed:', error);
-//     return null;
-//   }
-// }
-//
-// async function translateChunk(
-//   texts: string[],
-//   sourceLang: LocaleType,
-//   targetLang: LocaleType
-// ): Promise<string[]> {
-//   if (!AI_URL) throw new Error("No AI_URL env variable found.");
-//   if (!AI_API_KEY) throw new Error("No AI_API_KEY env variable found.");
-//
-//   const response = await fetch(AI_URL, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       'Authorization': `Bearer ${AI_API_KEY}`
-//     },
-//     body: JSON.stringify({
-//       model: "deepseek-reasoner",
-//       messages: [
-//         {
-//           role: 'system',
-//           content: `You are a professional translator. Translate the following array of texts from ${sourceLang} to ${targetLang}. Return ONLY a JSON array of translated strings in the same order as the input.`
-//         },
-//         {
-//           role: 'user',
-//           content: JSON.stringify(texts)
-//         }
-//       ],
-//       temperature: 0.5 // Lower temperature for more consistent translations
-//     })
-//   });
-//
-//   if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
-//
-//   const data = await response.json();
-//   const cleanedResponse = cleanAIJsonResponse(data.choices[0].message.content);
-//
-//   // Verify the response length matches the input length
-//   if (Array.isArray(cleanedResponse) && cleanedResponse.length === texts.length) {
-//     return cleanedResponse;
-//   } else {
-//     throw new Error('Translation response length mismatch');
-//   }
-// }

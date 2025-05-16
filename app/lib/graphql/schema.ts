@@ -1,7 +1,6 @@
 import {ArgsType, Field, Float, ID, InputType, Int, ObjectType, registerEnumType} from "type-graphql";
 import {
   type BookmarkType,
-  type LikeableObject,
   ChapterLanguage,
   ComicsGenre,
   ComicsStatus,
@@ -134,6 +133,9 @@ export class Chapter {
 
   @Field(() => Chapter, {nullable: true})
   prevChapter?: Chapter;
+
+  @Field({nullable: true})
+  isAIProcessedAt?: string;
 
   @Field()
   createdAt: string;
@@ -400,6 +402,18 @@ export class Coords {
   language!: LocaleEnum
 }
 
+@ObjectType("ContentItemStyle")
+export class ContentItemStyle implements React.CSSProperties {
+  @Field(() => String, { nullable: true })
+  backgroundColor?: React.CSSProperties['backgroundColor'];
+
+  @Field(() => String, { nullable: true })
+  color?: React.CSSProperties['color'];
+
+  @Field(() => Int,{ nullable: true })
+  fontWeight?: React.CSSProperties['fontWeight'];
+}
+
 @ObjectType("ContentItemRaw")
 export class ContentItemRaw {
   @Field(() => [TranslatedText])
@@ -407,6 +421,9 @@ export class ContentItemRaw {
 
   @Field(() => [Coords])
   coords!: Coords[];
+
+  @Field(() => ContentItemStyle, {nullable: true})
+  style?: React.CSSProperties;
 }
 
 @ObjectType("ChapterMetadataRaw")

@@ -13,7 +13,17 @@ export const transformMetadata = (
   for (const item of metadata.content) {
     if (item.coords.length === 0 || item.translatedTexts.length === 0) continue;
 
+    // Removing all null union types from style
+    const style = item.style
+      ? Object.entries(item.style).reduce((acc, [key, value]) => ({
+        ...acc,
+        [key]: value ?? undefined
+      }), {})
+      : undefined;
+
     content.push({
+      ...item,
+      style,
       coords: item.coords.reduce((acc, coords) => {
         acc[coords.language.toLowerCase() as LocaleType] = coords.coord;
         return acc;

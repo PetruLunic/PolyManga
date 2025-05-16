@@ -8,13 +8,13 @@ import dbConnect from "@/app/lib/utils/dbConnect";
 import UserModel from "@/app/lib/models/User";
 import {ChangePasswordSchema, UserInfoSchema, UserPreferencesSchema} from "@/app/lib/utils/zodSchemas";
 import {USER_IMAGE_MAX_SIZE, USER_NO_IMAGE_SRC} from "@/app/lib/utils/constants";
-import {deleteImage, getAbsoluteAwsUrl, uploadImage} from "@/app/lib/utils/awsUtils";
+import {deleteImage, uploadImage} from "@/app/lib/utils/awsUtils";
 import {DeleteObjectCommandOutput} from "@aws-sdk/client-s3/dist-types/commands";
 import bcrypt from "bcryptjs";
 import {HydratedDocument} from "mongoose";
 import {User} from "@/app/lib/graphql/schema";
 import {FormType as PreferencesFormType} from "@/app/(pages)/[locale]/user/settings/_components/PreferencesSection";
-import {ChapterLanguage, LocaleEnum, LocaleType} from "@/app/types";
+import {LocaleEnum} from "@/app/types";
 import {getTranslations} from "next-intl/server";
 
 export async function modifyUserInfo(input: InfoFormType, formData?: FormData): Promise<{success: boolean, imageUrl?: string}> {

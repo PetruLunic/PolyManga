@@ -10,7 +10,7 @@ import {useAlert} from "@/app/lib/contexts/AlertContext";
 import {useSession} from "next-auth/react";
 import {useModal} from "@/app/lib/contexts/ModalsContext";
 import {GET_BOOKMARKED_CHAPTER} from "@/app/lib/graphql/queries";
-import {useLocale, useTranslations} from "next-intl";
+import {useTranslations} from "next-intl";
 import {Link} from "@/i18n/routing";
 import {useChapterLanguage} from "@/app/lib/hooks/useChapterLanguage";
 import {LanguageSelectItem} from "@/app/_components/ChapterListWrapper";

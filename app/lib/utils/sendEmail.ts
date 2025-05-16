@@ -1,7 +1,9 @@
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-  service: 'Gmail',
+  host: "smtp.yandex.ru",
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
@@ -14,5 +16,9 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
     to,
     subject,
     html,
+    headers: {
+      'Content-Type': 'text/html; charset=UTF-8',
+      'Date': new Date().toUTCString()
+    }
   });
 };
