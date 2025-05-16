@@ -71,6 +71,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
     const coordsLanguage = item.coords[imagesLanguage] ? imagesLanguage : Object.keys(item.coords)[0] as LocaleType;
 
     return {
+      ...item,
       translatedTexts: languages.reduce((acc, lang) => ({
       ...acc,
       [lang]: {
@@ -148,7 +149,8 @@ export default function ChapterContent({chapter, metadata}: Props) {
                   top: `${data.coords.y1 - METADATA_BOX_PADDING}px`,
                   width: `${width}px`,
                   minHeight: `${height}px`,
-                  maxWidth: `${screenWidth}px`
+                  maxWidth: `${screenWidth}px`,
+                  ...data.style
                 }}
                 onPress={() => {
                   if (imagesLanguage !== targetLang) return;
@@ -169,11 +171,13 @@ export default function ChapterContent({chapter, metadata}: Props) {
                       relative 
                       [-webkit-text-stroke:0.2em_white]
                       text-balance
+                      whitespace-pre-line
                       before:text-balance
+                      before:z-[60]
                       before:content-[attr(data-content)]
                       before:absolute
-                      before:inset-0 
                       before:whitespace-pre-line
+                      before:inset-0 
                       before:text-black 
                       before:[-webkit-text-fill-color:black] 
                       before:[-webkit-text-stroke:0]
@@ -201,6 +205,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
                     top: `${data.coords.y1 - METADATA_BOX_PADDING}px`,
                     width: `${width}px`,
                     minHeight: `${height}px`,
+                    ...data.style
                   }}
                   isPressable
                   disableRipple
@@ -218,11 +223,13 @@ export default function ChapterContent({chapter, metadata}: Props) {
                       relative 
                       [-webkit-text-stroke:0.2em_white]
                       text-balance
+                      whitespace-pre-line
                       before:text-balance
+                      before:z-[60]
                       before:content-[attr(data-content)]
                       before:absolute
-                      before:inset-0 
                       before:whitespace-pre-line
+                      before:inset-0 
                       before:text-black 
                       before:[-webkit-text-fill-color:black] 
                       before:[-webkit-text-stroke:0]
@@ -260,21 +267,6 @@ export default function ChapterContent({chapter, metadata}: Props) {
         nativeLanguages={chapter.languages.map(lang => lang.toLowerCase()) as LocaleType[]}
         languages={locales}
       />
-      {/*{(session.data?.user.role === "ADMIN" || session.data?.user.role === "MODERATOR")*/}
-      {/*  && <div className="fixed top-40 right-5 flex flex-col gap-3 max-w-40">*/}
-      {/*        <Button*/}
-      {/*          as={Link}*/}
-      {/*          href={path + "/edit"}*/}
-      {/*        >*/}
-      {/*            Edit chapter*/}
-      {/*        </Button>*/}
-      {/*        <Button*/}
-      {/*            as={Link}*/}
-      {/*            href={path + "/edit/metadata"}*/}
-      {/*        >*/}
-      {/*            Edit chapter metadata*/}
-      {/*        </Button>*/}
-      {/*    </div>}*/}
     </>
   )
 }
