@@ -26,10 +26,17 @@ export async function POST(req: Request) {
     if (result.error)
       return new Response("Invalid data", {status: 400});
 
+    const PROCESSED_LANGUAGE = "en";
+
     // Flattening and filtering empty texts
     const processedData = result.data
       .flat()
-      .filter(item => (item.translatedTexts[0] && item.translatedTexts[0].text));
+      .filter(item => (item.translatedTexts[0] && item.translatedTexts[0].text)) // Delete empty texts
+      .map(item => ({
+        ...item,
+        coords: item.coords[0].language = PROCESSED_LANGUAGE,
+        translatedTexts: item.translatedTexts[0].language = PROCESSED_LANGUAGE
+      })); // Rewrite miss typed languages to PROCESSED_LANGUAGE
 
     await dbConnect();
     const existingMetadata = await ChapterMetadataModel.findOne({chapterId});
