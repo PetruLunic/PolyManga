@@ -17,6 +17,7 @@ import {
   translateWithGemini
 } from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/actions";
 import {Box} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/_components/RedactorPage";
+import retryPromise from "@/app/lib/utils/retryPromise";
 
 interface Props extends Omit<ModalProps, "children"> {
   boxes: Box[],
@@ -50,7 +51,19 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
     try {
       setIsTranslating(prev => ({...prev, [targetLang]: "processing"}));
       const originalTexts: string[] = boxes.map(box => box.translatedTexts[sourceLang]?.text ?? "Empty box");
-      const translatedTexts = await translateWithGemini(originalTexts, sourceLang, targetLang);
+
+      // Try to translate 3 times
+      const response = await retryPromise(
+        () => translateWithGemini(originalTexts, sourceLang, targetLang),
+        3,
+        1000
+      );
+
+      const translatedTexts = response.data;
+      if (!translatedTexts) {
+        setIsTranslating(prev => ({...prev, [targetLang]: "error"}));
+        return;
+      }
 
       let newMetadata: Box[] = [];
       setBoxes(prev => {

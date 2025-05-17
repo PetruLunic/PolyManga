@@ -233,6 +233,8 @@ export async function translateWithGemini(
           *   Accurately translate technical terms, character names (keep original if no standard translation), and onomatopoeia (prioritize target language equivalents if they exist, otherwise keep original). Use [*TL Note: explanation*] for essential untranslatable cultural concepts or technical terms ONLY when absolutely necessary for understanding.
       4.  **Output Structure:** Respond ONLY with a valid JSON array containing the translated strings. CRITICAL: The output JSON array MUST contain exactly the same number of elements as the input JSON array (${originalTexts.length} elements). Do NOT skip, merge, or add elements.. Each element in the output array corresponds to the translated version of the element at the same index in the input array.
       5. **Repeating Strings:** CRITICAL: Don't remove the repeating strings, keep it, so the order of the strings remain intact.
+      6.  **Gender and Pluralization Accuracy:** Pay close attention to gendered language requirements in ${targetLang}, especially for pronouns, verb conjugations, and adjectives. English terms like "you" (singular/plural) or gender-neutral professions can be ambiguous. Use the narrative flow, character interactions, and contextual clues *between* consecutive strings in the input array to infer and accurately represent gender (e.g., for male or female speakers) and number. For languages such as Russian and Romanian, this accuracy is critical for dialogue and narration.
+      7.  **Handling Ambiguity:** If, after considering all context, gender remains genuinely ambiguous and ${targetLang} requires a gendered form, choose the most contextually plausible option. If no single option is clearly plausible, and if ${targetLang} has neutral linguistic forms, use those. Avoid defaulting to a single gender if context suggests variation or unresolved ambiguity.
       `
     }],
   };
@@ -244,7 +246,9 @@ export async function translateWithGemini(
 
   const schema: Schema = {
     type: Type.ARRAY, // Expect an array
-    items: {type: Type.STRING} // ...of strings
+    items: {type: Type.STRING}, // ...of strings
+    minItems: originalTexts.length.toString(),
+    maxItems: originalTexts.length.toString()
   };
 
   const safetySettings: SafetySetting[] = [
