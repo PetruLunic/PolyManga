@@ -2,6 +2,8 @@ import {headers} from "next/headers";
 import ChapterMetadataModel from "@/app/lib/models/ChapterMetadata";
 import {MetadataSchema} from "@/app/lib/utils/zodSchemas";
 import dbConnect from "@/app/lib/utils/dbConnect";
+import {ContentItemRaw} from "@/app/lib/graphql/schema";
+import {LocaleEnum} from "@/app/types";
 
 const OCR_API_KEY = process.env.OCR_API_TOKEN;
 
@@ -26,16 +28,22 @@ export async function POST(req: Request) {
     if (result.error)
       return new Response("Invalid data", {status: 400});
 
-    const PROCESSED_LANGUAGE = "en";
+    const PROCESSED_LANGUAGE = "en" as LocaleEnum;
 
     // Flattening and filtering empty texts
-    const processedData = result.data
+    const processedData: ContentItemRaw[] = result.data
       .flat()
       .filter(item => (item.translatedTexts[0] && item.translatedTexts[0].text)) // Delete empty texts
       .map(item => ({
         ...item,
-        coords: item.coords[0].language = PROCESSED_LANGUAGE,
-        translatedTexts: item.translatedTexts[0].language = PROCESSED_LANGUAGE
+        coords: [{
+          ...item.coords[0],
+          language: PROCESSED_LANGUAGE
+        }],
+        translatedTexts: [{
+          ...item.translatedTexts[0],
+          language: PROCESSED_LANGUAGE
+        }],
       })); // Rewrite miss typed languages to PROCESSED_LANGUAGE
 
     await dbConnect();
