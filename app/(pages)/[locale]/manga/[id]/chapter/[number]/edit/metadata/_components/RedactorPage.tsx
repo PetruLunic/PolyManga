@@ -372,6 +372,20 @@ export default function RedactorPage({chapter, metadata}: Props) {
     ])
   }
 
+  const handleAllBoxesStyleChange = useCallback((style: React.CSSProperties) => {
+    setBoxes((prevBoxes) =>
+      prevBoxes.map((box) =>
+        ({
+          ...box,
+          style: {
+            ...box.style,
+            ...style
+          }
+        })
+      )
+    )
+  }, [])
+
   const handleBoxStyleChange = useCallback((id: string, style: React.CSSProperties) => {
     setBoxes((prevBoxes) =>
       prevBoxes.map((box) =>
@@ -518,6 +532,12 @@ export default function RedactorPage({chapter, metadata}: Props) {
         </Button>
       </div>
       <div className="fixed left-5 bottom-20 flex flex-col gap-3 min-w-40">
+        <Button
+          size="sm"
+          onPress={() => handleAllBoxesStyleChange({fontWeight: "bolder"})}
+        >
+          Make all Bold
+        </Button>
         <Select
           label={`Change boxes sizes`}
           className="w-full"
