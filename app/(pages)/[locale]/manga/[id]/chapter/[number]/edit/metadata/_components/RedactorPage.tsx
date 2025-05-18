@@ -191,20 +191,12 @@ export default function RedactorPage({chapter, metadata}: Props) {
       event.preventDefault();
     }
 
-    const keyboardHandler = (event: KeyboardEvent) => {
-      if (event.altKey) {
-        setIsAllBoxesHidden(prev => !prev);
-      }
-    }
-
     document.addEventListener("mousedown", mouseHandler);
     document.addEventListener("contextmenu", contextHandler);
-    document.addEventListener("keydown", keyboardHandler);
 
     return () => {
       document.removeEventListener("mousedown", mouseHandler);
       document.removeEventListener("contextmenu", contextHandler);
-      document.removeEventListener("keydown", keyboardHandler);
     }
   }, []);
 

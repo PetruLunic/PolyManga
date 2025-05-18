@@ -156,11 +156,13 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
              </Button>
              <Button
                onPress={handleSelectMissingLanguages}
+               isDisabled={Object.values(isTranslating).includes("processing")}
              >
                Select missing
              </Button>
              <Button
               onPress={handleSelectAllLanguages}
+              isDisabled={Object.values(isTranslating).includes("processing")}
              >
                Select all
              </Button>

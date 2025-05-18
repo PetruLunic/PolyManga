@@ -56,7 +56,7 @@ export function ColorPickerButton({ onChange, value, children, ...props }: Props
         <input
           ref={inputRef}
           type="color"
-          value={value || '#000000'} // Native color input needs a valid hex value
+          value={value || '#ffffff'} // Native color input needs a valid hex value
           onChange={handleChange}
           style={visuallyHiddenStyle}
           aria-hidden="true" // Indicate it's hidden for assistive technologies (button is the control)

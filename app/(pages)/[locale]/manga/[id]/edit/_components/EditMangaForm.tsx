@@ -286,7 +286,7 @@ export default function EditMangaForm({manga}: Props) {
                 <Button
                   isIconOnly
                   color="danger"
-                  onClick={() => removeLanguageFields(index)}
+                  onPress={() => removeLanguageFields(index)}
                 >
                   ✕
                 </Button>

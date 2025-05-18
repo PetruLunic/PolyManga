@@ -35,7 +35,7 @@ export async function saveMetadata (metadataContent: Box[], chapterId: string) {
     ...item,
     translatedTexts: Object.entries(item.translatedTexts).map(([language, text]) => ({
       language: language as LocaleEnum,
-      text: text?.text?.toUpperCase() || "Empty text",
+      text: text?.text || "Empty text",
       fontSize: text.fontSize ?? 30
     })),
     coords: Object.entries(item.coords).map(([language, coord]) => ({
@@ -226,16 +226,28 @@ export async function translateWithGemini(
 
   const systemInstruction: Content = {
     parts: [{
-      text: `COMIC LOCALIZATION ENGINEER. Translate the provided JSON array of sequential comic panel texts from ${sourceLang} to ${targetLang}. Follow these rules precisely:
-      1.  **Sequential Context:** Maintain narrative flow, character relationships, and plot progression *between* consecutive strings in the input array. Treat the array as panels in order.
-      2.  **Tone Detection:** Adapt tone based on implicit cues (e.g., exclamation points for dialogue excitement, lack of quotes for narrative/thoughts). Use conversational tone for dialogue, formal for narration.
-      3.  **Formatting:**
-          *   Accurately translate technical terms, character names (keep original if no standard translation), and onomatopoeia (prioritize target language equivalents if they exist, otherwise keep original). Use [*TL Note: explanation*] for essential untranslatable cultural concepts or technical terms ONLY when absolutely necessary for understanding.
-      4.  **Output Structure:** Respond ONLY with a valid JSON array containing the translated strings. CRITICAL: The output JSON array MUST contain exactly the same number of elements as the input JSON array (${originalTexts.length} elements). Do NOT skip, merge, or add elements.. Each element in the output array corresponds to the translated version of the element at the same index in the input array.
-      5. **Repeating Strings:** CRITICAL: Don't remove the repeating strings, keep it, so the order of the strings remain intact.
-      6.  **Gender and Pluralization Accuracy:** Pay close attention to gendered language requirements in ${targetLang}, especially for pronouns, verb conjugations, and adjectives. English terms like "you" (singular/plural) or gender-neutral professions can be ambiguous. Use the narrative flow, character interactions, and contextual clues *between* consecutive strings in the input array to infer and accurately represent gender (e.g., for male or female speakers) and number. For languages such as Russian and Romanian, this accuracy is critical for dialogue and narration.
-      7.  **Handling Ambiguity:** If, after considering all context, gender remains genuinely ambiguous and ${targetLang} requires a gendered form, choose the most contextually plausible option. If no single option is clearly plausible, and if ${targetLang} has neutral linguistic forms, use those. Avoid defaulting to a single gender if context suggests variation or unresolved ambiguity.
-      `
+      text: `**COMIC LOCALIZATION ENGINEER.** Translate the provided JSON array of sequential comic panel texts from ${sourceLang} to ${targetLang}. The text strings within the JSON array may contain HTML formatting (e.g., <b>, <i>, <span style="...">, <img> tags with alt text). Follow these rules precisely:
+1. **Sequential Context:** Maintain narrative flow, character relationships, and plot progression *between* consecutive strings in the input array. Treat the array as panels in order.
+2. **Tone Detection:** Adapt tone based on implicit cues (e.g., exclamation points for dialogue excitement, lack of quotes for narrative/thoughts, HTML emphasis tags like <b> or <em>). Use conversational tone for dialogue, formal for narration unless HTML styling suggests otherwise.
+3. **Content and Formatting Translation:**
+    * **HTML Tag Preservation:** All HTML tags (e.g., <b>, <i>, <span>, <div>, <p>) and their attributes (e.g., class, style, href) MUST be preserved exactly as they appear in the source string. Do NOT translate tag names or attribute names.
+    * **Textual Content Translation:** Translate ONLY the textual content enclosed within HTML tags and any plain text outside of tags.
+    * **Translatable Attributes:** If an HTML attribute itself contains translatable user-facing text (e.g., alt attribute in <img> tags, title attributes), translate the *value* of that attribute. For example, alt="A red car" would become alt="Una macchina rossa" if translating to Italian.
+    * **Technical Terms & Names:** Accurately translate technical terms. Keep character names original if no standard localized translation exists.
+    * **Onomatopoeia:** Prioritize target language equivalents if they exist. If not, keep the original onomatopoeia. You may use [\*TL Note: explanation for onomatopoeia*] if a direct equivalent is missing but the sound is crucial and needs cultural context.
+    * **TL Notes:** Use [\*TL Note: explanation*] for essential untranslatable cultural concepts or technical terms ONLY when absolutely necessary for understanding and they cannot be gracefully integrated or explained through the translation itself.
+4. **Output Structure:** Respond ONLY with a valid JSON array containing the translated strings.
+    * **CRITICAL:** The output JSON array MUST contain exactly the same number of elements as the input JSON array (${originalTexts.length} elements).
+    * Do NOT skip, merge, or add elements. Each element in the output array corresponds to the translated version of the element at the same index in the input array.
+    * The HTML structure within each translated string must mirror the HTML structure of its corresponding source string.
+5. **Repeating Strings:** CRITICAL: Do not remove repeating strings; keep them so the order and count of the strings remain intact.
+6. **Gender and Pluralization Accuracy:** Pay close attention to gendered language requirements in ${targetLang}, especially for pronouns, verb conjugations, and adjectives. English terms like "you" (singular/plural) or gender-neutral professions can be ambiguous. Use the narrative flow, character interactions, and contextual clues *between* consecutive strings in the input array to infer and accurately represent gender (e.g., for male or female speakers) and number. For languages such as Russian and Romanian, this accuracy is critical for dialogue and narration.
+7. **Handling Ambiguity:** If, after considering all context, gender remains genuinely ambiguous and ${targetLang} requires a gendered form, choose the most contextually plausible option. If no single option is clearly plausible, and if ${targetLang} has neutral linguistic forms, use those. Avoid defaulting to a single gender if context suggests variation or unresolved ambiguity.
+**Example of HTML Handling:**
+* **Input String (English):** "<p>He said: <b>\\"It's <i>urgent!</i>\\"</b></p>"
+* **Output String (Example Target: Spanish):** "<p>Él dijo: <b>\\"¡Es <i>urgente!</i>\\"</b></p>"
+**Source Language:** ${sourceLang}
+**Target Language:** ${targetLang}`
     }],
   };
 

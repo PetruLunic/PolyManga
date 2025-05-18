@@ -76,7 +76,7 @@ export const ComicsStatsSchema = z.object({
 
 export const MangaSchema = z.object({
   titles: z.array(z.object({
-      value: z.string().min(1).max(50),
+      value: z.string().min(1).max(200),
       language: z.string()
   })),
   descriptions: z.array(z.object({

@@ -21,12 +21,12 @@ export const ChapterMetadataSchema = new Schema<ChapterMetadataRaw>({
       backgroundColor: {
         type: String
       },
-      color: {
+      textAlign: {
         type: String
       },
-      fontWeight: {
-        type: Number
-      },
+      borderRadius: {
+        type: String
+      }
     },
     translatedTexts: [{
       language: {

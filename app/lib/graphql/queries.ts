@@ -135,7 +135,9 @@ export const GET_CHAPTER = gql(`
       metadata {
         content {
           style {
-            backgroundColor
+            backgroundColor,
+            borderRadius,
+            textAlign
           },
           translatedTexts {
             language,

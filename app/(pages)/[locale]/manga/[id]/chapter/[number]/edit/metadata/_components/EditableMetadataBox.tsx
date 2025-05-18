@@ -1,15 +1,23 @@
 import { Box } from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/_components/RedactorPage";
 import { Button, Card, CardBody, Select, SelectItem } from "@heroui/react";
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { LocaleType } from "@/app/types";
 import { locales } from "@/i18n/routing";
 import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
-import { Textarea } from "@heroui/input";
-import wildWords from "@/app/lib/fonts/WildWords";
 import useDebounce from "@/app/lib/hooks/useDebounce";
 import {ColorPickerButton} from "@/app/_components/ColorPickerButton";
+import ChapterMetadataText from "@/app/_components/ChapterMetadataText";
+import TextEditor from "@/app/_components/TextEditor";
+import { TbBackground } from "react-icons/tb";
+import {IoColorPalette} from "react-icons/io5";
+import hexToRgb from "@/app/lib/utils/hexToRgb";
+import {FaAlignCenter, FaAlignLeft, FaAlignRight} from "react-icons/fa";
+import invertColor from "@/app/lib/utils/invertColor";
 
-const FONT_SIZES = Array.from({ length: 30 }, (_, index) => 10 + index * 2);
+const FONT_SIZES = Array.from({ length: 50 }, (_, index) => 10 + index * 2);
+const OPACITY_VALUES = Array.from({ length: 11 }, (_, index) => index / 10);
+const RADIUS_VALUES = Array.from({ length: 20 }, (_, index) => index + "em");
+type SettingTab = "background" | "text";
 
 interface Props {
   box: Box;
@@ -47,7 +55,9 @@ function EditableMetadataBox({
   const coords = box.coords[imagesLanguage] ?? box.coords[Object.keys(box.coords)[0] as LocaleType];
   const canvasRef = useRef<HTMLCanvasElement>(null); // Ref for the canvas
   const [boxStyle, setBoxStyle] = useState<React.CSSProperties>();
+  const [activeTab, setActiveTab] = useState<SettingTab | null>(null);
   const debouncedBoxStyle = useDebounce(boxStyle, 200);
+  const opacity = boxStyle?.backgroundColor?.split(",").at(-1)?.replace(")", "");
 
   useEffect(() => {
     if (!debouncedBoxStyle) return;
@@ -351,10 +361,15 @@ function EditableMetadataBox({
     return true;
   };
 
+  const handleSettingTabPress = (tab: SettingTab) => () => {
+    if (tab === activeTab) {
+      setActiveTab(null);
+    } else {
+      setActiveTab(tab);
+    }
+  }
 
   if (!coords) return null;
-
-  console.log(JSON.stringify(box.style));
 
   return (
     <>
@@ -373,147 +388,240 @@ function EditableMetadataBox({
         data-id={box.id} // Pass the ID as a custom attribute for identification
       >
         <Card
-          className="relative light min-w-full min-h-full overflow-visible rounded-[10em] shadow-none"
+          className="relative light min-w-full min-h-full overflow-visible rounded-[10em] shadow-none text-center"
           style={box.style}
           data-id={box.id}
         >
           <CardBody
-            className="h-full items-center justify-center"
+            style={{textAlign: 'inherit'}}
+            className="h-full items-center justify-center overflow-visible"
           >
             {isEditing ? (
-              <Textarea
-                isClearable
+              <TextEditor
                 value={text}
                 onValueChange={setText}
+                className="bg-white h-full w-full rounded-3xl"
               />
             ) : (
-              <div
-                className={`relative text-center ${wildWords.className}`}
-                style={{
-                  fontSize: box.translatedTexts[language]?.fontSize ?? 32,
-                  lineHeight: 1.25,
-                }}
-              >
-                <div
-                  className={`
-                  relative 
-                  [-webkit-text-stroke:0.2em_white]
-                  z-[60]
-                  text-balance
-                  whitespace-pre-line
-                  before:text-balance
-                  before:z-[60]
-                  before:content-[attr(data-content)]
-                  before:absolute
-                  before:whitespace-pre-line
-                  before:inset-0 
-                  before:text-black 
-                  before:[-webkit-text-fill-color:black] 
-                  before:[-webkit-text-stroke:0]
-                  `}
-                  data-content={box.translatedTexts[language]?.text}
-                >
-                  {box.translatedTexts[language]?.text}
-                </div>
-              </div>
+              <ChapterMetadataText value={box.translatedTexts[language]} />
             )}
           </CardBody>
         </Card>
-        <div className="absolute right-[-10px] -translate-y-full translate-x-full flex flex-col gap-1 min-w-28 opacity-90">
-          <ColorPickerButton
-            size="sm"
-            value={box.style?.backgroundColor}
-            onChange={value => setBoxStyle(prev => ({
-              ...prev,
-              backgroundColor: value
-            }))}>
-            Pick Color
-          </ColorPickerButton>
-          <Button
-            onPress={() => {
-              onSave(box.id, language, text.toUpperCase() || "Empty");
-            }}
-            size="sm"
-          >
-            Upper Case
-          </Button>
-          <Select
-            selectedKeys={[language]}
-            disallowEmptySelection
-            label="Language"
-            size="sm"
-            onSelectionChange={(keys) => {
-              setLanguage((keys.currentKey ?? "en") as LocaleType);
-            }}
-          >
-            {locales.map((lang) => (
-              <SelectItem key={lang}>{lang}</SelectItem>
-            ))}
-          </Select>
-          <Select
-            selectedKeys={fontSize ? [fontSize.toString()] : ["32"]}
-            disallowEmptySelection
-            label={`All font size`}
-            size="sm"
-            onSelectionChange={(keys) => {
-              handleFontSizeChange(box.id, Object.keys(box.translatedTexts) as LocaleType[], Number.parseInt(keys.currentKey ?? "32"));
-            }}
-          >
-            {FONT_SIZES.map((number) => (
-              <SelectItem key={number}>{number.toString()}</SelectItem>
-            ))}
-          </Select>
-          <Select
-            selectedKeys={fontSize ? [fontSize.toString()] : ["32"]}
-            disallowEmptySelection
-            label={`${language} font size`}
-            size="sm"
-            onSelectionChange={(keys) => {
-              handleFontSizeChange(box.id, [language], Number.parseInt(keys.currentKey ?? "32"));
-            }}
-          >
-            {FONT_SIZES.map((number) => (
-              <SelectItem key={number}>{number.toString()}</SelectItem>
-            ))}
-          </Select>
-          {!isEditing ? (
+        <div className="absolute right-[-10px] -translate-y-full translate-x-full flex gap-2 opacity-90">
+          <div className="flex flex-col gap-1 min-w-36 max-w-44">
             <Button
+              startContent={<TbBackground />}
               size="sm"
-              onPress={() => setIsEditing(true)}
+              color={activeTab === "background" ? "primary" : "default"}
+              onPress={handleSettingTabPress("background")}
             >
-              Edit
+              Background
             </Button>
-          ) : (
-            <>
+            <div className="flex justify-between">
               <Button
-                color="success"
+                isIconOnly
                 onPress={() => {
-                  setIsEditing(false);
-                  onSave(box.id, language, text || "Empty");
+                  setBoxStyle(prev => ({
+                    ...prev,
+                    textAlign: "left"
+                  }))
                 }}
-                size="sm"
               >
-                Save
+                <FaAlignLeft />
               </Button>
               <Button
-                color="danger"
+                isIconOnly
                 onPress={() => {
-                  setIsEditing(false);
-                  setText(box.translatedTexts[language]?.text ?? "");
+                  setBoxStyle(prev => ({
+                    ...prev,
+                    textAlign: "center"
+                  }))
                 }}
-                size="sm"
               >
-                Cancel
+                <FaAlignCenter />
               </Button>
-            </>
-          )}
-          <Button
-            color="danger"
-            onPress={() => onDelete(box.id)}
-            size="sm"
-          >
-            Delete
-          </Button>
+              <Button
+                isIconOnly
+                onPress={() => {
+                  setBoxStyle(prev => ({
+                    ...prev,
+                    textAlign: "right"
+                  }))
+                }}
+              >
+                <FaAlignRight />
+              </Button>
+            </div>
+            <Select
+              selectedKeys={[language]}
+              disallowEmptySelection
+              label="Language"
+              size="sm"
+              onSelectionChange={(keys) => {
+                setLanguage((keys.currentKey ?? "en") as LocaleType);
+              }}
+            >
+              {locales.map((lang) => (
+                <SelectItem key={lang}>{lang}</SelectItem>
+              ))}
+            </Select>
+            <div className="flex gap-1">
+              <Select
+                selectedKeys={fontSize ? [fontSize.toString()] : ["32"]}
+                disallowEmptySelection
+                label={`all`}
+                size="sm"
+                onSelectionChange={(keys) => {
+                  handleFontSizeChange(box.id, Object.keys(box.translatedTexts) as LocaleType[], Number.parseInt(keys.currentKey ?? "32"));
+                }}
+              >
+                {FONT_SIZES.map((number) => (
+                  <SelectItem key={number}>{number.toString()}</SelectItem>
+                ))}
+              </Select>
+              <Select
+                selectedKeys={fontSize ? [fontSize.toString()] : ["32"]}
+                disallowEmptySelection
+                label={`${language}`}
+                size="sm"
+                onSelectionChange={(keys) => {
+                  handleFontSizeChange(box.id, [language], Number.parseInt(keys.currentKey ?? "32"));
+                }}
+              >
+                {FONT_SIZES.map((number) => (
+                  <SelectItem key={number}>{number.toString()}</SelectItem>
+                ))}
+              </Select>
+            </div>
+            {!isEditing ? (
+              <Button
+                size="sm"
+                onPress={() => setIsEditing(true)}
+              >
+                Edit
+              </Button>
+            ) : (
+              <>
+                <Button
+                  color="success"
+                  onPress={() => {
+                    setIsEditing(false);
+                    onSave(box.id, language, text || "Empty");
+                  }}
+                  size="sm"
+                >
+                  Save
+                </Button>
+                <Button
+                  color="danger"
+                  onPress={() => {
+                    setIsEditing(false);
+                    setText(box.translatedTexts[language]?.text ?? "");
+                  }}
+                  size="sm"
+                >
+                  Cancel
+                </Button>
+              </>
+            )}
+            <Button
+              color="danger"
+              onPress={() => onDelete(box.id)}
+              size="sm"
+            >
+              Delete
+            </Button>
+          </div>
+          {/* ------- Setting tabs --------*/}
+          {activeTab === "background" && <div className="flex flex-col gap-1 min-w-36">
+            <ColorPickerButton
+              startContent={<IoColorPalette />}
+              size="sm"
+              value={box.style?.backgroundColor}
+              onChange={value => setBoxStyle(prev => ({
+                ...prev,
+                backgroundColor: value
+              }))}>
+              Pick Color
+            </ColorPickerButton>
+              <Select
+                  selectedKeys={opacity ? [opacity] : ["1"]}
+                  disallowEmptySelection
+                  label="Opacity"
+                  size="sm"
+                  onSelectionChange={(keys) => {
+                    const key = keys.currentKey;
+                    if (!key) return;
+
+                    const prev = box.style;
+                    setBoxStyle(() => {
+                      // If has color then append the opacity else to create new white color with opacity
+                      if (prev?.backgroundColor) {
+                        const rgbColor = hexToRgb(prev?.backgroundColor);
+
+                        if (!rgbColor) {
+                          if (opacity) { // replace opacity
+                            let newColor = prev.backgroundColor.split(",");
+                            newColor.pop();
+
+                            return {
+                              ...prev,
+                              backgroundColor: newColor.concat(`${key})`).join(",")
+                            }
+                          }
+
+                          return {
+                            ...prev,
+                            backgroundColor: prev.backgroundColor.replace(")", "").concat(`,${key})`)
+                          }
+                        }
+
+                        return {
+                          ...prev,
+                          backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},${key})`
+                        }
+                      } else {
+                        return {
+                          ...prev,
+                          backgroundColor: `rgba(255,255,255,${key})`
+                        }
+                      }
+                    })
+                  }}
+              >
+                {OPACITY_VALUES.map((number) => (
+                  <SelectItem key={number}>{number.toString()}</SelectItem>
+                ))}
+              </Select>
+              <Select
+                  selectedKeys={box.style?.borderRadius ? [box.style?.borderRadius.toString()] : ["10em"]}
+                  disallowEmptySelection
+                  label={`Radius`}
+                  size="sm"
+                  onSelectionChange={(keys) => {
+                    const key = keys.currentKey;
+                    if (!key) return;
+
+                    setBoxStyle(prev => ({
+                      ...prev,
+                      borderRadius: key
+                    }))
+                  }}
+              >
+                {RADIUS_VALUES.map((number) => (
+                  <SelectItem key={number}>{number.toString()}</SelectItem>
+                ))}
+              </Select>
+              <Button
+                  startContent={<IoColorPalette />}
+                  size="sm"
+                  onPress={() => setBoxStyle(prev => ({
+                    ...prev,
+                    backgroundColor: invertColor(box.style?.backgroundColor ?? "rgb(255,255,255)")
+                  }))}>
+                  Inverse Color
+              </Button>
+          </div>}
         </div>
       </Rnd>
     </>

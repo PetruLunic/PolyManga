@@ -7,7 +7,7 @@ interface Props{
   params: Promise<{id: string}>
 }
 
-export const revalidate = 10;
+export const dynamic = "force-dynamic";
 
 export default async function Page({params}: Props) {
   const {id} = await params;

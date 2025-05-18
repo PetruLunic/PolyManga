@@ -408,10 +408,10 @@ export class ContentItemStyle implements React.CSSProperties {
   backgroundColor?: React.CSSProperties['backgroundColor'];
 
   @Field(() => String, { nullable: true })
-  color?: React.CSSProperties['color'];
+  borderRadius?: React.CSSProperties['borderRadius'];
 
-  @Field(() => Int,{ nullable: true })
-  fontWeight?: React.CSSProperties['fontWeight'];
+  @Field(() => String, { nullable: true })
+  textAlign?: React.CSSProperties['textAlign'];
 }
 
 @ObjectType("ContentItemRaw")

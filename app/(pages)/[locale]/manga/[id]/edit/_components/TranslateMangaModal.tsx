@@ -27,6 +27,10 @@ export default function TranslateMangaModal({onOpenChange, isOpen, manga, setVal
   const [sourceLang, setSourceLang] = useState<LocaleType>(locales[0]);
   const [targetLangs, setTargetLangs] = useState<LocaleType[]>([]);
 
+  function handleSelectMissingLanguages() {
+    setTargetLangs(locales.filter(locale => !manga.titles.some(title => title.language.toLowerCase() === locale)));
+  }
+
   async function translate() {
     try {
       setIsTranslating(true);
@@ -126,6 +130,12 @@ export default function TranslateMangaModal({onOpenChange, isOpen, manga, setVal
                 color="danger"
               >
                 Close
+              </Button>
+              <Button
+                onPress={handleSelectMissingLanguages}
+                isDisabled={isTranslating}
+              >
+                Select missing
               </Button>
               <Button
                 color="primary"

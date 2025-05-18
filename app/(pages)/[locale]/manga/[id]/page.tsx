@@ -160,7 +160,7 @@ export default async function Page({params}: Props) {
                 {formatNumber(manga?.stats?.bookmarks ?? 0)}
               </Button>
             </div>
-            <p className="text-default-600 text-sm">
+            <p className="text-default-600 text-sm whitespace-pre-line">
               {manga.description}
             </p>
             <div className="flex flex-col gap-3">

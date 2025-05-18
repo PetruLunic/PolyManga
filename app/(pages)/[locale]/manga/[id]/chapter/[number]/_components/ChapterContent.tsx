@@ -13,8 +13,8 @@ import {IoLanguage} from "react-icons/io5";
 import {TbLanguageOff} from "react-icons/tb";
 import {motion} from "framer-motion";
 import {useChapterLanguage} from "@/app/lib/hooks/useChapterLanguage";
-import wildWords from "@/app/lib/fonts/WildWords";
 import {ChapterImage} from "@/app/lib/graphql/schema";
+import ChapterMetadataText from "@/app/_components/ChapterMetadataText";
 
 const METADATA_BOX_PADDING = 0;
 const BUCKET_URL = process.env.NEXT_PUBLIC_BUCKET_URL;
@@ -142,7 +142,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
             return (
               <Card
                 key={index}
-                className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em]"
+                className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em] text-center"
                 style={{
                   opacity: showAllTargetLang ? hiddenSourceIndex === index ? 1 : 0 : hiddenSourceIndex === index ? 0 : 1,
                   left: `${data.coords.x1 - METADATA_BOX_PADDING}px`,
@@ -160,32 +160,10 @@ export default function ChapterContent({chapter, metadata}: Props) {
                 isPressable={imagesLanguage === targetLang}
               >
                 <CardBody
-                  className={`p-1 sm:p-2 text-center justify-center ${wildWords.className}`}
+                  style={{textAlign: 'inherit'}}
+                  className="h-full items-center justify-center overflow-visible"
                 >
-                  <div className={`text-center ${wildWords.className}`} style={{
-                    fontSize: data.translatedTexts[sourceLang]?.fontSize ?? 28,
-                    lineHeight: 1.25
-                  }}>
-                    <div
-                      className={`
-                      relative 
-                      [-webkit-text-stroke:0.2em_white]
-                      text-balance
-                      whitespace-pre-line
-                      before:text-balance
-                      before:z-[60]
-                      before:content-[attr(data-content)]
-                      before:absolute
-                      before:whitespace-pre-line
-                      before:inset-0 
-                      before:text-black 
-                      before:[-webkit-text-fill-color:black] 
-                      before:[-webkit-text-stroke:0]
-                      `}
-                      data-content={data.translatedTexts[sourceLang]?.text}>
-                      {data.translatedTexts[sourceLang]?.text}
-                    </div>
-                  </div>
+                  <ChapterMetadataText value={data.translatedTexts[sourceLang]}/>
                 </CardBody>
               </Card>
             )
@@ -198,7 +176,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
               return (
                 <Card
                   key={index}
-                  className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em]"
+                  className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em] text-center"
                   style={{
                     opacity: showAllTargetLang ? activeTargetIndex === index ? 0 : 1 : activeTargetIndex === index ? 1 : 0,
                     left: `${data.coords.x1 - METADATA_BOX_PADDING}px`,
@@ -212,32 +190,10 @@ export default function ChapterContent({chapter, metadata}: Props) {
                   onPress={() => setActiveTargetIndex(activeTargetIndex === index ? null : index)}
                 >
                   <CardBody
-                    className={`p-1 sm:p-2 text-center justify-center ${wildWords.className}`}
+                    style={{textAlign: 'inherit'}}
+                    className="h-full items-center justify-center overflow-visible"
                   >
-                    <div className={`text-center ${wildWords.className}`} style={{
-                      fontSize: data.translatedTexts[targetLang]?.fontSize ?? 28,
-                      lineHeight: 1.25
-                    }}>
-                      <div
-                        className={`
-                      relative 
-                      [-webkit-text-stroke:0.2em_white]
-                      text-balance
-                      whitespace-pre-line
-                      before:text-balance
-                      before:z-[60]
-                      before:content-[attr(data-content)]
-                      before:absolute
-                      before:whitespace-pre-line
-                      before:inset-0 
-                      before:text-black 
-                      before:[-webkit-text-fill-color:black] 
-                      before:[-webkit-text-stroke:0]
-                      `}
-                        data-content={data.translatedTexts[targetLang]?.text}>
-                        {data.translatedTexts[targetLang]?.text}
-                      </div>
-                    </div>
+                    <ChapterMetadataText value={data.translatedTexts[targetLang]}/>
                   </CardBody>
                 </Card>
               )
