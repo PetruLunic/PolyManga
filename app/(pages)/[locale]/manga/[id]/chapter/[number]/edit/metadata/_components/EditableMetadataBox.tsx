@@ -11,8 +11,9 @@ import TextEditor from "@/app/_components/TextEditor";
 import { TbBackground } from "react-icons/tb";
 import {IoColorPalette} from "react-icons/io5";
 import hexToRgb from "@/app/lib/utils/hexToRgb";
-import {FaAlignCenter, FaAlignLeft, FaAlignRight} from "react-icons/fa";
+import {FaAlignCenter, FaAlignLeft, FaAlignRight, FaBold, FaItalic} from "react-icons/fa";
 import invertColor from "@/app/lib/utils/invertColor";
+import {VscColorMode} from "react-icons/vsc";
 
 const FONT_SIZES = Array.from({ length: 50 }, (_, index) => 10 + index * 2);
 const OPACITY_VALUES = Array.from({ length: 11 }, (_, index) => index / 10);
@@ -377,6 +378,9 @@ function EditableMetadataBox({
       <Rnd
         bounds="parent"
         className="z-50 border-1 border-black border-solid"
+        style={{
+          borderColor: invertColor(box.style?.backgroundColor ?? "#fff")
+        }}
         size={{
           width: coords.x2 - coords.x1,
           height: coords.y2 - coords.y1,
@@ -388,7 +392,7 @@ function EditableMetadataBox({
         data-id={box.id} // Pass the ID as a custom attribute for identification
       >
         <Card
-          className="relative light min-w-full min-h-full overflow-visible rounded-[10em] shadow-none text-center"
+          className="relative light min-w-full min-h-full overflow-visible rounded-[10em] shadow-none text-center uppercase"
           style={box.style}
           data-id={box.id}
         >
@@ -410,7 +414,7 @@ function EditableMetadataBox({
         <div className="absolute right-[-10px] -translate-y-full translate-x-full flex gap-2 opacity-90">
           <div className="flex flex-col gap-1 min-w-36 max-w-44">
             <Button
-              startContent={<TbBackground />}
+              startContent={<TbBackground/>}
               size="sm"
               color={activeTab === "background" ? "primary" : "default"}
               onPress={handleSettingTabPress("background")}
@@ -427,7 +431,7 @@ function EditableMetadataBox({
                   }))
                 }}
               >
-                <FaAlignLeft />
+                <FaAlignLeft/>
               </Button>
               <Button
                 isIconOnly
@@ -438,7 +442,7 @@ function EditableMetadataBox({
                   }))
                 }}
               >
-                <FaAlignCenter />
+                <FaAlignCenter/>
               </Button>
               <Button
                 isIconOnly
@@ -449,8 +453,46 @@ function EditableMetadataBox({
                   }))
                 }}
               >
-                <FaAlignRight />
+                <FaAlignRight/>
               </Button>
+            </div>
+            <div className="flex justify-between">
+              <Button
+                isIconOnly
+                color={box.style?.fontWeight === "bolder" ? "primary" : "default"}
+                onPress={() => {
+                  setBoxStyle(prev => ({
+                    ...prev,
+                    fontWeight: box.style?.fontWeight === "bolder" ? "normal" : "bolder"
+                  }))
+                }}
+              >
+                <FaBold />
+              </Button>
+              <Button
+                isIconOnly
+                color={box.style?.fontStyle === "italic" ? "primary" : "default"}
+                onPress={() => {
+                  setBoxStyle(prev => ({
+                    ...prev,
+                    fontStyle: box.style?.fontStyle === "italic" ? "normal" : "italic"
+                  }))
+                }}
+              >
+                <FaItalic />
+              </Button>
+              <ColorPickerButton
+                isIconOnly
+                value={box.style?.color}
+                onChange={(value) => {
+                  setBoxStyle(prev => ({
+                    ...prev,
+                    color: value
+                  }))
+                }}
+              >
+                <IoColorPalette/>
+              </ColorPickerButton>
             </div>
             <Select
               selectedKeys={[language]}
@@ -534,16 +576,16 @@ function EditableMetadataBox({
           </div>
           {/* ------- Setting tabs --------*/}
           {activeTab === "background" && <div className="flex flex-col gap-1 min-w-36">
-            <ColorPickerButton
-              startContent={<IoColorPalette />}
-              size="sm"
-              value={box.style?.backgroundColor}
-              onChange={value => setBoxStyle(prev => ({
-                ...prev,
-                backgroundColor: value
-              }))}>
-              Pick Color
-            </ColorPickerButton>
+              <ColorPickerButton
+                  startContent={<IoColorPalette/>}
+                  size="sm"
+                  value={box.style?.backgroundColor}
+                  onChange={value => setBoxStyle(prev => ({
+                    ...prev,
+                    backgroundColor: value
+                  }))}>
+                  Pick Color
+              </ColorPickerButton>
               <Select
                   selectedKeys={opacity ? [opacity] : ["1"]}
                   disallowEmptySelection
@@ -613,7 +655,7 @@ function EditableMetadataBox({
                 ))}
               </Select>
               <Button
-                  startContent={<IoColorPalette />}
+                  startContent={<VscColorMode />}
                   size="sm"
                   onPress={() => setBoxStyle(prev => ({
                     ...prev,

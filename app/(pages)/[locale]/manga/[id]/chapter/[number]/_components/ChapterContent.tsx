@@ -142,7 +142,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
             return (
               <Card
                 key={index}
-                className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em] text-center"
+                className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em] text-center uppercase"
                 style={{
                   opacity: showAllTargetLang ? hiddenSourceIndex === index ? 1 : 0 : hiddenSourceIndex === index ? 0 : 1,
                   left: `${data.coords.x1 - METADATA_BOX_PADDING}px`,
@@ -176,7 +176,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
               return (
                 <Card
                   key={index}
-                  className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em] text-center"
+                  className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em] text-center uppercase"
                   style={{
                     opacity: showAllTargetLang ? activeTargetIndex === index ? 0 : 1 : activeTargetIndex === index ? 1 : 0,
                     left: `${data.coords.x1 - METADATA_BOX_PADDING}px`,

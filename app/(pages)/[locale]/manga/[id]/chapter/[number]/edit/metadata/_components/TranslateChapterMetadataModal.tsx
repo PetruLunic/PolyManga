@@ -65,6 +65,13 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
         return;
       }
 
+      // Convert font sizes by the length of the strings
+      const targetLangFontSizes = boxes.map((box, index) => {
+        const sourceLangText = box.translatedTexts[sourceLang];
+        if (!sourceLangText || !sourceLangText.fontSize) return 30;
+        return Math.floor((sourceLangText.text.length / translatedTexts[index].length) * sourceLangText.fontSize);
+      })
+
       let newMetadata: Box[] = [];
       setBoxes(prev => {
         newMetadata = prev.map((box, index) => ({
@@ -73,7 +80,7 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
             ...box.translatedTexts,
             [targetLang]: {
               text: translatedTexts[index],
-              fontSize: box.translatedTexts[sourceLang]?.fontSize ?? 34
+              fontSize: targetLangFontSizes[index]
             }
           }
         }))
