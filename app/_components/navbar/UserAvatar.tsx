@@ -4,10 +4,11 @@ import {Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownT
 import {signOut, useSession} from "next-auth/react";
 import {IoBookmarks, IoSettingsSharp} from "react-icons/io5";
 import {CiLogout} from "react-icons/ci";
-import {MdHistory} from "react-icons/md";
+import {MdAutorenew, MdHistory} from "react-icons/md";
 import {useTranslations} from "next-intl";
 import {Link} from "@/i18n/routing";
 import {USER_NO_IMAGE_SRC} from "@/app/lib/utils/constants";
+import {FaPlus} from "react-icons/fa";
 
 export default function UserAvatar() {
   const session = useSession();
@@ -32,36 +33,60 @@ export default function UserAvatar() {
          />
        </DropdownTrigger>
        <DropdownMenu aria-label="Profile Actions" variant="flat">
-         <DropdownItem
-           key="profile"
-           className="h-14 gap-2"
-         >
-           <p className="font-semibold">{session.data.user?.name}</p>
-         </DropdownItem>
-         <DropdownItem
+         <DropdownSection showDivider>
+           <DropdownItem
+             key="profile"
+             className="h-14 gap-2"
+           >
+             <p className="font-semibold">{session.data.user?.name}</p>
+           </DropdownItem>
+           <DropdownItem
              startContent={<IoBookmarks />}
              key="bookmarks"
              as={Link}
              href={`/user/bookmarks`}
-         >
-           {t("bookmarks")}
-         </DropdownItem>
-         <DropdownItem
+           >
+             {t("bookmarks")}
+           </DropdownItem>
+           <DropdownItem
              startContent={<MdHistory />}
              key="history"
              as={Link}
              href={`/user/history`}
-         >
-           {t("history")}
-         </DropdownItem>
-         <DropdownItem
+           >
+             {t("history")}
+           </DropdownItem>
+           <DropdownItem
              startContent={<IoSettingsSharp />}
              key="settings"
              as={Link}
              href={`/user/settings`}
-         >
-           {t("settings")}
-         </DropdownItem>
+           >
+             {t("settings")}
+           </DropdownItem>
+         </DropdownSection>
+
+         {(session.data.user.role === "MODERATOR" || session.data.user.role === "ADMIN")
+           ? <DropdownSection showDivider>
+              <DropdownItem
+                  startContent={<FaPlus />}
+                  key="manga"
+                  as={Link}
+                  href={`/manga/create`}
+              >
+                  Add Manga
+              </DropdownItem>
+              <DropdownItem
+                  startContent={<MdAutorenew />}
+                  key="scrap"
+                  as={Link}
+                  href={`/scrap`}
+              >
+                  Scrap
+              </DropdownItem>
+          </DropdownSection>
+           : <DropdownItem key="hidden" className="hidden">f</DropdownItem>
+         }
          <DropdownSection>
            <DropdownItem
                startContent={<CiLogout />}

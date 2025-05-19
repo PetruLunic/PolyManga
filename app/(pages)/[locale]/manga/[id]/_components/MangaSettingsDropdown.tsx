@@ -17,6 +17,8 @@ import {FiEdit, FiTrash2, FiUpload} from "react-icons/fi";
 import {useMutation} from "@apollo/client";
 import {DELETE_MANGA} from "@/app/lib/graphql/mutations";
 import {useAlert} from "@/app/lib/contexts/AlertContext";
+import {MdAutorenew} from "react-icons/md";
+import {Link} from "@/i18n/routing";
 
 interface Props {
   className?: string;
@@ -68,6 +70,14 @@ export default function MangaSettingsDropdown({className, mangaId}: Props) {
            </DropdownItem>
            <DropdownItem key="upload" aria-label="upload" href={path + "/upload"} startContent={<FiUpload />}>
              Upload
+           </DropdownItem>
+           <DropdownItem
+             startContent={<MdAutorenew />}
+             key="scrap"
+             as={Link}
+             href={path + "/scrap"}
+           >
+             Scrap
            </DropdownItem>
            <DropdownItem
                key="delete"

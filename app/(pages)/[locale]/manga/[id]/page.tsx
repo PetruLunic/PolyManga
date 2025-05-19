@@ -49,6 +49,8 @@ export async function generateMetadata({ params}: Props): Promise<Metadata> {
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
+  if (process.env.SKIP_GENERATE_STATIC_PARAMS === 'true') return [];
+
   const {data} = await queryGraphql(GET_STATIC_MANGAS);
 
   if (!data?.mangas) return [];

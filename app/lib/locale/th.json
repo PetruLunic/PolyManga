@@ -2,15 +2,17 @@
   "common": {
     "badges": {
       "languageAvailability": {
-        "available": "มีให้บริการ",
-        "unavailable": "ไม่มีให้บริการ",
+        "humanEdited": "แก้ไขโดยมนุษย์",
+        "AIEdited": "แก้ไขโดย AI",
+        "unavailable": "ไม่พร้อมใช้งาน",
         "items": {
           "chapter": "ตอน",
           "manga": "มังงะ"
         },
         "tooltips": {
-          "available": "{item} นี้มีให้บริการในภาษาของคุณ",
-          "unavailable": "{item} นี้ไม่มีให้บริการในภาษาของคุณ"
+          "humanEdited": "{item}นี้ได้รับการแก้ไขโดยมนุษย์ในภาษาของคุณ",
+          "AIEdited": "{item}นี้ได้รับการแก้ไขโดย AI ในภาษาของคุณ",
+          "unavailable": "{item}นี้ไม่พร้อมใช้งานในภาษาของคุณ"
         }
       }
     },

@@ -29,6 +29,7 @@ export const CHAPTERS_LIST = gql(`
     createdAt,
     languages,
     title(locale: $locale),
+    isAIProcessedAt,
     number
   }
 `)
@@ -411,6 +412,7 @@ export const GET_LATEST_UPLOADED_CHAPTERS = gql(`
       number,
       title(locale: $locale),
       languages,
+      isAIProcessedAt,
       manga {
         id,
         title(locale: $locale),

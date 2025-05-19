@@ -15,6 +15,7 @@ import {motion} from "framer-motion";
 import {useChapterLanguage} from "@/app/lib/hooks/useChapterLanguage";
 import {ChapterImage} from "@/app/lib/graphql/schema";
 import ChapterMetadataText from "@/app/_components/ChapterMetadataText";
+import scaleFontSizes from "@/app/lib/utils/scaleFontSizes";
 
 const METADATA_BOX_PADDING = 0;
 const BUCKET_URL = process.env.NEXT_PUBLIC_BUCKET_URL;
@@ -76,6 +77,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
       ...acc,
       [lang]: {
         ...acc[lang],
+        text: scaleFontSizes(acc[lang].text, scalingFactor),
         fontSize: (acc[lang].fontSize ?? 22) * scalingFactor
       }
     }), item.translatedTexts),

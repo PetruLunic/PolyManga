@@ -2,15 +2,17 @@
   "common": {
     "badges": {
       "languageAvailability": {
-        "available": "Magagamit",
-        "unavailable": "Hindi Magagamit",
+        "humanEdited": "In-edit ng tao",
+        "AIEdited": "In-edit ng AI",
+        "unavailable": "Hindi available",
         "items": {
           "chapter": "kabanata",
           "manga": "manga"
         },
         "tooltips": {
-          "available": "Magagamit ang {item} na ito sa iyong wika",
-          "unavailable": "Hindi magagamit ang {item} na ito sa iyong wika"
+          "humanEdited": "Ang {item} na ito ay in-edit ng tao sa iyong wika",
+          "AIEdited": "Ang {item} na ito ay in-edit ng AI sa iyong wika",
+          "unavailable": "Ang {item} na ito ay hindi available sa iyong wika"
         }
       }
     },

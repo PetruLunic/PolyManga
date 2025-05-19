@@ -2,14 +2,16 @@
   "common": {
     "badges": {
       "languageAvailability": {
-        "available": "Có sẵn",
+        "humanEdited": "Con người chỉnh sửa",
+        "AIEdited": "AI chỉnh sửa",
         "unavailable": "Không có sẵn",
         "items": {
           "chapter": "chương",
-          "manga": "manga"
+          "manga": "truyện tranh"
         },
         "tooltips": {
-          "available": "{item} này có sẵn bằng ngôn ngữ của bạn",
+          "humanEdited": "{item} này được con người chỉnh sửa bằng ngôn ngữ của bạn",
+          "AIEdited": "{item} này được AI chỉnh sửa bằng ngôn ngữ của bạn",
           "unavailable": "{item} này không có sẵn bằng ngôn ngữ của bạn"
         }
       }

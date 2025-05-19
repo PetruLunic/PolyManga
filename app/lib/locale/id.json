@@ -2,14 +2,16 @@
   "common": {
     "badges": {
       "languageAvailability": {
-        "available": "Tersedia",
-        "unavailable": "Tidak Tersedia",
+        "humanEdited": "Diedit oleh manusia",
+        "AIEdited": "Diedit oleh AI",
+        "unavailable": "Tidak tersedia",
         "items": {
           "chapter": "bab",
           "manga": "manga"
         },
         "tooltips": {
-          "available": "{item} ini tersedia dalam bahasa Anda",
+          "humanEdited": "{item} ini diedit oleh manusia dalam bahasa Anda",
+          "AIEdited": "{item} ini diedit oleh AI dalam bahasa Anda",
           "unavailable": "{item} ini tidak tersedia dalam bahasa Anda"
         }
       }

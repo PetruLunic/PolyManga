@@ -2,14 +2,16 @@
   "common": {
     "badges": {
       "languageAvailability": {
-        "available": "Disponible",
+        "humanEdited": "Édité par un humain",
+        "AIEdited": "Édité par IA",
         "unavailable": "Indisponible",
         "items": {
           "chapter": "chapitre",
           "manga": "manga"
         },
         "tooltips": {
-          "available": "Ce {item} est disponible dans votre langue",
+          "humanEdited": "Ce {item} est édité par un humain dans votre langue",
+          "AIEdited": "Ce {item} est édité par IA dans votre langue",
           "unavailable": "Ce {item} n'est pas disponible dans votre langue"
         }
       }

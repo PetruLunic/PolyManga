@@ -8,6 +8,7 @@ import {Link} from "@/i18n/routing";
 import {useTranslations} from "next-intl";
 import {extractMangaTitle} from "@/app/lib/utils/extractionUtils";
 import {IoLanguage} from "react-icons/io5";
+import {BsStars} from "react-icons/bs";
 
 const comicsTypeBadgeColor = {
   "manhwa": "danger",
@@ -49,21 +50,21 @@ export default function MangaCard({manga, type, bookmarkedChapter, chapterBookma
          <>
            {hasLocale
              ? <Tooltip
-               aria-label={tBadge("tooltips.available", {item: tBadge("items.manga")})}
-               content={tBadge("tooltips.available", {item: tBadge("items.manga")})}
+               aria-label={tBadge("tooltips.humanEdited", {item: tBadge("items.manga")})}
+               content={tBadge("tooltips.humanEdited", {item: tBadge("items.manga")})}
              >
-               <span className="flex gap-1 items-center">{tBadge("available")} <IoLanguage size={15}/></span>
+               <span className="flex gap-1 items-center">{tBadge("humanEdited")} <IoLanguage size={15}/></span>
              </Tooltip>
              : <Tooltip
-               aria-label={tBadge("tooltips.unavailable", {item: tBadge("items.manga")})}
-               content={tBadge("tooltips.unavailable", {item: tBadge("items.manga")})}
+               aria-label={tBadge("tooltips.AIEdited", {item: tBadge("items.manga")})}
+               content={tBadge("tooltips.AIEdited", {item: tBadge("items.manga")})}
              >
-               <span className="flex gap-1 items-center">{tBadge("unavailable")} <IoLanguage size={15} color="white"/></span>
+               <span className="flex gap-1 items-center">{tBadge("AIEdited")} <BsStars size={15} /></span>
              </Tooltip>}
          </>
         }
          showOutline={false}
-         color={hasLocale ? "success" : "default"}
+         color={hasLocale ? "success" : "primary"}
          classNames={{
          base: "h-full"
          }}
@@ -75,6 +76,7 @@ export default function MangaCard({manga, type, bookmarkedChapter, chapterBookma
              size="lg"
              content={t(`type.${manga.type}`)}
              color={comicsTypeBadgeColor[manga.type]}
+             showOutline={false}
            >
              <Image
                shadow="sm"

@@ -2,18 +2,20 @@
   "common": {
     "badges": {
       "languageAvailability": {
-        "available": "Disponibil",
+        "humanEdited": "Editat de om",
+        "AIEdited": "Editat de AI",
         "unavailable": "Indisponibil",
         "items": {
           "chapter": "capitol",
-          "manga": "mangă"
+          "manga": "manga"
         },
         "tooltips": {
-          "available": "Acest {item} este disponibil în limba ta",
+          "humanEdited": "Acest {item} este editat de om în limba ta",
+          "AIEdited": "Acest {item} este editat de AI în limba ta",
           "unavailable": "Acest {item} nu este disponibil în limba ta"
         }
-      }
-    },
+    }
+  },
     "manga": {
       "status": {
         "ONGOING": "Ongoing",

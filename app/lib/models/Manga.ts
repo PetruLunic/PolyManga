@@ -28,7 +28,7 @@ const MangaSchema = new Schema<Manga>({
     value: {
       type: String,
       required: true,
-      maxlength: [50, "Title cannot be more than 50 characters"]
+      maxlength: [200, "Title cannot be more than 50 characters"]
     }
   }],
   descriptions: [{

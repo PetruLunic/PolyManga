@@ -30,7 +30,7 @@ const documents = {
     "\n  mutation deleteChapterBookmark($chapterId: String!) {\n    deleteChapterBookmark(chapterId: $chapterId) {\n      id\n    }\n  }\n": types.DeleteChapterBookmarkDocument,
     "\n  mutation toggleChapterAIProcessed($id: String!) {\n    toggleIsAIProcessed(id: $id)\n  }\n": types.ToggleChapterAiProcessedDocument,
     "\n  fragment MangaCard on Manga {\n    id,\n    title(locale: $locale),\n    slug,\n    image,\n    type,\n    status,\n    languages,\n    stats {\n      rating {\n        value\n      }\n    },\n    latestChapter {\n      id\n      number,\n      title(locale: $locale)\n    }\n  }\n": types.MangaCardFragmentDoc,
-    "\n  fragment ChaptersList on Chapter {\n    id,\n    mangaId,\n    createdAt,\n    languages,\n    title(locale: $locale),\n    number\n  }\n": types.ChaptersListFragmentDoc,
+    "\n  fragment ChaptersList on Chapter {\n    id,\n    mangaId,\n    createdAt,\n    languages,\n    title(locale: $locale),\n    isAIProcessedAt,\n    number\n  }\n": types.ChaptersListFragmentDoc,
     "\n  query manga($id: String!, $limit: Int, $offset: Int, $locale: String) {\n  manga(id: $id) {\n    id,\n    title(locale: $locale),\n    description(locale: $locale),\n    author,\n    image,\n    chapters(limit: $limit, offset: $offset) {\n      ...ChaptersList\n    },\n    status,\n    type,\n    genres,\n    releaseYear,\n    languages,\n    firstChapter {\n      id,\n      number,\n      title(locale: $locale),\n    },\n    latestChapter {\n      id,\n      number,\n      title(locale: $locale)\n    },\n    stats {\n      bookmarks,\n      likes,\n      rating {\n        nrVotes,\n        value\n      },\n      views,\n    }\n  }\n}\n": types.MangaDocument,
     "\n  query chapters($id: String!, $limit: Int, $offset: Int, $locale: String, $isDescending: Boolean) {\n    manga(id: $id) {\n      id,\n      chapters(limit: $limit, offset: $offset, isDescending: $isDescending) {\n      ...ChaptersList\n      }\n    }\n  }\n": types.ChaptersDocument,
     "\n  query staticMangas {\n    mangas {\n      id,\n      slug\n    }\n  }\n": types.StaticMangasDocument,
@@ -53,7 +53,7 @@ const documents = {
     "\n    query userPreferences {\n      user {\n        preferences {\n          targetLanguage,\n          sourceLanguage\n        }\n      }\n    }\n": types.UserPreferencesDocument,
     "\n  query getBookmarkedChapter($slug: String!, $locale: String!) {\n    getBookmarkedChapter(slug: $slug) {\n      chapterId,\n      chapter {\n        title(locale: $locale),\n        number\n      }\n    }\n  }\n": types.GetBookmarkedChapterDocument,
     "\n  query getMangaWithBookmarkedChapters($locale: String!) {\n    user {\n      chapterBookmarks {\n        manga {\n          ...MangaCard\n        },\n        chapter {\n          title(locale: $locale),\n        },\n        createdAt\n      }\n    }\n  }\n": types.GetMangaWithBookmarkedChaptersDocument,
-    "\n  query getLatestUploadedChapters($limit: Int!, $offset: Int, $locale: String!) {\n    latestChapters(limit: $limit, offset: $offset) {\n      id,\n      createdAt,\n      number,\n      title(locale: $locale),\n      languages,\n      manga {\n        id,\n        title(locale: $locale),\n        slug,\n        image\n      }\n    }\n  }\n": types.GetLatestUploadedChaptersDocument,
+    "\n  query getLatestUploadedChapters($limit: Int!, $offset: Int, $locale: String!) {\n    latestChapters(limit: $limit, offset: $offset) {\n      id,\n      createdAt,\n      number,\n      title(locale: $locale),\n      languages,\n      isAIProcessedAt,\n      manga {\n        id,\n        title(locale: $locale),\n        slug,\n        image\n      }\n    }\n  }\n": types.GetLatestUploadedChaptersDocument,
 };
 
 /**
@@ -141,7 +141,7 @@ export function gql(source: "\n  fragment MangaCard on Manga {\n    id,\n    tit
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  fragment ChaptersList on Chapter {\n    id,\n    mangaId,\n    createdAt,\n    languages,\n    title(locale: $locale),\n    number\n  }\n"): (typeof documents)["\n  fragment ChaptersList on Chapter {\n    id,\n    mangaId,\n    createdAt,\n    languages,\n    title(locale: $locale),\n    number\n  }\n"];
+export function gql(source: "\n  fragment ChaptersList on Chapter {\n    id,\n    mangaId,\n    createdAt,\n    languages,\n    title(locale: $locale),\n    isAIProcessedAt,\n    number\n  }\n"): (typeof documents)["\n  fragment ChaptersList on Chapter {\n    id,\n    mangaId,\n    createdAt,\n    languages,\n    title(locale: $locale),\n    isAIProcessedAt,\n    number\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -233,7 +233,7 @@ export function gql(source: "\n  query getMangaWithBookmarkedChapters($locale: S
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query getLatestUploadedChapters($limit: Int!, $offset: Int, $locale: String!) {\n    latestChapters(limit: $limit, offset: $offset) {\n      id,\n      createdAt,\n      number,\n      title(locale: $locale),\n      languages,\n      manga {\n        id,\n        title(locale: $locale),\n        slug,\n        image\n      }\n    }\n  }\n"): (typeof documents)["\n  query getLatestUploadedChapters($limit: Int!, $offset: Int, $locale: String!) {\n    latestChapters(limit: $limit, offset: $offset) {\n      id,\n      createdAt,\n      number,\n      title(locale: $locale),\n      languages,\n      manga {\n        id,\n        title(locale: $locale),\n        slug,\n        image\n      }\n    }\n  }\n"];
+export function gql(source: "\n  query getLatestUploadedChapters($limit: Int!, $offset: Int, $locale: String!) {\n    latestChapters(limit: $limit, offset: $offset) {\n      id,\n      createdAt,\n      number,\n      title(locale: $locale),\n      languages,\n      isAIProcessedAt,\n      manga {\n        id,\n        title(locale: $locale),\n        slug,\n        image\n      }\n    }\n  }\n"): (typeof documents)["\n  query getLatestUploadedChapters($limit: Int!, $offset: Int, $locale: String!) {\n    latestChapters(limit: $limit, offset: $offset) {\n      id,\n      createdAt,\n      number,\n      title(locale: $locale),\n      languages,\n      isAIProcessedAt,\n      manga {\n        id,\n        title(locale: $locale),\n        slug,\n        image\n      }\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

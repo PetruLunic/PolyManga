@@ -36,21 +36,32 @@ export default function ChapterUpdateCard({chapter, locale = 'en'}: Props) {
         <>
           {hasLocale
             ? <Tooltip
-              aria-label={t("tooltips.available", {item: t("items.chapter")})}
-              content={t("tooltips.available", {item: t("items.chapter")})}
+              aria-label={t("tooltips.humanEdited", {item: t("items.chapter")})}
+              content={t("tooltips.humanEdited", {item: t("items.chapter")})}
             >
-              <span className="flex gap-1 items-center">{t("available")} <IoLanguage size={15}/></span>
+              <span className="flex gap-1 items-center">{t("humanEdited")} <IoLanguage size={15}/></span>
             </Tooltip>
-            : <Tooltip
-              aria-label={t("tooltips.unavailable", {item: t("items.chapter")})}
-              content={t("tooltips.unavailable", {item: t("items.chapter")})}
-            >
-              <span className="flex gap-1 items-center">{t("unavailable")} <IoLanguage size={15} color="white"/></span>
-            </Tooltip>}
+            : chapter.isAIProcessedAt
+              ? <Tooltip
+                aria-label={t("tooltips.AIEdited", {item: t("items.chapter")})}
+                content={t("tooltips.AIEdited", {item: t("items.chapter")})}
+              >
+                <span className="flex gap-1 items-center">{t("AIEdited")} <IoLanguage size={15} color="white"/></span>
+              </Tooltip>
+              : <Tooltip
+                aria-label={t("tooltips.unavailable", {item: t("items.chapter")})}
+                content={t("tooltips.unavailable", {item: t("items.chapter")})}
+              >
+                <span className="flex gap-1 items-center">{t("unavailable")} <IoLanguage size={15} color="white"/></span>
+              </Tooltip>}
         </>
       }
       showOutline={false}
-      color={hasLocale ? "success" : "default"}
+      color={hasLocale
+        ? "success"
+        : chapter.isAIProcessedAt
+          ? "primary"
+          : "default"}
       classNames={{
         base: "h-full"
       }}
