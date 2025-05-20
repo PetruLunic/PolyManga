@@ -407,7 +407,8 @@ function EditableMetadataBox({
         data-id={box.id} // Pass the ID as a custom attribute for identification
       >
         <Card
-          className="relative light min-w-full min-h-full overflow-visible rounded-[10em] shadow-none text-center uppercase"
+          className="relative light min-w-full min-h-full overflow-visible rounded-[10em] shadow-none text-center uppercase hyphens-auto"
+          lang={language}
           style={box.style}
           data-id={box.id}
         >

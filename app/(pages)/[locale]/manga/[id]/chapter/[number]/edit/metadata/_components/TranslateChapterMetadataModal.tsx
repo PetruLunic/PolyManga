@@ -27,6 +27,26 @@ interface Props extends Omit<ModalProps, "children"> {
 
 type TranslateStatus = "pending" | "finished" | "error" | "processing"
 
+function calculateAdjustedFontSize (
+  sourceLength: number,
+  targetLength: number,
+  sourceFontSize: number,
+  minFontSize = 22,
+  maxFontSize = 100,
+  smoothingFactor = 0.7
+): number {
+  if (targetLength === 0) {
+    return sourceFontSize; // Or a default minimum
+  }
+
+  const ratio = sourceLength / targetLength;
+  const adjustedRatio = (smoothingFactor * ratio) + (1 - smoothingFactor);
+
+  let newFontSize = Math.floor(adjustedRatio * sourceFontSize);
+  newFontSize = Math.max(minFontSize, Math.min(newFontSize, maxFontSize));
+  return newFontSize;
+}
+
 export default function TranslateChapterMetadataModal({onOpenChange, isOpen, boxes, setBoxes, chapterId}: Props) {
   const [isTranslating, setIsTranslating] = useState<Partial<Record<LocaleType, TranslateStatus>>>({});
   const [sourceLang, setSourceLang] = useState<LocaleType>(locales[0]);
@@ -69,7 +89,7 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
       const targetLangFontSizes = boxes.map((box, index) => {
         const sourceLangText = box.translatedTexts[sourceLang];
         if (!sourceLangText || !sourceLangText.fontSize) return 30;
-        return Math.floor((sourceLangText.text.length / translatedTexts[index].length) * sourceLangText.fontSize);
+        return calculateAdjustedFontSize(sourceLangText.text.length, translatedTexts[index].length, sourceLangText.fontSize);
       })
 
       let newMetadata: Box[] = [];

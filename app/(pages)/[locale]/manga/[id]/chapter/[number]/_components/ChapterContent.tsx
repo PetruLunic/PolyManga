@@ -144,7 +144,8 @@ export default function ChapterContent({chapter, metadata}: Props) {
             return (
               <Card
                 key={index}
-                className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em] text-center uppercase"
+                className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em] text-center uppercase hyphens-auto"
+                lang={sourceLang}
                 style={{
                   opacity: showAllTargetLang ? hiddenSourceIndex === index ? 1 : 0 : hiddenSourceIndex === index ? 0 : 1,
                   left: `${data.coords.x1 - METADATA_BOX_PADDING}px`,
@@ -178,7 +179,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
               return (
                 <Card
                   key={index}
-                  className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em] text-center uppercase"
+                  className="absolute z-[19] transition-opacity duration-200 card light shadow-none overflow-visible rounded-[10em] text-center uppercase hyphens-auto"
                   style={{
                     opacity: showAllTargetLang ? activeTargetIndex === index ? 0 : 1 : activeTargetIndex === index ? 1 : 0,
                     left: `${data.coords.x1 - METADATA_BOX_PADDING}px`,
@@ -187,6 +188,7 @@ export default function ChapterContent({chapter, metadata}: Props) {
                     minHeight: `${height}px`,
                     ...data.style
                   }}
+                  lang={targetLang}
                   isPressable
                   disableRipple
                   onPress={() => setActiveTargetIndex(activeTargetIndex === index ? null : index)}
