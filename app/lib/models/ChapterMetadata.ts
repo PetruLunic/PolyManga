@@ -21,6 +21,9 @@ export const ChapterMetadataSchema = new Schema<ChapterMetadataRaw>({
       backgroundColor: {
         type: String
       },
+      backgroundImage: {
+        type: String
+      },
       textAlign: {
         type: String
       },

@@ -18,6 +18,7 @@ import {VscColorMode} from "react-icons/vsc";
 const FONT_SIZES = Array.from({ length: 50 }, (_, index) => 10 + index * 2);
 const OPACITY_VALUES = Array.from({ length: 11 }, (_, index) => index / 10);
 const RADIUS_VALUES = Array.from({ length: 20 }, (_, index) => index + "em");
+const GRADIENT_TURN_VALUES = Array.from({ length: 21 }, (_, index) => index / 20 + "turn");
 type SettingTab = "background" | "text";
 
 interface Props {
@@ -59,6 +60,20 @@ function EditableMetadataBox({
   const [activeTab, setActiveTab] = useState<SettingTab | null>(null);
   const debouncedBoxStyle = useDebounce(boxStyle, 200);
   const opacity = boxStyle?.backgroundColor?.split(",").at(-1)?.replace(")", "");
+  const [gradient, setGradient] = useState({
+    turn: boxStyle?.backgroundImage?.replace("linear-gradient(", "").split(",")[0],
+    first: boxStyle?.backgroundImage?.split(",")[1],
+    second:  boxStyle?.backgroundImage?.split(",")[2].replace(")", "")
+  });
+
+  useEffect(() => {
+    if (!gradient.first || !gradient.second) return;
+    const turn = gradient.turn ?? "0.5turn";
+    setBoxStyle(prev => ({
+      ...prev,
+      backgroundImage: `linear-gradient(${turn},${gradient.first},${gradient.second})`
+    }))
+  }, [gradient]);
 
   useEffect(() => {
     if (!debouncedBoxStyle) return;
@@ -663,6 +678,42 @@ function EditableMetadataBox({
                   }))}>
                   Inverse Color
               </Button>
+              <Select
+                  selectedKeys={[gradient.turn ?? 0]}
+                  label={`Turn`}
+                  size="sm"
+                  onSelectionChange={(keys) => {
+                    const key = keys.currentKey;
+                    if (!key) return;
+
+                    setGradient(prev => ({
+                      ...prev,
+                      turn: key
+                    }))
+                  }}
+              >
+                {GRADIENT_TURN_VALUES.map((number) => (
+                  <SelectItem key={number}>{number.replace("turn", "")}</SelectItem>
+                ))}
+              </Select>
+              <div className="flex">
+                  <ColorPickerButton
+                      value={gradient.first}
+                      onChange={value => setGradient(prev => ({
+                        ...prev,
+                        first: value
+                      }))}>
+                      <IoColorPalette/>
+                  </ColorPickerButton>
+                  <ColorPickerButton
+                      value={gradient.second}
+                      onChange={value => setGradient(prev => ({
+                        ...prev,
+                        second: value
+                      }))}>
+                      <IoColorPalette/>
+                  </ColorPickerButton>
+              </div>
           </div>}
         </div>
       </Rnd>

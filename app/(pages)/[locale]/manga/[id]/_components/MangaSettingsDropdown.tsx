@@ -74,7 +74,6 @@ export default function MangaSettingsDropdown({className, mangaId}: Props) {
            <DropdownItem
              startContent={<MdAutorenew />}
              key="scrap"
-             as={Link}
              href={path + "/scrap"}
            >
              Scrap

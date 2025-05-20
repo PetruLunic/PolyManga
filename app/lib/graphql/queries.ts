@@ -137,6 +137,7 @@ export const GET_CHAPTER = gql(`
         content {
           style {
             backgroundColor,
+            backgroundImage,
             borderRadius,
             textAlign,
             fontWeight,

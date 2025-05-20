@@ -647,7 +647,7 @@ export default function RedactorPage({chapter, metadata}: Props) {
             } catch (e) {
               console.error(e);
             } finally {
-              setIsSaving(false)
+              setIsSaving(false);
             }
           }}
         >

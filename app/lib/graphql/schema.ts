@@ -408,6 +408,9 @@ export class ContentItemStyle implements React.CSSProperties {
   backgroundColor?: React.CSSProperties['backgroundColor'];
 
   @Field(() => String, { nullable: true })
+  backgroundImage?: React.CSSProperties['backgroundImage'];
+
+  @Field(() => String, { nullable: true })
   borderRadius?: React.CSSProperties['borderRadius'];
 
   @Field(() => String, { nullable: true })

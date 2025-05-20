@@ -87,7 +87,7 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
         return newMetadata;
       })
 
-      if (newMetadata.length !== boxes.length) {
+      if (newMetadata.length === 0) {
         setIsTranslating(prev => ({...prev, [targetLang]: "error"}));
         return;
       }
