@@ -7,6 +7,8 @@ import MangaCard from "@/app/_components/MangaCard";
 import {getLocale, getTranslations} from "next-intl/server";
 import {LocaleType} from "@/app/types";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const locale = await getLocale();
   const t = await getTranslations("pages.user.history");

@@ -51,7 +51,6 @@ export async function POST(req: Request) {
 
     // Edit the existing metadata or create new one of there wasn't
     if (existingMetadata) {
-      // @ts-ignore
       existingMetadata.content = processedData;
       await existingMetadata.save();
     } else {

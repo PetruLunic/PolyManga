@@ -5,6 +5,8 @@ import {cookies} from "next/headers";
 import {getLocale, getTranslations} from "next-intl/server";
 import {Suspense} from "react";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const locale = await getLocale();
   const t = await getTranslations("pages.user.bookmarks");

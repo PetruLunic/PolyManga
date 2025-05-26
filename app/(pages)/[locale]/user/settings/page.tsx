@@ -2,6 +2,8 @@ import {auth} from "@/auth";
 import SettingsPage from "@/app/(pages)/[locale]/user/settings/_components/SettingsPage";
 import {getTranslations} from "next-intl/server";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const t = await getTranslations("pages.user.settings");
   const session = await auth();
