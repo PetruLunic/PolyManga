@@ -34,6 +34,8 @@ interface Props {
   needsResize: boolean;
   onBoxChange: (id: string, newX1: number, newY1: number, newX2: number, newY2: number) => void;
   handleBoxStyleChange: (id: string, style: React.CSSProperties) => void;
+  isFocused?: boolean | null;
+  onPress?: () => void;
 }
 
 function EditableMetadataBox({
@@ -46,9 +48,11 @@ function EditableMetadataBox({
                                handleResizeStop,
                                imagesLanguage,
                                imageRef,
-                                needsResize,
+                               needsResize,
                                onBoxChange,
-                               handleBoxStyleChange
+                               handleBoxStyleChange,
+                               isFocused,
+                               onPress
                              }: Props) {
   const [language, setLanguage] = useState<LocaleType>(defaultTextLanguage);
   const [isEditing, setIsEditing] = useState(false);
@@ -388,352 +392,356 @@ function EditableMetadataBox({
   if (!coords) return null;
 
   return (
-    <>
-      <canvas ref={canvasRef} style={{ display: "none" }} /> {/* Hidden canvas */}
-      <Rnd
-        bounds="parent"
-        className="z-50 border-1 border-black border-solid"
-        style={{
-          borderColor: invertColor(box.style?.backgroundColor ?? "#fff")
-        }}
-        size={{
-          width: coords.x2 - coords.x1,
-          height: coords.y2 - coords.y1,
-        }}
-        position={{ x: coords.x1, y: coords.y1 }}
-        disableDragging={isEditing}
-        onDragStop={handleDragStop}
-        onResizeStop={handleResizeStop}
-        data-id={box.id} // Pass the ID as a custom attribute for identification
-      >
-        <Card
-          className="relative light min-w-full min-h-full overflow-visible rounded-[10em] shadow-none text-center uppercase hyphens-auto"
-          lang={language}
-          style={box.style}
-          data-id={box.id}
+      <>
+        <canvas ref={canvasRef} style={{ display: "none" }} /> {/* Hidden canvas */}
+        <Rnd
+            bounds="parent"
+            className="z-50 border-1 border-black border-solid"
+            style={{
+              borderColor: invertColor(box.style?.backgroundColor ?? "#fff")
+            }}
+            size={{
+              width: coords.x2 - coords.x1,
+              height: coords.y2 - coords.y1,
+            }}
+            position={{ x: coords.x1, y: coords.y1 }}
+            disableDragging={isEditing}
+            onDragStop={handleDragStop}
+            onResizeStop={handleResizeStop}
+            data-id={box.id} // Pass the ID as a custom attribute for identification
         >
-          <CardBody
-            style={{textAlign: 'inherit'}}
-            className="h-full items-center justify-center overflow-visible"
+          <Card
+              className="relative light min-w-full min-h-full overflow-visible rounded-[10em] shadow-none text-center uppercase hyphens-auto"
+              lang={language}
+              style={box.style}
+              data-id={box.id}
           >
-            {isEditing ? (
-              <TextEditor
-                value={text}
-                onValueChange={setText}
-                className="bg-white h-full w-full rounded-3xl"
-              />
-            ) : (
-              <ChapterMetadataText value={box.translatedTexts[language]} />
-            )}
-          </CardBody>
-        </Card>
-        <div className="absolute right-[-10px] -translate-y-full translate-x-full flex gap-2 opacity-90">
-          <div className="flex flex-col gap-1 min-w-36 max-w-44">
-            <Button
-              startContent={<TbBackground/>}
-              size="sm"
-              color={activeTab === "background" ? "primary" : "default"}
-              onPress={handleSettingTabPress("background")}
+            <CardBody
+                style={{textAlign: 'inherit'}}
+                onClick={onPress}
+                className="h-full items-center justify-center overflow-visible"
             >
-              Background
-            </Button>
-            <div className="flex justify-between">
-              <Button
-                isIconOnly
-                onPress={() => {
-                  setBoxStyle(prev => ({
-                    ...prev,
-                    textAlign: "left"
-                  }))
-                }}
-              >
-                <FaAlignLeft/>
-              </Button>
-              <Button
-                isIconOnly
-                onPress={() => {
-                  setBoxStyle(prev => ({
-                    ...prev,
-                    textAlign: "center"
-                  }))
-                }}
-              >
-                <FaAlignCenter/>
-              </Button>
-              <Button
-                isIconOnly
-                onPress={() => {
-                  setBoxStyle(prev => ({
-                    ...prev,
-                    textAlign: "right"
-                  }))
-                }}
-              >
-                <FaAlignRight/>
-              </Button>
-            </div>
-            <div className="flex justify-between">
-              <Button
-                isIconOnly
-                color={box.style?.fontWeight === "bolder" ? "primary" : "default"}
-                onPress={() => {
-                  setBoxStyle(prev => ({
-                    ...prev,
-                    fontWeight: box.style?.fontWeight === "bolder" ? "normal" : "bolder"
-                  }))
-                }}
-              >
-                <FaBold />
-              </Button>
-              <Button
-                isIconOnly
-                color={box.style?.fontStyle === "italic" ? "primary" : "default"}
-                onPress={() => {
-                  setBoxStyle(prev => ({
-                    ...prev,
-                    fontStyle: box.style?.fontStyle === "italic" ? "normal" : "italic"
-                  }))
-                }}
-              >
-                <FaItalic />
-              </Button>
-              <ColorPickerButton
-                isIconOnly
-                value={box.style?.color}
-                onChange={(value) => {
-                  setBoxStyle(prev => ({
-                    ...prev,
-                    color: value
-                  }))
-                }}
-              >
-                <IoColorPalette/>
-              </ColorPickerButton>
-            </div>
-            <Select
-              selectedKeys={[language]}
-              disallowEmptySelection
-              label="Language"
-              size="sm"
-              onSelectionChange={(keys) => {
-                setLanguage((keys.currentKey ?? "en") as LocaleType);
-              }}
-            >
-              {locales.map((lang) => (
-                <SelectItem key={lang}>{lang}</SelectItem>
-              ))}
-            </Select>
-            <div className="flex gap-1">
-              <Select
-                selectedKeys={fontSize ? [fontSize.toString()] : ["32"]}
-                disallowEmptySelection
-                label={`all`}
-                size="sm"
-                onSelectionChange={(keys) => {
-                  handleFontSizeChange(box.id, Object.keys(box.translatedTexts) as LocaleType[], Number.parseInt(keys.currentKey ?? "32"));
-                }}
-              >
-                {FONT_SIZES.map((number) => (
-                  <SelectItem key={number}>{number.toString()}</SelectItem>
-                ))}
-              </Select>
-              <Select
-                selectedKeys={fontSize ? [fontSize.toString()] : ["32"]}
-                disallowEmptySelection
-                label={`${language}`}
-                size="sm"
-                onSelectionChange={(keys) => {
-                  handleFontSizeChange(box.id, [language], Number.parseInt(keys.currentKey ?? "32"));
-                }}
-              >
-                {FONT_SIZES.map((number) => (
-                  <SelectItem key={number}>{number.toString()}</SelectItem>
-                ))}
-              </Select>
-            </div>
-            {!isEditing ? (
-              <Button
-                size="sm"
-                onPress={() => setIsEditing(true)}
-              >
-                Edit
-              </Button>
-            ) : (
-              <>
-                <Button
-                  color="success"
-                  onPress={() => {
-                    setIsEditing(false);
-                    onSave(box.id, language, text || "Empty");
-                  }}
-                  size="sm"
-                >
-                  Save
-                </Button>
-                <Button
-                  color="danger"
-                  onPress={() => {
-                    setIsEditing(false);
-                    setText(box.translatedTexts[language]?.text ?? "");
-                  }}
-                  size="sm"
-                >
-                  Cancel
-                </Button>
-              </>
-            )}
-            <Button
-              color="danger"
-              onPress={() => onDelete(box.id)}
-              size="sm"
-            >
-              Delete
-            </Button>
-          </div>
-          {/* ------- Setting tabs --------*/}
-          {activeTab === "background" && <div className="flex flex-col gap-1 min-w-36">
-              <ColorPickerButton
-                  startContent={<IoColorPalette/>}
-                  size="sm"
-                  value={box.style?.backgroundColor}
-                  onChange={value => setBoxStyle(prev => ({
-                    ...prev,
-                    backgroundColor: value
-                  }))}>
-                  Pick Color
-              </ColorPickerButton>
-              <Select
-                  selectedKeys={opacity ? [opacity] : ["1"]}
-                  disallowEmptySelection
-                  label="Opacity"
-                  size="sm"
-                  onSelectionChange={(keys) => {
-                    const key = keys.currentKey;
-                    if (!key) return;
+              {isEditing ? (
+                  <TextEditor
+                      value={text}
+                      onValueChange={setText}
+                      className="bg-white h-full w-full rounded-3xl"
+                  />
+              ) : (
+                  <ChapterMetadataText value={box.translatedTexts[language]} />
+              )}
+            </CardBody>
+          </Card>
+          {isFocused && (
+              <div className="absolute right-[-10px] -translate-y-full translate-x-full flex gap-2 opacity-90">
+                <div className="flex flex-col gap-1 min-w-36 max-w-44">
+                  <Button
+                      startContent={<TbBackground/>}
+                      size="sm"
+                      color={activeTab === "background" ? "primary" : "default"}
+                      onPress={handleSettingTabPress("background")}
+                  >
+                    Background
+                  </Button>
+                  <div className="flex justify-between">
+                    <Button
+                        isIconOnly
+                        onPress={() => {
+                          setBoxStyle(prev => ({
+                            ...prev,
+                            textAlign: "left"
+                          }))
+                        }}
+                    >
+                      <FaAlignLeft/>
+                    </Button>
+                    <Button
+                        isIconOnly
+                        onPress={() => {
+                          setBoxStyle(prev => ({
+                            ...prev,
+                            textAlign: "center"
+                          }))
+                        }}
+                    >
+                      <FaAlignCenter/>
+                    </Button>
+                    <Button
+                        isIconOnly
+                        onPress={() => {
+                          setBoxStyle(prev => ({
+                            ...prev,
+                            textAlign: "right"
+                          }))
+                        }}
+                    >
+                      <FaAlignRight/>
+                    </Button>
+                  </div>
+                  <div className="flex justify-between">
+                    <Button
+                        isIconOnly
+                        color={box.style?.fontWeight === "bolder" ? "primary" : "default"}
+                        onPress={() => {
+                          setBoxStyle(prev => ({
+                            ...prev,
+                            fontWeight: box.style?.fontWeight === "bolder" ? "normal" : "bolder"
+                          }))
+                        }}
+                    >
+                      <FaBold/>
+                    </Button>
+                    <Button
+                        isIconOnly
+                        color={box.style?.fontStyle === "italic" ? "primary" : "default"}
+                        onPress={() => {
+                          setBoxStyle(prev => ({
+                            ...prev,
+                            fontStyle: box.style?.fontStyle === "italic" ? "normal" : "italic"
+                          }))
+                        }}
+                    >
+                      <FaItalic/>
+                    </Button>
+                    <ColorPickerButton
+                        isIconOnly
+                        value={box.style?.color}
+                        onChange={(value) => {
+                          setBoxStyle(prev => ({
+                            ...prev,
+                            color: value
+                          }))
+                        }}
+                    >
+                      <IoColorPalette/>
+                    </ColorPickerButton>
+                  </div>
+                  <Select
+                      selectedKeys={[language]}
+                      disallowEmptySelection
+                      label="Language"
+                      size="sm"
+                      onSelectionChange={(keys) => {
+                        setLanguage((keys.currentKey ?? "en") as LocaleType);
+                      }}
+                  >
+                    {locales.map((lang) => (
+                        <SelectItem key={lang}>{lang}</SelectItem>
+                    ))}
+                  </Select>
+                  <div className="flex gap-1">
+                    <Select
+                        selectedKeys={fontSize ? [fontSize.toString()] : ["32"]}
+                        disallowEmptySelection
+                        label={`all`}
+                        size="sm"
+                        onSelectionChange={(keys) => {
+                          handleFontSizeChange(box.id, Object.keys(box.translatedTexts) as LocaleType[], Number.parseInt(keys.currentKey ?? "32"));
+                        }}
+                    >
+                      {FONT_SIZES.map((number) => (
+                          <SelectItem key={number}>{number.toString()}</SelectItem>
+                      ))}
+                    </Select>
+                    <Select
+                        selectedKeys={fontSize ? [fontSize.toString()] : ["32"]}
+                        disallowEmptySelection
+                        label={`${language}`}
+                        size="sm"
+                        onSelectionChange={(keys) => {
+                          handleFontSizeChange(box.id, [language], Number.parseInt(keys.currentKey ?? "32"));
+                        }}
+                    >
+                      {FONT_SIZES.map((number) => (
+                          <SelectItem key={number}>{number.toString()}</SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+                  {!isEditing ? (
+                      <Button
+                          size="sm"
+                          onPress={() => setIsEditing(true)}
+                      >
+                        Edit
+                      </Button>
+                  ) : (
+                      <>
+                        <Button
+                            color="success"
+                            onPress={() => {
+                              setIsEditing(false);
+                              onSave(box.id, language, text || "Empty");
+                            }}
+                            size="sm"
+                        >
+                          Save
+                        </Button>
+                        <Button
+                            color="danger"
+                            onPress={() => {
+                              setIsEditing(false);
+                              setText(box.translatedTexts[language]?.text ?? "");
+                            }}
+                            size="sm"
+                        >
+                          Cancel
+                        </Button>
+                      </>
+                  )}
+                  <Button
+                      color="danger"
+                      onPress={() => onDelete(box.id)}
+                      size="sm"
+                  >
+                    Delete
+                  </Button>
+                </div>
+                {/* ------- Setting tabs --------*/}
+                {activeTab === "background" && <div className="flex flex-col gap-1 min-w-36">
+                  <ColorPickerButton
+                      startContent={<IoColorPalette/>}
+                      size="sm"
+                      value={box.style?.backgroundColor}
+                      onChange={value => setBoxStyle(prev => ({
+                        ...prev,
+                        backgroundColor: value
+                      }))}>
+                    Pick Color
+                  </ColorPickerButton>
+                  <Select
+                      selectedKeys={opacity ? [opacity] : ["1"]}
+                      disallowEmptySelection
+                      label="Opacity"
+                      size="sm"
+                      onSelectionChange={(keys) => {
+                        const key = keys.currentKey;
+                        if (!key) return;
 
-                    const prev = box.style;
-                    setBoxStyle(() => {
-                      // If has color then append the opacity else to create new white color with opacity
-                      if (prev?.backgroundColor) {
-                        const rgbColor = hexToRgb(prev?.backgroundColor);
+                        const prev = box.style;
+                        setBoxStyle(() => {
+                          // If has color then append the opacity else to create new white color with opacity
+                          if (prev?.backgroundColor) {
+                            const rgbColor = hexToRgb(prev?.backgroundColor);
 
-                        if (!rgbColor) {
-                          if (opacity) { // replace opacity
-                            let newColor = prev.backgroundColor.split(",");
-                            newColor.pop();
+                            if (!rgbColor) {
+                              if (opacity) { // replace opacity
+                                let newColor = prev.backgroundColor.split(",");
+                                newColor.pop();
+
+                                return {
+                                  ...prev,
+                                  backgroundColor: newColor.concat(`${key})`).join(",")
+                                }
+                              }
+
+                              return {
+                                ...prev,
+                                backgroundColor: prev.backgroundColor.replace(")", "").concat(`,${key})`)
+                              }
+                            }
 
                             return {
                               ...prev,
-                              backgroundColor: newColor.concat(`${key})`).join(",")
+                              backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},${key})`
+                            }
+                          } else {
+                            return {
+                              ...prev,
+                              backgroundColor: `rgba(255,255,255,${key})`
                             }
                           }
+                        })
+                      }}
+                  >
+                    {OPACITY_VALUES.map((number) => (
+                        <SelectItem key={number}>{number.toString()}</SelectItem>
+                    ))}
+                  </Select>
+                  <Select
+                      selectedKeys={box.style?.borderRadius ? [box.style?.borderRadius.toString()] : ["10em"]}
+                      disallowEmptySelection
+                      label={`Radius`}
+                      size="sm"
+                      onSelectionChange={(keys) => {
+                        const key = keys.currentKey;
+                        if (!key) return;
 
-                          return {
-                            ...prev,
-                            backgroundColor: prev.backgroundColor.replace(")", "").concat(`,${key})`)
-                          }
-                        }
-
-                        return {
+                        setBoxStyle(prev => ({
                           ...prev,
-                          backgroundColor: `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},${key})`
-                        }
-                      } else {
-                        return {
+                          borderRadius: key
+                        }))
+                      }}
+                  >
+                    {RADIUS_VALUES.map((number) => (
+                        <SelectItem key={number}>{number.toString()}</SelectItem>
+                    ))}
+                  </Select>
+                  <Button
+                      startContent={<VscColorMode/>}
+                      size="sm"
+                      onPress={() => setBoxStyle(prev => ({
+                        ...prev,
+                        backgroundColor: invertColor(box.style?.backgroundColor ?? "rgb(255,255,255)")
+                      }))}>
+                    Inverse Color
+                  </Button>
+                  <Select
+                      selectedKeys={[gradient.turn ?? 0]}
+                      label={`Turn`}
+                      size="sm"
+                      onSelectionChange={(keys) => {
+                        const key = keys.currentKey;
+                        if (!key) return;
+
+                        setGradient(prev => ({
                           ...prev,
-                          backgroundColor: `rgba(255,255,255,${key})`
-                        }
-                      }
-                    })
-                  }}
-              >
-                {OPACITY_VALUES.map((number) => (
-                  <SelectItem key={number}>{number.toString()}</SelectItem>
-                ))}
-              </Select>
-              <Select
-                  selectedKeys={box.style?.borderRadius ? [box.style?.borderRadius.toString()] : ["10em"]}
-                  disallowEmptySelection
-                  label={`Radius`}
-                  size="sm"
-                  onSelectionChange={(keys) => {
-                    const key = keys.currentKey;
-                    if (!key) return;
-
-                    setBoxStyle(prev => ({
-                      ...prev,
-                      borderRadius: key
-                    }))
-                  }}
-              >
-                {RADIUS_VALUES.map((number) => (
-                  <SelectItem key={number}>{number.toString()}</SelectItem>
-                ))}
-              </Select>
-              <Button
-                  startContent={<VscColorMode />}
-                  size="sm"
-                  onPress={() => setBoxStyle(prev => ({
-                    ...prev,
-                    backgroundColor: invertColor(box.style?.backgroundColor ?? "rgb(255,255,255)")
-                  }))}>
-                  Inverse Color
-              </Button>
-              <Select
-                  selectedKeys={[gradient.turn ?? 0]}
-                  label={`Turn`}
-                  size="sm"
-                  onSelectionChange={(keys) => {
-                    const key = keys.currentKey;
-                    if (!key) return;
-
-                    setGradient(prev => ({
-                      ...prev,
-                      turn: key
-                    }))
-                  }}
-              >
-                {GRADIENT_TURN_VALUES.map((number) => (
-                  <SelectItem key={number}>{number.replace("turn", "")}</SelectItem>
-                ))}
-              </Select>
-              <div className="flex">
-                  <ColorPickerButton
-                      value={gradient.first}
-                      onChange={value => setGradient(prev => ({
-                        ...prev,
-                        first: value
-                      }))}>
+                          turn: key
+                        }))
+                      }}
+                  >
+                    {GRADIENT_TURN_VALUES.map((number) => (
+                        <SelectItem key={number}>{number.replace("turn", "")}</SelectItem>
+                    ))}
+                  </Select>
+                  <div className="flex">
+                    <ColorPickerButton
+                        value={gradient.first}
+                        onChange={value => setGradient(prev => ({
+                          ...prev,
+                          first: value
+                        }))}>
                       <IoColorPalette/>
-                  </ColorPickerButton>
-                  <ColorPickerButton
-                      value={gradient.second}
-                      onChange={value => setGradient(prev => ({
-                        ...prev,
-                        second: value
-                      }))}>
+                    </ColorPickerButton>
+                    <ColorPickerButton
+                        value={gradient.second}
+                        onChange={value => setGradient(prev => ({
+                          ...prev,
+                          second: value
+                        }))}>
                       <IoColorPalette/>
-                  </ColorPickerButton>
+                    </ColorPickerButton>
+                  </div>
+                </div>}
               </div>
-          </div>}
-        </div>
-      </Rnd>
-    </>
+          )}
+        </Rnd>
+      </>
   );
 }
 
 export default React.memo(
-  EditableMetadataBox,
-  (prevProps, nextProps) => {
-    return (
-      prevProps.box.id === nextProps.box.id &&
-      prevProps.box.coords === nextProps.box.coords &&
-      prevProps.box.translatedTexts === nextProps.box.translatedTexts &&
-      prevProps.box.style === nextProps.box.style &&
-      prevProps.imagesLanguage === nextProps.imagesLanguage &&
-      prevProps.defaultTextLanguage === nextProps.defaultTextLanguage &&
-      prevProps.imageRef === nextProps.imageRef &&
-      prevProps.needsResize === nextProps.needsResize
-    );
-  }
+    EditableMetadataBox,
+    (prevProps, nextProps) => {
+      return (
+          prevProps.box.id === nextProps.box.id &&
+          prevProps.box.coords === nextProps.box.coords &&
+          prevProps.box.translatedTexts === nextProps.box.translatedTexts &&
+          prevProps.box.style === nextProps.box.style &&
+          prevProps.imagesLanguage === nextProps.imagesLanguage &&
+          prevProps.defaultTextLanguage === nextProps.defaultTextLanguage &&
+          prevProps.imageRef === nextProps.imageRef &&
+          prevProps.needsResize === nextProps.needsResize &&
+          prevProps.isFocused === nextProps.isFocused
+      );
+    }
 );
