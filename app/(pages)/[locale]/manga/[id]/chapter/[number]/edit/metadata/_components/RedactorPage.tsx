@@ -378,8 +378,6 @@ export default function RedactorPage({chapter, metadata}: Props) {
     ])
   }
 
-  console.log(focusedBox);
-
   const handleAllBoxesStyleChange = useCallback((style: React.CSSProperties) => {
     setBoxes((prevBoxes) =>
         prevBoxes.map((box) =>
@@ -405,7 +403,6 @@ export default function RedactorPage({chapter, metadata}: Props) {
   }, [])
 
   const handleFocusBox = useCallback((id: string) => () => {
-    console.log(id);
     setFocusedBox(id);
   }, []);
 

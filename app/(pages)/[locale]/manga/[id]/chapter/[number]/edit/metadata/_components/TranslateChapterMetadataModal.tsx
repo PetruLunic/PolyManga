@@ -31,9 +31,9 @@ function calculateAdjustedFontSize (
   sourceLength: number,
   targetLength: number,
   sourceFontSize: number,
-  minFontSize = 22,
+  minFontSize = 14,
   maxFontSize = 100,
-  smoothingFactor = 0.7
+  smoothingFactor = 0.6
 ): number {
   if (targetLength === 0) {
     return sourceFontSize; // Or a default minimum
@@ -48,12 +48,15 @@ function calculateAdjustedFontSize (
 }
 
 export default function TranslateChapterMetadataModal({onOpenChange, isOpen, boxes, setBoxes, chapterId}: Props) {
+  const translatedLangs = boxes.length !== 0
+      ? Object.keys(boxes[0]?.translatedTexts) as LocaleType[]
+      : [];
   const [isTranslating, setIsTranslating] = useState<Partial<Record<LocaleType, TranslateStatus>>>({});
-  const [sourceLang, setSourceLang] = useState<LocaleType>(locales[0]);
+  const [sourceLangs, setSourceLangs] = useState<LocaleType[]>([locales[0]]);
   const [targetLangs, setTargetLangs] = useState<LocaleType[]>([]);
 
   function handleSelectAllLanguages() {
-    setTargetLangs(locales.filter(locale => locale !== sourceLang));
+    setTargetLangs(locales.filter(locale => !sourceLangs.includes(locale)));
   }
 
   function handleSelectMissingLanguages() {
@@ -63,18 +66,21 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
   async function handleTranslate() {
     setIsTranslating(targetLangs.reduce((acc, lang) => ({...acc, [lang]: "pending"}), {}));
     for (const lang of targetLangs) {
-      await translateTexts(sourceLang, lang);
+      await translateTexts(sourceLangs, lang);
     }
   }
 
-  async function translateTexts(sourceLang: LocaleType, targetLang: LocaleType) {
+  async function translateTexts(sourceLangs: LocaleType[], targetLang: LocaleType) {
     try {
       setIsTranslating(prev => ({...prev, [targetLang]: "processing"}));
-      const originalTexts: string[] = boxes.map(box => box.translatedTexts[sourceLang]?.text ?? "Empty box");
+      const originalTexts: Record<LocaleType, string[]> = sourceLangs.reduce((acc, sourceLang) => {
+        acc[sourceLang] = boxes.map(box => box.translatedTexts[sourceLang]?.text ?? "Empty box");
+        return acc;
+      }, {} as Record<LocaleType, string[]>)
 
       // Try to translate 3 times
       const response = await retryPromise(
-        () => translateWithGemini(originalTexts, sourceLang, targetLang),
+        () => translateWithGemini(originalTexts, sourceLangs[0], targetLang),
         3,
         1000
       );
@@ -87,7 +93,7 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
 
       // Convert font sizes by the length of the strings
       const targetLangFontSizes = boxes.map((box, index) => {
-        const sourceLangText = box.translatedTexts[sourceLang];
+        const sourceLangText = box.translatedTexts[sourceLangs[0]];
         if (!sourceLangText || !sourceLangText.fontSize) return 30;
         return calculateAdjustedFontSize(sourceLangText.text.length, translatedTexts[index].length, sourceLangText.fontSize);
       })
@@ -135,15 +141,16 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
            <ModalBody className="gap-4">
              <div className="flex justify-between gap-5">
                <Select
-                 label={`Source language`}
+                 label={`Source languages`}
                  className="w-full"
+                 selectionMode="multiple"
                  isDisabled={Object.values(isTranslating).includes("processing")}
-                 selectedKeys={[sourceLang]}
+                 selectedKeys={sourceLangs}
                  onSelectionChange={keys => {
-                   setSourceLang(keys.currentKey as LocaleType);
+                   setSourceLangs(Array.from(keys) as LocaleType[]);
                  }}
                >
-                 {locales.map(lang =>
+                 {translatedLangs.map(lang =>
                    <SelectItem key={lang}>
                      {lang}
                    </SelectItem>

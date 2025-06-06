@@ -219,37 +219,97 @@ function manualJsonRepair(json: string): string {
 }
 
 export async function translateWithGemini(
-  originalTexts: string[],
+  originalTexts: Record<LocaleType, string[]>,
   sourceLang: LocaleType,
   targetLang: LocaleType
  ): Promise<string[]> {
 
-  const systemInstruction: Content = {
-    parts: [{
-      text: `**COMIC LOCALIZATION ENGINEER.** Translate the provided JSON array of sequential comic panel texts from ${sourceLang} to ${targetLang}. The text strings within the JSON array may contain HTML formatting (e.g., <b>, <i>, <span style="...">, <img> tags with alt text). Follow these rules precisely:
-1. **Sequential Context:** Maintain narrative flow, character relationships, and plot progression *between* consecutive strings in the input array. Treat the array as panels in order.
-2. **Tone Detection:** Adapt tone based on implicit cues (e.g., exclamation points for dialogue excitement, lack of quotes for narrative/thoughts, HTML emphasis tags like <b> or <em>). Use conversational tone for dialogue, formal for narration unless HTML styling suggests otherwise.
-3. **Content and Formatting Translation:**
-    * **HTML Tag Preservation:** All HTML tags (e.g., <b>, <i>, <span>, <div>, <p>) and their attributes (e.g., class, style, href) MUST be preserved exactly as they appear in the source string. Do NOT translate tag names or attribute names.
-    * **Textual Content Translation:** Translate ONLY the textual content enclosed within HTML tags and any plain text outside of tags.
-    * **Translatable Attributes:** If an HTML attribute itself contains translatable user-facing text (e.g., alt attribute in <img> tags, title attributes), translate the *value* of that attribute. For example, alt="A red car" would become alt="Una macchina rossa" if translating to Italian.
-    * **Technical Terms & Names:** Accurately translate technical terms. Keep character names original if no standard localized translation exists.
-    * **Onomatopoeia:** Prioritize target language equivalents if they exist. If not, keep the original onomatopoeia. You may use [\*TL Note: explanation for onomatopoeia*] if a direct equivalent is missing but the sound is crucial and needs cultural context.
-    * **TL Notes:** Use [\*TL Note: explanation*] for essential untranslatable cultural concepts or technical terms ONLY when absolutely necessary for understanding and they cannot be gracefully integrated or explained through the translation itself.
-4. **Output Structure:** Respond ONLY with a valid JSON array containing the translated strings.
-    * **CRITICAL:** The output JSON array MUST contain exactly the same number of elements as the input JSON array (${originalTexts.length} elements).
-    * Do NOT skip, merge, or add elements. Each element in the output array corresponds to the translated version of the element at the same index in the input array.
-    * The HTML structure within each translated string must mirror the HTML structure of its corresponding source string.
-5. **Repeating Strings:** CRITICAL: Do not remove repeating strings; keep them so the order and count of the strings remain intact.
-6. **Gender and Pluralization Accuracy:** Pay close attention to gendered language requirements in ${targetLang}, especially for pronouns, verb conjugations, and adjectives. English terms like "you" (singular/plural) or gender-neutral professions can be ambiguous. Use the narrative flow, character interactions, and contextual clues *between* consecutive strings in the input array to infer and accurately represent gender (e.g., for male or female speakers) and number. For languages such as Russian and Romanian, this accuracy is critical for dialogue and narration.
-7. **Handling Ambiguity:** If, after considering all context, gender remains genuinely ambiguous and ${targetLang} requires a gendered form, choose the most contextually plausible option. If no single option is clearly plausible, and if ${targetLang} has neutral linguistic forms, use those. Avoid defaulting to a single gender if context suggests variation or unresolved ambiguity.
-**Example of HTML Handling:**
-* **Input String (English):** "<p>He said: <b>\\"It's <i>urgent!</i>\\"</b></p>"
-* **Output String (Example Target: Spanish):** "<p>Él dijo: <b>\\"¡Es <i>urgente!</i>\\"</b></p>"
-**Source Language:** ${sourceLang}
-**Target Language:** ${targetLang}`
-    }],
-  };
+  const sourceLangs = Object.keys(originalTexts).join(', ');
+  const primarySourceArray = originalTexts[sourceLang];
+  const secondaryLangs = Object.keys(originalTexts).filter(lang => lang !== sourceLang).join(', ');
+
+  const systemInstruction = `**COMIC LOCALIZATION ENGINEER - MULTI-SOURCE TRANSLATION**
+
+Translate sequential comic panel texts from **${sourceLangs}** to **${targetLang}** using multi-language context for enhanced accuracy.
+
+## **INPUT & OUTPUT REQUIREMENTS**
+
+**Input Structure:** JSON object with language arrays containing identical content
+**Output:** JSON array with exactly **${primarySourceArray.length}** translated strings
+**Primary Source:** ${sourceLang} | **Context Languages:** ${secondaryLangs}
+
+## **CRITICAL TRANSLATION PROTOCOL**
+
+### **1. Multi-Source Context Strategy**
+- **Primary Translation:** Use ${sourceLang} as base text
+- **Cross-Linguistic Resolution:** Leverage ${secondaryLangs} for:
+  * Gender/number disambiguation (e.g., Russian verb endings → Spanish gendered forms)
+  * Character relationship clarity (e.g., formal/informal address patterns)
+  * Emotional context validation across languages
+  * Technical term consistency verification
+
+### **2. Sequential Narrative Continuity**
+- **Panel Flow:** Maintain story progression between consecutive array elements
+- **Character Consistency:** Preserve established voices, relationships, and attributes
+- **Tone Adaptation:** Match dialogue (conversational) vs narration (formal) based on:
+  * Punctuation patterns (!, ?, ellipses)
+  * HTML emphasis tags (<b>, <em>, <strong>)
+  * Quote presence/absence
+
+### **3. HTML Structure Preservation [CRITICAL]**
+
+✅ PRESERVE: All tags, attributes, structure
+❌ NEVER TRANSLATE: Tag names, CSS classes, technical attributes
+✅ TRANSLATE: Text content within tags + user-facing attributes (alt, title)
+
+**Example Transformation:**
+
+  Input:  <p class="speaker">He said: <b>"It's <i>urgent!</i>"</b></p>
+  Output: <p class="speaker">Él dijo: <b>"¡Es <i>urgente!</i>"</b></p>
+
+### **4. Advanced Gender/Number Resolution**
+**For Morphologically Rich Targets (${targetLang}):**
+
+| Ambiguity Type | Resolution Strategy | Example |
+|----------------|-------------------|---------|
+| **English "They"** | Check Russian/other for number/gender markers | EN: "They left" + RU: "Она ушла" → ES: "Ella se fue" |
+| **Neutral Professions** | Use character context from previous panels | "The doctor" → Use established character gender |
+| **Pronouns** | Cross-reference verb agreements in Slavic sources | Verb conjugation patterns reveal speaker gender |
+
+### **5. Content-Specific Rules**
+- **Character Names:** Maintain consistency across all source languages
+- **Onomatopoeia:** Target language equivalent > original > [*TL Note: sound meaning*]
+- **Cultural References:** Integrate naturally or use minimal [*TL Note: cultural context*]
+- **Repeating Elements:** Preserve ALL repetitions - maintain exact count and sequence
+
+### **6. Quality Assurance Checklist**
+**Before Output, Verify:**
+- [ ] Array length = ${primarySourceArray.length} (exact match)
+- [ ] HTML structure identical to source
+- [ ] Gender consistency within character dialogue chains
+- [ ] Cross-language context utilized for ambiguous elements
+- [ ] Tone appropriate for dialogue vs narration context
+
+### **7. Edge Case Handling**
+- **Conflicting Source Languages:** Prioritize morphologically explicit language
+- **Missing Context:** Use narrative flow and character establishment patterns
+- **Technical Terms:** Maintain original if no standard localization exists
+- **Empty/Whitespace Strings:** Preserve exactly as-is
+
+## **DISAMBIGUATION EXAMPLES**
+
+**Scenario 1 - Gender Resolution:**
+
+  EN: ["The student finished their work"]
+  RU: ["Студентка закончила свою работу"]
+→ ES: ["La estudiante terminó su trabajo"] (using RU feminine markers)
+
+**Scenario 2 - Formal/Informal Address:**
+
+  EN: ["You should go now"]
+  JP: ["もう行った方がいいですよ"] (polite form)
+→ ES: ["Debería irse ya"] (formal based on JP politeness)
+`;
 
   const userContent: Content = {
     role: "user", // Explicitly setting role is good practice
@@ -259,8 +319,8 @@ export async function translateWithGemini(
   const schema: Schema = {
     type: Type.ARRAY, // Expect an array
     items: {type: Type.STRING}, // ...of strings
-    minItems: originalTexts.length.toString(),
-    maxItems: originalTexts.length.toString()
+    minItems: primarySourceArray.length.toString(),
+    maxItems: primarySourceArray.length.toString()
   };
 
   const safetySettings: SafetySetting[] = [
@@ -344,10 +404,10 @@ export async function translateWithGemini(
       throw new Error(`AI response was valid JSON, but not an array as expected. Type: ${typeof parsedJson}`);
     }
 
-    if (parsedJson.length !== originalTexts.length) {
-      console.warn(`AI response array length (${parsedJson.length}) does not match input array length (${originalTexts.length}).`);
+    if (parsedJson.length !== primarySourceArray.length) {
+      console.warn(`AI response array length (${parsedJson.length}) does not match input array length (${primarySourceArray.length}).`);
       // Decide how to handle this: throw error, truncate, pad? Throwing is safest.
-      throw new Error(`AI response array length mismatch. Expected ${originalTexts.length}, got ${parsedJson.length}.`);
+      throw new Error(`AI response array length mismatch. Expected ${primarySourceArray.length}, got ${parsedJson.length}.`);
     }
 
     // Ensure all elements are strings (basic check)
