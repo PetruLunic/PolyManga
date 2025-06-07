@@ -116,6 +116,11 @@ const MangaSchema = new Schema<Manga>({
     type: Number,
     required: [true, "Manga must have a release year"]
   },
+  scrapSources: {
+    asurascans: {
+      type: String
+    }
+  },
   uploadedBy: {
     type: String,
     required: [true, "Manga should have an uploader"]

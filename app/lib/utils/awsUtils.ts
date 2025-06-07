@@ -28,14 +28,20 @@ export const deleteImage = (pathname: string): Promise<DeleteObjectCommandOutput
   }
 }
 
-export async function getSignedURLs(pathnames: string[]): Promise<{ failure: string } | { success: string[] }> {
-  const session = await auth();
+interface GetSignedURLsOptions {
+  bypassAuth?: boolean
+}
 
-  if (!session) {
-    return {failure: "Not authenticated"}
+export async function getSignedURLs(pathnames: string[], options: GetSignedURLsOptions = {}): Promise<{ failure: string } | { success: string[] }> {
+  if (!options.bypassAuth) {
+    const session = await auth();
+
+    if (!session) {
+      return {failure: "Not authenticated"}
+    }
   }
 
-  const signedUrls: string[] = [];
+ const signedUrls: string[] = [];
 
   for (let path of pathnames) {
     const Key = path.substring(1); // Deleting leading /

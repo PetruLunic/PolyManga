@@ -53,6 +53,9 @@ export const createManga = async (formData: FormData, mangaInput: FormType) => {
     languages: languages as ChapterLanguage[],
     type: mangaInput.type as ComicsType,
     status: mangaInput.status as ComicsStatus,
+    scrapSources: {
+      asurascans: mangaInput.scrapSources
+    }
   }
 
   // Creating new manga

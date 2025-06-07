@@ -359,6 +359,9 @@ export const GET_MANGA_EDIT = gql(`
         value,
         language
       },
+      scrapSources {
+        asurascans
+      } 
       releaseYear,
       image,
       languages

@@ -162,6 +162,12 @@ export class MangaDescription {
   value: string
 }
 
+@ObjectType("ScrapSources")
+export class ScrapSources {
+  @Field({nullable: true})
+  asurascans?: string;
+}
+
 @ObjectType("Manga")
 export class Manga {
   @Field(() => ID)
@@ -202,6 +208,9 @@ export class Manga {
 
   @Field()
   image: string;
+
+  @Field(() => ScrapSources, {nullable: true})
+  scrapSources?: ScrapSources;
 
   @Field(() => ComicsStats)
   stats: ComicsStats;
@@ -491,6 +500,12 @@ export class MangaDescriptionInput implements MangaDescription {
   value: string
 }
 
+@InputType("ScrapSourcesInput")
+export class ScrapSourcesInput implements ScrapSourcesInput {
+  @Field({nullable: true})
+  asurascans?: string;
+}
+
 @InputType("AddMangaInput")
 export class AddMangaInput implements Partial<Manga> {
   @Field()
@@ -528,6 +543,9 @@ export class AddMangaInput implements Partial<Manga> {
 
   @Field()
   uploadedBy: string;
+
+  @Field(() => ScrapSourcesInput)
+  scrapSources: ScrapSourcesInput;
 }
 
 @InputType("EditMangaInput")
@@ -561,6 +579,9 @@ export class EditMangaInput implements Partial<Manga> {
 
   @Field(() => Int)
   releaseYear: number;
+
+  @Field(() => ScrapSourcesInput, {nullable: true})
+  scrapSources?: ScrapSourcesInput;
 }
 
 @InputType("ImageInput")

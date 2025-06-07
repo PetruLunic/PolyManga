@@ -21,7 +21,8 @@ export const editManga = async (manga: EditMangaInput, formData?: FormData) => {
   const isValid = MangaSchema.safeParse({
     ...manga,
     genres: manga.genres.join(","),
-    languages: manga.languages.join(",")
+    languages: manga.languages.join(","),
+    scrapSources: manga.scrapSources?.asurascans
   });
 
   if (!isValid.success) {

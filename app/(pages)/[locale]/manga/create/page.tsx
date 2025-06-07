@@ -218,6 +218,12 @@ export default function Page() {
               <SelectItem key={lang}>{ChapterLanguageFull[lang as ChapterLanguage]}</SelectItem>
             )}
           </Select>
+          <Input
+            label="Scrap URL"
+            errorMessage={errors.scrapSources?.message}
+            isInvalid={!!errors.scrapSources}
+            {...register("scrapSources")}
+          />
         </div>
       </div>
         <div className="flex justify-between items-center mb-2">

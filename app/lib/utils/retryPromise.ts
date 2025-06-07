@@ -1,4 +1,4 @@
-interface RetryResult<T> {
+export interface RetryResult<T> {
   data: T | null;
   error: any | null;
   repetitions: number;
@@ -12,13 +12,16 @@ interface RetryResult<T> {
  * @param maxRepeats The maximum number of times to attempt the promise (including the initial try).
  *                   Must be at least 1.
  * @param delayMs Optional delay in milliseconds between retries.
+ * @param isFalsePositive Optional function to check if the resolved data is a false positive.
+ *                        If it returns true, the promise is considered failed and retried.
  * @returns A promise that resolves to an object containing the data (if successful),
  *          the error (if all attempts failed), and the number of repetitions made.
  */
 export default async function retryPromise<T>(
   promiseFn: () => Promise<T>,
   maxRepeats: number = 3,
-  delayMs: number = 0 // Optional delay between retries
+  delayMs: number = 0,
+  isFalsePositive?: (data: T) => boolean
 ): Promise<RetryResult<T>> {
   if (maxRepeats < 1) {
     return {
@@ -35,6 +38,9 @@ export default async function retryPromise<T>(
     currentRepetition = i + 1;
     try {
       const data = await promiseFn();
+      if (isFalsePositive && isFalsePositive(data)) {
+        throw new Error("False positive detected");
+      }
       return {
         data,
         error: null,
@@ -50,7 +56,6 @@ export default async function retryPromise<T>(
     }
   }
 
-  // If the loop finishes, all attempts have failed
   return {
     data: null,
     error: lastError,

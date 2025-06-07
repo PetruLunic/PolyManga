@@ -57,7 +57,7 @@ export interface ScrapedChapter {
   images: ArrayBuffer[]
 }
 
-async function filterImageBanners(images: ArrayBuffer[]): Promise<ArrayBuffer[]> {
+export async function filterScrapedImageBanners(images: ArrayBuffer[]): Promise<ArrayBuffer[]> {
   try {
     // Step 1: Extract widths of all images
     const widths: number[] = await Promise.all(
@@ -119,7 +119,7 @@ export async function scrapeChapter(url: string): Promise<ScrapedChapter> {
       const imagesBuffer = await fetchImagesBuffer(imagesUrl);
       if (!imagesBuffer) throw new Error("Images not found");
 
-      const filteredImagesBuffer = await filterImageBanners(imagesBuffer);
+      const filteredImagesBuffer = await filterScrapedImageBanners(imagesBuffer);
 
       // Close the page after processing
       await page.close();
@@ -194,27 +194,6 @@ export default async function scrapManga(slug: string, url: string) {
       }
 
       const images = scrapedChapter.images.map((buffer, index) => new File([buffer], `img-${index}`));
-
-      // Function to save buffer images to the local folder
-      // const saveImages = async (buffers: Buffer[], directory: string): Promise<void> => {
-      //   buffers.forEach((buffer, index) => {
-      //     const fileName: string = `image_${index + 1}.jpg`; // You can change the file extension if needed
-      //     const filePath: string = directory + "/" + fileName;
-      //
-      //     fs.writeFile(filePath, buffer, (err) => {
-      //       if (err) {
-      //         console.error(`Error saving image ${fileName}:`, err);
-      //       } else {
-      //         console.log(`Image ${fileName} saved successfully.`);
-      //       }
-      //     });
-      //   });
-      // };
-
-// Save the images
-//         saveImages(images, "/app/public/scrapped-images").catch((error) => {
-//           console.error('Error saving images:', error);
-//         });
 
       if (images.length === 0) {
         i--;

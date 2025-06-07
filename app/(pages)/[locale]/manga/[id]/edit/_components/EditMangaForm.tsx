@@ -47,7 +47,8 @@ export default function EditMangaForm({manga}: Props) {
     defaultValues: {
       ...manga,
       genres: manga.genres.join(","),
-      languages: manga.languages.join(",")
+      languages: manga.languages.join(","),
+      scrapSources: manga.scrapSources?.asurascans ?? undefined
     }
   })
   const disclosure = useDisclosure();
@@ -79,7 +80,10 @@ export default function EditMangaForm({manga}: Props) {
         genres: data.genres.split(",") as ComicsGenre[],
         languages: data.languages.split(",") as ChapterLanguage[],
         type: data.type as ComicsType,
-        status: data.status as ComicsStatus
+        status: data.status as ComicsStatus,
+        scrapSources: {
+          asurascans: data.scrapSources
+        }
       }
       await editManga(mangaInput, formData);
 
@@ -239,6 +243,12 @@ export default function EditMangaForm({manga}: Props) {
                 <SelectItem key={lang}>{ChapterLanguageFull[lang as ChapterLanguage]}</SelectItem>
               )}
             </Select>
+            <Input
+              label="Scrap URL"
+              errorMessage={errors.scrapSources?.message}
+              isInvalid={!!errors.scrapSources}
+              {...register("scrapSources")}
+            />
           </div>
         </div>
         <div className="flex justify-between items-center mb-2">

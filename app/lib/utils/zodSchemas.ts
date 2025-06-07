@@ -88,7 +88,8 @@ export const MangaSchema = z.object({
   author: z.string().min(1).max(50),
   type: ComicsTypeSchema,
   genres: z.string(),
-  releaseYear: z.number().positive().int()
+  releaseYear: z.number().positive().int(),
+  scrapSources: z.string().min(10).optional(),
 })
 
 const CoordsItemSchema = z.object({
