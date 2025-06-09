@@ -50,7 +50,7 @@ export const ChapterSchema = new Schema<Chapter>({
     value: {
       type: String,
       required: [true, "Chapter must have a title"],
-      maxlength: [50, "Title cannot be more than 50 characters"]
+      maxlength: [150, "Title cannot be more than 50 characters"]
     },
     language: {
       type: String,
