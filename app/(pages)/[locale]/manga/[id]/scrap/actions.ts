@@ -139,7 +139,9 @@ export async function scrapeChapter(url: string): Promise<ScrapedChapter> {
   }
 }
 
-export default async function scrapManga(slug: string, url: string) {
+const scrapServerUrl = process.env.SCRAP_SERVER_URL;
+
+export default async function scrapManga(slug: string, scrapUrl: string, latestChapter?: number) {
   try {
     const session = await auth();
 
@@ -148,76 +150,27 @@ export default async function scrapManga(slug: string, url: string) {
       throw new Error("Forbidden action");
     }
 
-    await dbConnect();
-   const manga = await Manga.findOne({slug}).lean();
-
-    if (!manga) {
-      throw new Error(`${slug} not found`)
+    if (!scrapServerUrl) {
+      throw new Error("SCRAP_SERVER_URL .env variable is missing in the environment");
     }
 
-    console.log("chapters: ", manga.chapters);
+    const response = await fetch(scrapServerUrl + "/scrap/manga", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.SCRAP_API_SECRET_KEY!,
+      },
+      body: JSON.stringify({
+        slug,
+        scrapUrl,
+        latestChapter,
+      }),
+    });
 
-    const latestChapterNumber = await getLatestChapter(manga.id).then(res => res?.number);
-    const chapterNumbersToScrap = await getFirstAndLastChapterToScrap(url);
+    console.log(JSON.stringify(response));
 
-    if (!chapterNumbersToScrap) {
-      throw new Error("Chapter numbers to scrap not found");
-    }
-
-    // Getting starting point of chapters scraping
-    const startingChapterToScrap = latestChapterNumber
-      ? latestChapterNumber < chapterNumbersToScrap[1]
-        ? latestChapterNumber + 1
-        : null
-      : chapterNumbersToScrap[0]
-
-    console.log("Latest chapter number: ", latestChapterNumber)
-    console.log("starting chapter number: ", startingChapterToScrap);
-    console.log("chapters number to scrap: ", chapterNumbersToScrap)
-
-    if (startingChapterToScrap === null) {
-      return `${manga.title} already full.`;
-    }
-
-    // Generate chapters urls to scrap
-    const urlsToScrap = Array.from({length: chapterNumbersToScrap[1] - startingChapterToScrap + 1}, (_, index) => `${url}/chapter/${startingChapterToScrap + index}`);
-
-    for (let i = 0; i < urlsToScrap.length; i++){
-      console.log("Scrap url: ", urlsToScrap[i]);
-      const scrapedChapter = await scrapeChapter(urlsToScrap[i]);
-
-      console.log("Scraped chapter: ", scrapedChapter);
-
-      if (!scrapedChapter) {
-        console.error(`${manga.slug} ${urlsToScrap[i]} not found`);
-        continue;
-      }
-
-      const images = scrapedChapter.images.map((buffer, index) => new File([buffer], `img-${index}`));
-
-      if (images.length === 0) {
-        i--;
-        console.warn(`No image found for ${urlsToScrap[i]} chapter`)
-        await new Promise(resolve => setTimeout(() => resolve("f"), 2000));
-        continue;
-      }
-
-      const formData = new FormData();
-
-      images.forEach(img => {
-        formData.append(`images-${ChapterLanguage.En}`, img)
-      })
-
-      await createChapter({
-        number: scrapedChapter.number,
-        titles: [{
-          language: ChapterLanguage.En,
-          value: scrapedChapter.title
-        }],
-        mangaId: slug,
-        languages: ChapterLanguage.En,
-        id: ""
-      }, formData)
+    if (!response.ok) {
+      throw new Error("Failed to fetch scrap server");
     }
   } catch (e) {
     console.error("Error at scraping manga: ", e);
