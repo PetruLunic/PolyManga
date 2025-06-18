@@ -372,7 +372,7 @@ export const GET_MANGA_EDIT = gql(`
 export const GET_SCRAP_MANGA = gql(`
   query mangaScrap($id: String!) {
     manga(id: $id) {
-      latestChapter {
+      chapters(limit: 9999) {
         number
       },
       scrapSources {

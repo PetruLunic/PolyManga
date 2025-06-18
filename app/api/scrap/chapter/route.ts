@@ -4,7 +4,6 @@ import {createChapter} from "@/app/(pages)/[locale]/manga/[id]/upload/actions";
 import retryPromise from "@/app/lib/utils/retryPromise";
 import {ChapterInput} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/_components/EditChapterForm";
 import {cookies} from "next/headers";
-import {filterScrapedImageBanners} from "@/app/(pages)/[locale]/manga/[id]/scrap/actions";
 import sharp from "sharp";
 
 interface ScrapedChapter {
@@ -61,8 +60,6 @@ export async function POST(request: NextRequest) {
           console.warn(`Invalid image URL at index ${i}: ${imageUrl}`);
           continue;
         }
-
-        console.log(`Fetching image ${i + 1}/${images.length}: ${imageUrl}`);
 
         const {data: response} = await retryPromise(
           () => fetch(imageUrl),

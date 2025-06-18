@@ -90,6 +90,6 @@ export const ChapterSchema = new Schema<Chapter>({
   }
 }, {timestamps: true})
 
-ChapterSchema.index({ number: 1, mangaId: 1 }); // Unique chapter number per manga
+ChapterSchema.index({ number: 1, mangaId: 1 }, { unique: true }); // Unique chapter number per manga
 
 export default mongoose.models["Chapter"] as ChapterModel || model<Chapter, ChapterModel>("Chapter", ChapterSchema)

@@ -4,11 +4,11 @@ import {Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownT
 import {signOut, useSession} from "next-auth/react";
 import {IoBookmarks, IoSettingsSharp} from "react-icons/io5";
 import {CiLogout} from "react-icons/ci";
-import {MdAutorenew, MdHistory} from "react-icons/md";
+import {MdHistory} from "react-icons/md";
 import {useTranslations} from "next-intl";
 import {Link} from "@/i18n/routing";
 import {USER_NO_IMAGE_SRC} from "@/app/lib/utils/constants";
-import {FaPlus} from "react-icons/fa";
+import {FaPlus, FaServer} from "react-icons/fa";
 
 export default function UserAvatar() {
   const session = useSession();
@@ -77,12 +77,12 @@ export default function UserAvatar() {
                   Add Manga
               </DropdownItem>
               <DropdownItem
-                  startContent={<MdAutorenew />}
+                  startContent={<FaServer />}
                   key="scrap"
                   as={Link}
-                  href={`/scrap`}
+                  href={`/scrap/status`}
               >
-                  Scrap
+                  Scrap Status
               </DropdownItem>
           </DropdownSection>
            : <DropdownItem key="hidden" className="hidden">f</DropdownItem>

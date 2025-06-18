@@ -139,9 +139,74 @@ export async function scrapeChapter(url: string): Promise<ScrapedChapter> {
   }
 }
 
+interface GlobalScrapingStatus {
+  isLocked: boolean;
+  timeoutProtectionActive: boolean;
+  activeJobs: number;
+  currentlyScrapingMangas: Array<{
+    mangaId: string;
+    status: string;
+    currentChapter: number | null;
+    totalChapters: number;
+    completedChapters: number;
+    message: string;
+    startTime: string;
+  }>;
+  serverUptime: number;
+  timestamp: string;
+}
+
+interface ActionResult<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
+export async function getGlobalScrapingStatus(): Promise<ActionResult<GlobalScrapingStatus>> {
+  const session = await auth();
+
+  // This action can use only moderators and admins
+  if (!session || (session.user.role !== "MODERATOR" && session.user.role !== "ADMIN")) {
+    throw new Error("Forbidden action");
+  }
+
+  try {
+    const scrapServerUrl = process.env.SCRAP_SERVER_URL;
+
+    if (!scrapServerUrl) {
+      throw new Error("SCRAP_SERVER_URL environment variable is missing");
+    }
+
+    const response = await fetch(`${scrapServerUrl}/scrap/status`, {
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.SCRAP_API_SECRET_KEY!,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      success: true,
+      data
+    };
+  } catch (error) {
+    console.error("Error fetching global scraping status:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch scraping status'
+    };
+  }
+}
+
+
 const scrapServerUrl = process.env.SCRAP_SERVER_URL;
 
-export default async function scrapManga(slug: string, scrapUrl: string, latestChapter?: number) {
+export default async function scrapManga(slug: string, scrapUrl: string, chapters?: number[]) {
   try {
     const session = await auth();
 
@@ -163,7 +228,7 @@ export default async function scrapManga(slug: string, scrapUrl: string, latestC
       body: JSON.stringify({
         slug,
         scrapUrl,
-        latestChapter,
+        chapters,
       }),
     });
 

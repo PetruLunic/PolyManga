@@ -3,7 +3,7 @@
 import {nanoid} from "nanoid";
 import {AddChapterInput, ChapterLanguage} from "@/app/__generated__/graphql";
 import {getImageURLs} from "@/app/lib/utils/getImageURL";
-import {getSignedURLs} from "@/app/lib/utils/awsUtils";
+import {deleteImage, getSignedURLs} from "@/app/lib/utils/awsUtils";
 import {auth} from "@/auth";
 import sharp from "sharp";
 import dbConnect from "@/app/lib/utils/dbConnect";
@@ -14,6 +14,7 @@ import {EditChapterInputSchema} from "@/app/lib/utils/zodSchemas";
 import {fetchInBatches} from "@/app/lib/utils/fetchInBatches";
 import {cookies} from "next/headers";
 import Chapter from "@/app/lib/models/Chapter";
+import retryPromise from "@/app/lib/utils/retryPromise";
 
 export interface ChapterImageBuffer extends Omit<ChapterImage, "src"> {
   buffer: ArrayBuffer
@@ -66,6 +67,12 @@ export async function createChapter(data: ChapterInput, formData: FormData) {
       return {success: false, message: "Manga not found"};
     }
 
+    const existingChapter = await Chapter.exists({number, mangaId});
+
+    if (!existingChapter) {
+      return {success: false, message: "Chapter with this number already exists in this manga"};
+    }
+
     const chapterId = nanoid();
 
     const imagesMap: Record<ChapterLanguage, ChapterImageBuffer[]> = {} as Record<ChapterLanguage, ChapterImageBuffer[]>;
@@ -112,20 +119,36 @@ export async function createChapter(data: ChapterInput, formData: FormData) {
     }
 
     // Creating promises to create each image parallel
-    const fetchImagesPromises: Promise<Response>[] = [];
+    const fetchImagesPromises: Promise<Response | null>[] = [];
 
     languages.forEach((language) => {
       imagesMap[language].forEach((image, index) => {
         const imageFile = new File([image.buffer], 'combined-image.webp', { type: 'image/webp' });
 
 
-        fetchImagesPromises.push(fetch(signedURLs[language][index], {
-          method: "PUT",
-          body: imageFile,
-          headers: {
-            "Content-type": imageFile.type
-          }
-        }))
+        fetchImagesPromises.push(
+          retryPromise(
+            () =>
+            fetch(signedURLs[language][index], {
+              method: "PUT",
+              body: imageFile,
+              headers: {
+                "Content-type": imageFile.type
+              }
+            }
+            ),
+            3,
+            5000,
+            (response) => !response.ok
+          ).then(({data}) => {
+            if (!data) {
+              console.error("Image file upload failed.");
+              return null;
+            }
+
+            return data;
+          })
+        )
       })
     })
 
@@ -152,14 +175,31 @@ export async function createChapter(data: ChapterInput, formData: FormData) {
       languages
     }
 
-    const newChapter = new Chapter(chapter);
-    await newChapter.save();
+    // Saving chapter to database and images to bucket
+    try {
+      // Fetching images to the bucket
+      await fetchInBatches(fetchImagesPromises, 30);
 
-    manga.chapters.push(newChapter.id);
-    await manga.save();
+      const newChapter = new Chapter(chapter);
+      await newChapter.save();
 
-    // Fetching images to the bucket
-    await fetchInBatches(fetchImagesPromises, 30);
+      manga.chapters.push(newChapter.id);
+      await manga.save();
+    } catch (e) {
+      console.error("Error while fetching images", e);
+
+      // Clean up fetched images on error
+      await fetchInBatches(
+        languages.flatMap(language => {
+          return imagesURLs[language].map(url => {
+            return deleteImage(url);
+          })
+        })
+          .filter(promise => promise !== undefined)
+      )
+
+      return {success: false, message: "Failed to fetch images"};
+    }
 
     return {success: true, message: "Chapter created"}
   } catch (e) {

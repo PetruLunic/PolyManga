@@ -50,7 +50,7 @@ const documents = {
     "\n  query isLiked($slug: ID!) {\n    isLiked(slug: $slug)\n  }\n": types.IsLikedDocument,
     "\n  query isRated($slug: ID!) {\n    isRated(slug: $slug)\n  }\n": types.IsRatedDocument,
     "\n  query mangaEdit($id: String!) {\n    manga(id: $id) {\n      id,\n      titles {\n        value,\n        language\n      },\n      author,\n      status,\n      type,\n      genres,\n      descriptions {\n        value,\n        language\n      },\n      scrapSources {\n        asurascans\n      } \n      releaseYear,\n      image,\n      languages\n    }\n  }\n": types.MangaEditDocument,
-    "\n  query mangaScrap($id: String!) {\n    manga(id: $id) {\n      latestChapter {\n        number\n      },\n      scrapSources {\n        asurascans\n      } \n    }\n  }\n": types.MangaScrapDocument,
+    "\n  query mangaScrap($id: String!) {\n    manga(id: $id) {\n      chapters(limit: 9999) {\n        number\n      },\n      scrapSources {\n        asurascans\n      } \n    }\n  }\n": types.MangaScrapDocument,
     "\n    query userPreferences {\n      user {\n        preferences {\n          targetLanguage,\n          sourceLanguage\n        }\n      }\n    }\n": types.UserPreferencesDocument,
     "\n  query getBookmarkedChapter($slug: String!, $locale: String!) {\n    getBookmarkedChapter(slug: $slug) {\n      chapterId,\n      chapter {\n        title(locale: $locale),\n        number\n      }\n    }\n  }\n": types.GetBookmarkedChapterDocument,
     "\n  query getMangaWithBookmarkedChapters($locale: String!) {\n    user {\n      chapterBookmarks {\n        manga {\n          ...MangaCard\n        },\n        chapter {\n          title(locale: $locale),\n        },\n        createdAt\n      }\n    }\n  }\n": types.GetMangaWithBookmarkedChaptersDocument,
@@ -222,7 +222,7 @@ export function gql(source: "\n  query mangaEdit($id: String!) {\n    manga(id: 
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query mangaScrap($id: String!) {\n    manga(id: $id) {\n      latestChapter {\n        number\n      },\n      scrapSources {\n        asurascans\n      } \n    }\n  }\n"): (typeof documents)["\n  query mangaScrap($id: String!) {\n    manga(id: $id) {\n      latestChapter {\n        number\n      },\n      scrapSources {\n        asurascans\n      } \n    }\n  }\n"];
+export function gql(source: "\n  query mangaScrap($id: String!) {\n    manga(id: $id) {\n      chapters(limit: 9999) {\n        number\n      },\n      scrapSources {\n        asurascans\n      } \n    }\n  }\n"): (typeof documents)["\n  query mangaScrap($id: String!) {\n    manga(id: $id) {\n      chapters(limit: 9999) {\n        number\n      },\n      scrapSources {\n        asurascans\n      } \n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
