@@ -63,17 +63,14 @@ export async function POST(request: NextRequest) {
 
         const {data: response} = await retryPromise(
           () => fetch(imageUrl),
-          3,
-          2000,
+          5,
+          7000,
           (response) => !response.ok
         );
 
         if (!response?.ok) {
           console.error(`Failed to fetch image ${imageUrl}: ${response?.status}`);
-          return NextResponse.json(
-            { error: `Failed to fetch image ${imageUrl}: ${response?.status}` },
-            { status: response?.status ?? 500 }
-          );
+          continue;
         }
 
         imagesMetadata.push({
