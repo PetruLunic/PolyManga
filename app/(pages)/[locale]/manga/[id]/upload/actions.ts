@@ -69,7 +69,7 @@ export async function createChapter(data: ChapterInput, formData: FormData) {
 
     const existingChapter = await Chapter.exists({number, mangaId});
 
-    if (!existingChapter) {
+    if (existingChapter) {
       return {success: false, message: "Chapter with this number already exists in this manga"};
     }
 
