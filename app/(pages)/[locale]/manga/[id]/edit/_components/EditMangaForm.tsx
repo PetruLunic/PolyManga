@@ -73,6 +73,7 @@ export default function EditMangaForm({manga}: Props) {
 
       const mangaInput: EditMangaInput = {
         ...data,
+        slug: manga.slug,
         descriptions,
         titles,
         id: manga.id,

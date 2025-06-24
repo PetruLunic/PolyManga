@@ -347,6 +347,7 @@ export const GET_MANGA_EDIT = gql(`
   query mangaEdit($id: String!) {
     manga(id: $id) {
       id,
+      slug,
       titles {
         value,
         language

@@ -4,7 +4,6 @@ export async function generateStaticParams() {
   return [];
 }
 
-
 interface Props {
   params: Promise<{
     id: string,

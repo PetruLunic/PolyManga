@@ -16,6 +16,9 @@ import {
 } from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/_components/EditChapterForm";
 import {EditChapterInputSchema} from "@/app/lib/utils/zodSchemas";
 import {fetchInBatches} from "@/app/lib/utils/fetchInBatches";
+import retryPromise from "@/app/lib/utils/retryPromise";
+import Manga from "@/app/lib/models/Manga";
+import {revalidateTag} from "next/cache";
 
 export async function editChapter(data: ChapterInput, formData: FormData) {
   const session = await auth();
@@ -43,6 +46,12 @@ export async function editChapter(data: ChapterInput, formData: FormData) {
 
   if (!chapter) {
     throw new Error("No chapter found");
+  }
+
+  const manga = await Manga.findOne({id: chapter.mangaId}).lean();
+
+  if (!manga) {
+    throw new Error("Manga not found");
   }
 
   if (number !== chapter.number) {
@@ -96,19 +105,35 @@ export async function editChapter(data: ChapterInput, formData: FormData) {
   }
 
   // Creating promises to create each image parallel
-  const fetchImagesPromises: Promise<Response>[] = [];
+  const fetchImagesPromises: Promise<Response | null>[] = [];
 
   languagesWithNewImages.forEach((language) => {
     imagesMap[language].forEach((image, index) => {
       const imageFile = new File([image.buffer], 'combined-image.webp', { type: 'image/webp' });
 
-      fetchImagesPromises.push(fetch(signedURLs[language][index], {
-        method: "PUT",
-        body: imageFile,
-        headers: {
-          "Content-type": imageFile.type
-        }
-      }))
+      fetchImagesPromises.push(
+        retryPromise(
+          () =>
+            fetch(signedURLs[language][index], {
+                method: "PUT",
+                body: imageFile,
+                headers: {
+                  "Content-type": imageFile.type
+                }
+              }
+            ),
+          3,
+          5000,
+          (response) => !response.ok
+        ).then(({data}) => {
+          if (!data) {
+            console.error("Image file upload failed.");
+            return null;
+          }
+
+          return data;
+        })
+      )
     })
   })
 
@@ -183,11 +208,29 @@ export async function editChapter(data: ChapterInput, formData: FormData) {
   chapter.languages = languages;
   chapter.titles = titles;
 
-  // Saving the chapter
-  await chapter.save();
+  // Saving chapter to database and images to bucket
+  try {
+    // Fetching images to the bucket
+    await fetchInBatches(fetchImagesPromises, 30);
+    await chapter.save();
 
-  // Fetching images to the bucket
-  await fetchInBatches(fetchImagesPromises, 30);
+    // Revalidate manga and chapter pages
+    revalidateTag(`chapter-${manga.slug}-${chapter.number}`)
+  } catch (e) {
+    console.error("Error while fetching images", e);
+
+    // Clean up fetched images on error
+    await fetchInBatches(
+      languages.flatMap(language => {
+        return imagesURLs[language].map(url => {
+          return deleteImage(url);
+        })
+      })
+        .filter(promise => promise !== undefined)
+    )
+
+    return {success: false, message: "Failed to fetch images"};
+  }
 
   return {success: true, message: "Chapter updated"}
 }

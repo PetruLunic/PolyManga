@@ -9,6 +9,8 @@ import {EditMangaInput} from "@/app/__generated__/graphql";
 import {cookies} from "next/headers";
 import {deleteImage, uploadImage} from "@/app/lib/utils/awsUtils";
 
+import {revalidateTag} from "next/cache";
+
 export const editManga = async (manga: EditMangaInput, formData?: FormData) => {
   const session = await auth();
 
@@ -59,5 +61,8 @@ export const editManga = async (manga: EditMangaInput, formData?: FormData) => {
       }
     },
     context: {headers: {cookie: await cookies()}}
-  })
+  });
+
+  // Revalidate manga page
+  revalidateTag(`manga-${manga.slug}`);
 }

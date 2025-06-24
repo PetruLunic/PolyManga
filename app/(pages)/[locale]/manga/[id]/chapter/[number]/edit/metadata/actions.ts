@@ -16,7 +16,8 @@ import {
   HarmBlockThreshold, GenerateContentConfig
 } from "@google/genai";
 import {geminiModel} from "@/app/lib/AIModels";
-
+import Manga from "@/app/lib/models/Manga";
+import {revalidateTag} from "next/cache";
 
 export async function saveMetadata (metadataContent: Box[], chapterId: string) {
   const session = await auth();
@@ -68,6 +69,11 @@ export async function saveMetadata (metadataContent: Box[], chapterId: string) {
     });
     await newMetadata.save();
   }
+
+  const chapter = await Chapter.findOne({id: chapterId}).lean();
+  const manga = await Manga.findOne({id: chapter?.mangaId}).lean();
+
+  revalidateTag(`chapter-${manga?.slug}-${chapter?.number}`)
 }
 
 const BUCKET_URL = process.env.NEXT_PUBLIC_BUCKET_URL;

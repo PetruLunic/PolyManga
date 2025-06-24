@@ -10,6 +10,7 @@ import {AddMangaInput, ChapterLanguage, ComicsGenre, ComicsStatus, ComicsType} f
 import {cookies} from "next/headers";
 import {getSignedURLs} from "@/app/lib/utils/awsUtils";
 import {generateSlug} from "@/app/lib/utils/generateSlug";
+import {redirect} from "@/i18n/routing";
 
 export const createManga = async (formData: FormData, mangaInput: FormType) => {
   const session = await auth();
@@ -74,4 +75,6 @@ export const createManga = async (formData: FormData, mangaInput: FormType) => {
       "Content-type": image.type
     }
   })
+
+  redirect({href: {pathname: `/manga/${manga.slug}`}, locale: "en"});
 }

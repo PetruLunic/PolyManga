@@ -19,7 +19,13 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
 
   if (Number.isNaN(number)) return await seoMetaData.manga(locale);
 
-  const {data} = await queryGraphql(GET_CHAPTER_METADATA, {slug: id, number, locale});
+  const {data} = await queryGraphql(GET_CHAPTER_METADATA,
+    {slug: id, number, locale},
+    {
+      tags: [`chapter-${id}-${number}`, `chapter-${id}-${number}-${locale}`],
+      revalidate: 7200
+    }
+  );
 
   if (!data?.chapter) return await seoMetaData.manga(locale);
   const {chapter} = data;
@@ -113,9 +119,6 @@ interface Props {
   params: Promise<Params>
 }
 
-// 6 hours revalidation
-export const revalidate = 21600;
-
 export default async function Page({params}: Props) {
   const {locale, id, number: numberString} = await params;
   setRequestLocale(locale);
@@ -123,7 +126,14 @@ export default async function Page({params}: Props) {
   const number = Number.parseFloat(numberString);
   if (Number.isNaN(number)) notFound();
 
-  const {data} = await queryGraphql(GET_CHAPTER, {number, slug: id, locale});
+  const {data} = await queryGraphql(GET_CHAPTER,
+    {number, slug: id, locale},
+    {
+      tags: [`chapter-${id}-${number}`, `chapter-${id}-${number}-${locale}`],
+      revalidate: 21600 // 6 hours
+    }
+  );
+
   if (!data) notFound();
 
   const chapter = data.chapter;

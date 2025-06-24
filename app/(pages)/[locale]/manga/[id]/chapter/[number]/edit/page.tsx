@@ -11,6 +11,8 @@ interface Props{
   }>
 }
 
+export const revalidate = 0;
+
 export default async function Page({params}: Props) {
   const {id: slug, number: numberStr, locale} = await params;
   const number = Number.parseFloat(numberStr);

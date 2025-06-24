@@ -553,6 +553,9 @@ export class EditMangaInput implements Partial<Manga> {
   @Field()
   id: string;
 
+  @Field()
+  slug: string;
+
   @Field(() => [MangaTitleInput])
   titles: MangaTitleInput[];
 

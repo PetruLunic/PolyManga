@@ -20,7 +20,13 @@ import {getFragmentData} from "@/app/__generated__";
 
 export async function generateMetadata({ params}: Props): Promise<Metadata> {
   const {id, locale} = await params;
-  const {data} = await queryGraphql(GET_MANGA_METADATA, {id, locale});
+  const {data} = await queryGraphql(GET_MANGA_METADATA,
+    {id, locale},
+    {
+      tags: [`manga-${id}`, `manga-${id}-${locale}`],
+      revalidate: 7200
+    }
+  );
   const mangaT = await getTranslations({locale, namespace: "common.manga"});
   const metadataT = await getTranslations({locale, namespace: "pages.mangaDetails.metadata"});
 
@@ -70,13 +76,17 @@ interface Props{
   }>
 }
 
-// 2 hours revalidate
-export const revalidate = 7200;
-
 export default async function Page({params}: Props) {
   const {id, locale} = await params;
   setRequestLocale(locale);
-  const {data} = await queryGraphql(GET_MANGA, {id, offset: 0, limit: 30, locale});
+  const { data } = await queryGraphql(
+    GET_MANGA,
+    { id, offset: 0, limit: 30, locale },
+    {
+      tags: [`manga-${id}`, `manga-${id}-${locale}`],
+      revalidate: 7200
+    }
+  );
 
   if (!data) notFound();
   const mangaT = await getTranslations({locale, namespace:"common.manga"});

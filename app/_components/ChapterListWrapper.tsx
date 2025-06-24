@@ -2,7 +2,7 @@
 
 import { ChaptersListFragment } from "@/app/__generated__/graphql";
 import { useLocale, useTranslations } from "next-intl";
-import React, { useMemo, useState } from "react"; // Removed useEffect for data sync
+import React, { useMemo, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { CHAPTERS_LIST, GET_CHAPTERS } from "@/app/lib/graphql/queries";
 import { useInfiniteScroll } from "@/app/lib/hooks/useInfiniteScroll";

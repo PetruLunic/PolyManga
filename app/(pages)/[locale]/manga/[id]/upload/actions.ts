@@ -15,6 +15,7 @@ import {fetchInBatches} from "@/app/lib/utils/fetchInBatches";
 import {cookies} from "next/headers";
 import Chapter from "@/app/lib/models/Chapter";
 import retryPromise from "@/app/lib/utils/retryPromise";
+import {revalidateTag} from "next/cache";
 
 export interface ChapterImageBuffer extends Omit<ChapterImage, "src"> {
   buffer: ArrayBuffer
@@ -185,6 +186,11 @@ export async function createChapter(data: ChapterInput, formData: FormData) {
 
       manga.chapters.push(newChapter.id);
       await manga.save();
+
+      // Revalidate manga and chapter pages
+      revalidateTag(`chapter-${manga.slug}-${chapter.number}`);
+      revalidateTag(`chapter-${manga.slug}-${chapter.number - 1}`);
+      revalidateTag(`manga-${manga.slug}`);
     } catch (e) {
       console.error("Error while fetching images", e);
 
