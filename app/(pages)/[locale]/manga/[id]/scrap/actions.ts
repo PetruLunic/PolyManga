@@ -6,7 +6,6 @@ import {Chapter} from "@/app/lib/graphql/schema";
 import {chromium} from "playwright";
 import {auth} from "@/auth";
 import sharp from "sharp";
-import {createChapter} from "@/app/(pages)/[locale]/manga/[id]/upload/actions";
 import {ChapterLanguage} from "@/app/types";
 import dbConnect from "@/app/lib/utils/dbConnect";
 

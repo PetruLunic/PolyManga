@@ -116,25 +116,39 @@ export class ChapterResolver {
   @Query(() => [Chapter])
   async latestChapters(@Args() {limit = 10, offset = 0}: GetChaptersArgs): Promise<Chapter[]> {
     return ChapterModel.aggregate([
-      // Step 1: Sort by mangaId and createdAt (newest first)
-      { $sort: { mangaId: 1, createdAt: -1 } },
-
-      // Step 2: Group by mangaId, keeping only the newest chapter (one per mangaId)
+      // Step 1: Add a match stage to potentially reduce documents early
+      // Only include chapters from the last 6 months for performance
       {
-        $group: {
-          _id: "$mangaId",   // Group by bookId
-          latestChapter: { $first: "$$ROOT" }  // Get the most recent chapter for each mangaId
+        $match: {
+          createdAt: {
+            $gte: new Date(Date.now() - 3 * 30 * 24 * 60 * 60 * 1000) // 3 months ago
+          }
         }
       },
 
-      // Step 3: Replace root to get the original document format
+      // Step 2: Sort by mangaId and createdAt (newest first) - now with fewer documents
+      { $sort: { mangaId: 1, createdAt: -1 } },
+
+      // Step 3: Group by mangaId, keeping only the newest chapter
+      {
+        $group: {
+          _id: "$mangaId",
+          latestChapter: { $first: "$$ROOT" }
+        }
+      },
+
+      // Step 4: Replace root
       { $replaceRoot: { newRoot: "$latestChapter" } },
 
-      // Step 4: Sort the final result by createdAt in descending order
+      // Step 5: Sort by createdAt descending
       { $sort: { createdAt: -1 } },
-      { $skip: offset }, // Skip documents for pagination
-      { $limit: limit }, // Limit the number of documents returned
-    ]).exec();
+
+      // Step 6: Apply pagination
+      { $skip: offset },
+      { $limit: limit },
+    ], {
+      allowDiskUse: true
+    }).exec();
   }
 
   @Authorized(["MODERATOR"])

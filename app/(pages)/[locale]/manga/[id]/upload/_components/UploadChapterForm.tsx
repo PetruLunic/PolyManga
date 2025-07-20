@@ -1,7 +1,7 @@
 "use client"
 
 import {useState} from "react";
-import {createChapter} from "@/app/(pages)/[locale]/manga/[id]/upload/actions";
+import {createChapter} from "@/app/(pages)/[locale]/manga/[id]/upload/createChapter";
 import {Button, Select, SelectItem} from "@heroui/react";
 import {Input} from "@heroui/input";
 import {ChapterLanguage} from "@/app/__generated__/graphql";
@@ -76,9 +76,6 @@ export default function UploadChapterForm({slug, latestChapterNumber}: Props) {
     try {
       clearErrors("root");
 
-      // Create FormData object from the current form
-      const formData = new FormData();
-
       for (let id in imageInputSections) {
         // Validate length of images
         if (imageInputSections[id].images.length === 0) {
@@ -94,11 +91,6 @@ export default function UploadChapterForm({slug, latestChapterNumber}: Props) {
           setError(`images.${repeatedLanguageSection[0]}`, {type: "custom", message: `The language ${imageInputSections[id].language} is not unique`});
           return;
         }
-
-        // Append images to formData
-        for (let image of imageInputSections[id].images) {
-          formData.append(`images-${imageInputSections[id].language}`, image);
-        }
       }
 
       const input: ChapterInput = {
@@ -106,14 +98,28 @@ export default function UploadChapterForm({slug, latestChapterNumber}: Props) {
         mangaId: slug
       }
 
-      const result = await createChapter(input, formData);
+      const filesInput: Record<ChapterLanguage, File[]> = Object.values(imageInputSections)
+        .reduce((acc, {language, images}) => {
+          return {
+            ...acc,
+            [language]: images
+          }
+        }, {} as Record<ChapterLanguage, File[]>);
+
+      const result = await createChapter(input, filesInput);
 
       if (!result.success) {
         addAlert({type: "danger", message: result.message});
         return;
       }
 
-      addAlert({type: "success", message: "Chapter successfully uploaded"});
+      addAlert({
+        type: "success",
+        message: `Chapter created successfully! Processed ${result.imagesProcessed} images.`
+      });
+
+      // Reset form
+      setImageInputSections({[nanoid()]: { language: ChapterLanguage.En, images: [] }});
     } catch (e) {
       console.error(e);
 
@@ -237,145 +243,3 @@ export default function UploadChapterForm({slug, latestChapterNumber}: Props) {
     </div>
   );
 };
-
-// export default function UploadChapterForm({slug, latestChapterNumber}: Props) {
-//   // Setting first input section default with first language, and empty images
-//   const [imageInputSections, setImageInputSections] =
-//       useState<ImageInputSection>({[nanoid()]: {language: languagesMap[0].key, images: []}});
-//   const formRef = useRef<HTMLFormElement | null>(null);
-//   const {
-//     register,
-//     handleSubmit,
-//     formState: {
-//       errors ,
-//       isSubmitting,
-//       isSubmitSuccessful
-//     },
-//     setError,
-//     clearErrors
-//   } = useForm<FormData>({
-//     resolver: zodResolver(ChapterInputSchema),
-//   });
-//
-//   const onSubmit = handleSubmit(async () => {
-//     try {
-//       if (!formRef.current) return;
-//       clearErrors("root");
-//
-//       // Create FormData object from the current form
-//       const formData = new FormData(formRef.current);
-//
-//       // Append additional data to FormData
-//       formData.append("slug", slug);
-//
-//       // Append images to formData
-//       for (let id in imageInputSections) {
-//
-//         // Validate length of images
-//         if (imageInputSections[id].images.length === 0) {
-//           setError(`images.${id}`, {type: "custom", message: "In image input must be at least 1 image"})
-//           return;
-//         }
-//
-//         // Append title to form data
-//         formData.append(`title-${imageInputSections[id].language}`, imageInputSections[id].title);
-//
-//         // Append images to form data
-//         for (let image of imageInputSections[id].images) {
-//           formData.append(`images-${imageInputSections[id].language}`, image);
-//         }
-//       }
-//
-//       // Getting array of chapter languages
-//       const languages = Object.values(imageInputSections).map(({language}) => language);
-//
-//       // Every language should be unique. Invalidating it
-//       if (new Set(languages).size !== languages.length) {
-//         setError("root.languages", {type: "custom", message: "Languages must be unique"})
-//         return;
-//       }
-//
-//       // Call server action
-//       const response = await createChapter(formData, languages);
-//
-//       if (!response?.success) {
-//         setError("root.server", {type: "custom", message: response?.message})
-//       }
-//
-//     } catch (e) {
-//       console.error(e);
-//       setError("root", {type: "custom", message: "Unexpected error"})
-//     }
-//   })
-//
-//   return (
-//       <div className="flex flex-col gap-5 px-2">
-//         <form ref={formRef} className="flex flex-col gap-3" onSubmit={onSubmit}>
-//           <Alert
-//               key={nanoid()}
-//               title="Submit error"
-//               description={errors.root && errors.root["languages"]?.message}
-//               type="danger"
-//               isVisible={!!(errors.root && errors.root["languages"])}
-//               onDismiss={() => clearErrors("root.languages")}
-//           />
-//           <Alert
-//               key={nanoid()}
-//               title="Submit error"
-//               description={errors.root && errors.root["server"]?.message}
-//               type="danger"
-//               isVisible={!!(errors.root && errors.root["server"])}
-//               onDismiss={() => clearErrors("root.server")}
-//           />
-//           <Alert
-//               key={nanoid()}
-//               title="Chapter created successfully"
-//               type="success"
-//               isVisible={isSubmitSuccessful}
-//           />
-//           <div className="flex flex-col gap-3 md:flex-row">
-//             <Input
-//                 label="Chapter number"
-//                 type="number"
-//                 placeholder="Enter chapter number"
-//                 isInvalid={!!errors.number}
-//                 errorMessage={errors.number?.message}
-//                 defaultValue={(latestChapterNumber ? latestChapterNumber + 1 : 1).toString()}
-//                 {...register("number", {valueAsNumber: true})}
-//             />
-//           </div>
-//           <div className="flex flex-col gap-3">
-//             {Object.keys(imageInputSections).map((id) => {
-//               const error = errors.images && errors.images[id];
-//
-//               return <ImagesInputSection
-//                   key={id}
-//                   id={id}
-//                   setImageInputSections={setImageInputSections}
-//                   imageInputSections={imageInputSections}
-//                   languagesMap={languagesMap}
-//                   errorMessage={error?.message}
-//               />
-//             }
-//             )}
-//             <Divider/>
-//             {Object.keys(imageInputSections).length < languagesLimit &&
-//               <div className="flex justify-end">
-//                 <Button
-//                     isIconOnly
-//                     radius="full"
-//                     onPress={() =>
-//                         setImageInputSections(prev => {
-//                           return {...prev, [nanoid()]: {language: languagesMap[0].key, images: [], title: ""}}
-//                         })
-//                     }
-//                 >
-//                     <HiOutlinePlus className="text-xl"/>
-//                 </Button>
-//               </div>}
-//           </div>
-//           <Button className="w-12" type="submit" isLoading={isSubmitting}>Submit</Button>
-//         </form>
-//       </div>
-//   );
-// };

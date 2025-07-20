@@ -1,160 +1,97 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ChapterLanguage } from '@/app/__generated__/graphql';
-import {createChapter} from "@/app/(pages)/[locale]/manga/[id]/upload/actions";
-import retryPromise from "@/app/lib/utils/retryPromise";
-import {ChapterInput} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/_components/EditChapterForm";
-import {cookies} from "next/headers";
-import sharp from "sharp";
-
-interface ScrapedChapter {
-  title: string;
-  number: number;
-  images: string[]; // Array of image URLs
-  mangaId: string;
-}
+import { ChapterInput } from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/_components/EditChapterForm";
+import { cookies } from "next/headers";
+import {createChapter} from "@/app/(pages)/[locale]/manga/[id]/upload/createChapter";
 
 export async function POST(request: NextRequest) {
   try {
     const apiKey = request.headers.get("x-api-key");
 
     if (!apiKey || apiKey !== process.env.SCRAP_API_SECRET_KEY) {
-      console.error(`Invalid API Key on /api/scrap/chapter. IP: ${request.headers.get('X-Forwarded-For') ?? request.headers.get('x-real-ip')}`);
       return NextResponse.json(
         { error: 'Invalid or missing API key' },
         { status: 401 }
       );
     }
 
-    const body: ScrapedChapter = await request.json();
+    const body = await request.json();
     const { title, number, images, mangaId } = body;
 
     // Validation
     if (!title || !number || !Array.isArray(images) || !mangaId) {
       return NextResponse.json(
-        { error: 'Invalid request body. Required: title, number, images, mangaId' },
+        { error: 'Invalid request body' },
         { status: 400 }
       );
     }
 
-    if (images.length === 0) {
-      return NextResponse.json(
-        { error: 'At least one image is required' },
-        { status: 400 }
-      );
-    }
+    // Process images - convert to File objects with ArrayBuffer
+    const processedFiles: File[] = [];
+    let processedImages = 0;
 
-    // Create FormData and fetch images
-    const formData = new FormData();
-    const imagesMetadata: {
-      buffer: ArrayBuffer,
-      contentType: string
-    }[] = [];
-
-    console.log(`Processing ${images.length} images for chapter ${number}`);
-
-    for (let i = 0; i < images.length; i++) {
+    for (const imageUrl of images) {
       try {
-        const imageUrl = images[i];
+        const response = await fetch(imageUrl);
+        if (!response.ok) continue;
 
-        if (!imageUrl || !imageUrl.startsWith('http')) {
-          console.warn(`Invalid image URL at index ${i}: ${imageUrl}`);
-          continue;
-        }
+        const buffer = await response.arrayBuffer();
+        const contentType = response.headers.get('content-type') || 'image/jpeg';
+        const extension = contentType.includes('png') ? 'png' : 'jpg';
 
-        const {data: response} = await retryPromise(
-          () => fetch(imageUrl),
-          5,
-          7000,
-          (response) => !response.ok
-        );
-
-        if (!response?.ok) {
-          console.error(`Failed to fetch image ${imageUrl}: ${response?.status}`);
-          continue;
-        }
-
-        imagesMetadata.push({
-          buffer: await response.arrayBuffer(),
-          contentType: response.headers.get('content-type') || 'image/jpeg'
-        });
-      } catch (error) {
-        console.error(`Error fetching image ${i}:`, error);
-      }
-    }
-
-    // Step 2: Filter using indexed approach
-    const imageWidths = await Promise.all(
-      imagesMetadata.map(async (metadata) => {
-        const sharpMetadata = await sharp(metadata.buffer).metadata();
-        return sharpMetadata.width || 0;
-      })
-    );
-
-    // Find most common width
-    const widthCounts: Record<number, number> = {};
-    imageWidths.forEach(width => {
-      widthCounts[width] = (widthCounts[width] || 0) + 1;
-    });
-
-    const mostCommonWidth = Object.keys(widthCounts)
-      .map(Number)
-      .reduce((a, b) => (widthCounts[a] > widthCounts[b] ? a : b), 0);
-
-    // Step 3: Filter and create FormData based on width
-    let filteredCount = 0;
-    for (let i = 0; i < imagesMetadata.length; i++) {
-      if (imageWidths[i] === mostCommonWidth) {
-        const { buffer, contentType } = imagesMetadata[i];
-
-        const extension = contentType.includes('png') ? 'png' :
-          contentType.includes('webp') ? 'webp' : 'jpg';
-
-        const file = new File([buffer], `image-${filteredCount}.${extension}`, {
+        const file = new File([buffer], `image-${processedImages}.${extension}`, {
           type: contentType
         });
 
-        formData.append(`images-${ChapterLanguage.En}`, file);
-        filteredCount++;
+        processedFiles.push(file);
+        processedImages++;
+      } catch (error) {
+        console.error(`Error processing image ${imageUrl}:`, error);
       }
     }
 
-    console.log(`Created FormData with ${filteredCount} filtered images`);
-
-    if (filteredCount === 0) {
+    if (processedFiles.length === 0) {
       return NextResponse.json(
-        { error: 'No images remained after banner filtering' },
+        { error: 'No images could be processed' },
         { status: 400 }
       );
     }
 
+    // Set service authentication
+    const cookieStore = await cookies();
+    cookieStore.set('service-auth', process.env.SCRAP_API_SECRET_KEY!);
 
-    // Prepare chapter input data
+    // Prepare chapter input
     const chapterInput: ChapterInput = {
       mangaId,
-      titles: [{
-        language: ChapterLanguage.En,
-        value: title
-      }],
+      titles: [{ language: ChapterLanguage.En, value: title }],
       number,
       languages: ChapterLanguage.En,
       id: ""
     };
 
-    // Set service authentication cookie
-    const cookieStore = await cookies();
-    cookieStore.set('service-auth', process.env.SCRAP_API_SECRET_KEY!);
+    // Prepare image files object
+    const imageFiles: Record<ChapterLanguage, File[]> = {
+      [ChapterLanguage.En]: processedFiles
+    } as Record<ChapterLanguage, File[]>;
 
-    // Call your createChapter function
-    const result = await createChapter(chapterInput, formData);
-
-    console.log(result);
+    const result = await createChapter(
+      chapterInput,
+      imageFiles,
+      {
+        progressCallback: (progress) => {
+          console.log(`[${progress.stage}] ${progress.message} (${progress.completed}/${progress.total})`);
+        }
+      }
+    );
 
     if (result.success) {
       return NextResponse.json({
         success: true,
         message: result.message,
-        imagesProcessed: filteredCount,
-        totalImages: images.length
+        chapterId: result.chapterId,
+        imagesProcessed: result.imagesProcessed,
+        totalImages: result.totalImages
       }, { status: 201 });
     } else {
       return NextResponse.json({
@@ -164,12 +101,10 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Error in POST /api/scrap/chapters:', error);
-
+    console.error('Error in chapter creation:', error);
     return NextResponse.json({
       success: false,
-      error: 'Internal server error',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Internal server error'
     }, { status: 500 });
   }
 }

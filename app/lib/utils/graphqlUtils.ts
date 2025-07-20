@@ -16,8 +16,6 @@ export async function queryGraphql<TData, TVariables extends { [key: string]: un
   }
 ): Promise<{ data: TData | null, errors: readonly GraphQLError[] | undefined }> {
 
-  console.log("Query: ", document.loc?.source.name);
-
   // Create a cache key from the query and variables
   const cacheKey = [
     document.loc?.source.name || 'query',

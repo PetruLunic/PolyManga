@@ -90,6 +90,8 @@ export const ChapterSchema = new Schema<Chapter>({
   }
 }, {timestamps: true})
 
+ChapterSchema.index({ mangaId: 1, createdAt: -1 }); // For the aggregation sort
+ChapterSchema.index({ createdAt: -1 }); // For final sorting
 ChapterSchema.index({ number: 1, mangaId: 1 }, { unique: true }); // Unique chapter number per manga
 
 export default mongoose.models["Chapter"] as ChapterModel || model<Chapter, ChapterModel>("Chapter", ChapterSchema)

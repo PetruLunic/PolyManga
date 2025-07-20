@@ -15,8 +15,6 @@ import {
 } from "@heroui/react";
 import {nanoid} from "nanoid";
 import {CoordsItem} from "@/app/lib/graphql/schema";
-import EditableMetadataBox
-  from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/_components/EditableMetadataBox";
 import {Link, locales} from "@/i18n/routing";
 import {
   saveMetadata,
@@ -32,6 +30,18 @@ import {TOGGLE_CHAPTER_AI_PROCESSED} from "@/app/lib/graphql/mutations";
 import {FaEye, FaEyeSlash, FaPlus} from "react-icons/fa";
 import {MdAutoFixHigh} from "react-icons/md";
 import {useParams} from "next/navigation";
+import dynamic from "next/dynamic";
+const EditableMetadataBox = dynamic(
+  () => import('./EditableMetadataBox'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-32 h-16 border border-dashed border-gray-300 bg-gray-100 animate-pulse flex items-center justify-center text-xs">
+        Loading Editor...
+      </div>
+    )
+  }
+);
 
 export interface Box {
   id: string;
@@ -428,7 +438,6 @@ export default function RedactorPage({chapter, metadata}: Props) {
                   height={image.height}
                   data-loaded='false'
                   data-error='false'
-                  crossOrigin="anonymous"
                   onLoad={event => {
                     event.currentTarget.setAttribute('data-loaded', 'true')
                   }}

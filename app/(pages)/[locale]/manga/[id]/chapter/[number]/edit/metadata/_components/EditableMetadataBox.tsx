@@ -1,3 +1,5 @@
+"use client"
+
 import { Box } from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/_components/RedactorPage";
 import { Button, Card, CardBody, Select, SelectItem } from "@heroui/react";
 import React, { useEffect, useState, useRef } from "react";
@@ -54,6 +56,7 @@ function EditableMetadataBox({
                                isFocused,
                                onPress
                              }: Props) {
+  const [isMounted, setIsMounted] = useState(false);
   const [language, setLanguage] = useState<LocaleType>(defaultTextLanguage);
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState("");
@@ -69,6 +72,10 @@ function EditableMetadataBox({
     first: boxStyle?.backgroundImage?.split(",")[1],
     second:  boxStyle?.backgroundImage?.split(",")[2].replace(")", "")
   });
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!gradient.first || !gradient.second) return;
@@ -92,10 +99,9 @@ function EditableMetadataBox({
     setText(box.translatedTexts[language]?.text ?? "");
   }, [box.translatedTexts, language]);
 
-  // Inside EditableMetadataBox.tsx
-
   useEffect(() => {
     if (!needsResize) return;
+    if (!isMounted || typeof window === 'undefined') return;
 
     // ---- Pre-checks ----
     if (!imageRef) {
@@ -328,14 +334,6 @@ function EditableMetadataBox({
     const finalNewY1 = newCRY1 + imageDocumentY;
     const finalNewX2 = newCRX2 + imageDocumentX;
     const finalNewY2 = newCRY2 + imageDocumentY;
-    //
-    // console.log({
-    //   imageSrc: actualImageElement.src,
-    //   initialBoxMidCanvas: { x: xScanCoords, y: yScanCoords },
-    //   oldAbs: { x1: coords.x1, y1: coords.y1, x2: coords.x2, y2: coords.y2 },
-    //   newCanvasRel: { x1: newCRX1, y1: newCRY1, x2: newCRX2, y2: newCRY2 },
-    //   newAbs: { x1: finalNewX1, y1: finalNewY1, x2: finalNewX2, y2: finalNewY2 }
-    // });
 
     onBoxChange(box.id, finalNewX1, finalNewY1, finalNewX2, finalNewY2);
 
