@@ -14,6 +14,7 @@ import {
 } from "@google/genai";
 import { geminiModel } from "@/app/lib/AIModels";
 import {LocaleType} from "@/app/types";
+import {GEMINI_MODEL} from "@/app/lib/utils/constants";
 
 // --- Input Interface ---
 interface TranslateChapterTitlesInput {
@@ -137,7 +138,7 @@ RULES:
   };
 
   const result = await geminiModel.models.generateContent({
-    model: "gemini-2.5-flash-preview-04-17",
+    model: GEMINI_MODEL,
     contents: userContent,
     config: generationConfig,
   });

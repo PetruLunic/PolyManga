@@ -14,7 +14,7 @@ import {locales} from "@/i18n/routing";
 import React, {useState} from "react";
 import {
   saveMetadata,
-  translateWithGemini
+  translateChapterContent
 } from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/actions";
 import {Box} from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/_components/RedactorPage";
 import retryPromise from "@/app/lib/utils/retryPromise";
@@ -80,7 +80,7 @@ export default function TranslateChapterMetadataModal({onOpenChange, isOpen, box
 
       // Try to translate 3 times
       const response = await retryPromise(
-        () => translateWithGemini(originalTexts, sourceLangs[0], targetLang),
+        () => translateChapterContent(originalTexts, sourceLangs[0], targetLang),
         3,
         1000
       );

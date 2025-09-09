@@ -18,6 +18,8 @@ import {
 import {geminiModel} from "@/app/lib/AIModels";
 import Manga from "@/app/lib/models/Manga";
 import {revalidateTag} from "next/cache";
+import {Agent} from "https";
+import {GEMINI_MODEL} from "@/app/lib/utils/constants";
 
 export async function saveMetadata (metadataContent: Box[], chapterId: string) {
   const session = await auth();
@@ -77,11 +79,19 @@ export async function saveMetadata (metadataContent: Box[], chapterId: string) {
 }
 
 const BUCKET_URL = process.env.NEXT_PUBLIC_BUCKET_URL;
-const API_TOKEN = process.env.OCR_API_TOKEN;
+const OCR_API_TOKEN = process.env.OCR_API_TOKEN;
+const OCR_API_URL = process.env.OCR_API_URL;
 
-export async function scanOCR(ocrUrl: string, id: string, language: LocaleType) {
+export async function scanOCR(id: string, language: LocaleType) {
+  const session = await auth();
+
+  if (!session || session.user.role !== "ADMIN" && session.user.role !== "MODERATOR") {
+    throw new Error("Unauthorized access");
+  }
+
   if (!BUCKET_URL) throw new Error("No BUCKET_URL specified");
-  if (!API_TOKEN) throw new Error("No API_TOKEN specified");
+  if (!OCR_API_TOKEN) throw new Error("No OCR_API_TOKEN specified");
+  if (!OCR_API_URL) throw new Error("No OCR_API_URL specified");
 
   await dbConnect();
   const chapter = await Chapter.findOne({id}).lean();
@@ -97,20 +107,90 @@ export async function scanOCR(ocrUrl: string, id: string, language: LocaleType) 
     data: imagesUrls
   });
 
-  const response = await fetch(ocrUrl, {
+  // Create custom agent that ignores SSL certificate errors
+  const httpsAgent = new Agent({
+    rejectUnauthorized: false
+  });
+
+  const response = await fetch(OCR_API_URL + "/api/sync", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': API_TOKEN.toString()
+      'x-api-key': OCR_API_TOKEN.toString()
     },
+    // Add the custom agent for HTTPS requests
+    ...(OCR_API_URL.startsWith('https') && {
+      agent: httpsAgent
+    }),
     body
   })
 
+  console.log(body);
+
+  console.log(JSON.stringify(response));
+
   const data = await response.json();
+
+  console.log(data);
 
   if (!response.ok) throw new Error("Error at processing OCR: " + JSON.stringify(data));
 
   return data;
+}
+
+interface OCRStatusResponse {
+  status: "available" | "busy" | "error";
+  message?: string;
+}
+
+interface OCRStatusResult {
+  success: boolean;
+  status?: "available" | "busy" | "error";
+  error?: string;
+}
+
+export async function checkOCRStatus(): Promise<OCRStatusResult> {
+  try {
+    const OCR_API_URL = process.env.OCR_API_URL;
+
+    if (!OCR_API_URL) {
+      throw new Error("OCR_API_URL environment variable is not configured");
+    }
+
+    // Create custom agent that ignores SSL certificate errors
+    const httpsAgent = new Agent({
+      rejectUnauthorized: false
+    });
+
+    const response = await fetch(`${OCR_API_URL}/api/status`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // Add the custom agent for HTTPS requests
+      ...(OCR_API_URL.startsWith('https') && {
+        agent: httpsAgent
+      }),
+      signal: AbortSignal.timeout(10000)
+    });
+
+    if (!response.ok) {
+      throw new Error(`OCR API returned ${response.status}: ${response.statusText}`);
+    }
+
+    const data: OCRStatusResponse = await response.json();
+
+    return {
+      success: true,
+      status: data.status
+    };
+  } catch (error) {
+    console.error('Error checking OCR status:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
+    };
+  }
 }
 
 function cleanAIJsonResponse(response: string): any | null {
@@ -224,7 +304,7 @@ function manualJsonRepair(json: string): string {
   return json;
 }
 
-export async function translateWithGemini(
+export async function translateChapterContent(
   originalTexts: Record<LocaleType, string[]>,
   sourceLang: LocaleType,
   targetLang: LocaleType
@@ -347,7 +427,7 @@ Translate sequential comic panel texts from **${sourceLangs}** to **${targetLang
   try {
     // Note: The first argument to generateContent is the prompt/contents array
     const result = await geminiModel.models.generateContent({
-      model: "gemini-2.5-flash-preview-04-17",
+      model: GEMINI_MODEL,
       contents: userContent,
       config: generationConfig
     });
