@@ -4,6 +4,7 @@ import dbConnect from "@/app/lib/utils/dbConnect";
 import {schema} from "@/app/lib/graphql/resolvers";
 import {GraphQLError} from "graphql/error";
 import {unstable_cache} from "next/cache";
+import {nanoid} from "nanoid";
 
 // Graphql query executor, only server-side
 export async function queryGraphql<TData, TVariables extends { [key: string]: unknown } | undefined> (
@@ -16,9 +17,12 @@ export async function queryGraphql<TData, TVariables extends { [key: string]: un
   }
 ): Promise<{ data: TData | null, errors: readonly GraphQLError[] | undefined }> {
 
+  // Extracting the unique name of query, otherwise disabling cache by a unique id
+  const queryName = "name" in document.definitions[0] ? document.definitions[0].name?.value ?? nanoid() : nanoid();
+
   // Create a cache key from the query and variables
   const cacheKey = [
-    document.loc?.source.name || 'query',
+    queryName,
     JSON.stringify(variables || {})
   ];
 
