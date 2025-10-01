@@ -151,7 +151,7 @@ interface OCRStatusResult {
 
 export async function checkOCRStatus(): Promise<OCRStatusResult> {
   try {
-    const OCR_API_URL = process.env.OCR_API_URL;
+    const OCR_API_URL = process.env.NEXT_PUBLIC_OCR_API_URL;
 
     if (!OCR_API_URL) {
       throw new Error("OCR_API_URL environment variable is not configured");

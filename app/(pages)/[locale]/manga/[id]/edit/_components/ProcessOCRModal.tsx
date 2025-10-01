@@ -7,182 +7,216 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalProps, Select, SelectItem,
+  ModalProps, Select, SelectItem, Spinner,
 } from "@heroui/react";
 import { ChapterList } from "@/app/_components/ChapterListEdit";
 import React, { useEffect, useState, useRef } from "react";
-import { scanOCR, checkOCRStatus } from "@/app/(pages)/[locale]/manga/[id]/chapter/[number]/edit/metadata/actions";
 import { ChapterLanguage, ChapterLanguageFull, LocaleType } from "@/app/types";
+import {OcrWsClient} from "@/app/lib/utils/OcrWsClient";
 
 interface Props extends Omit<ModalProps, "children"> {
   chapters?: ChapterList,
   selectedChapters: string[]
 }
 
-type ProcessStatus = "pending" | "finished" | "error" | "processing";
+interface ChapterForOcr {
+  id: string;
+  images: { src: string }[];
+}
 
-const POLL_INTERVAL = 20000; // 20 seconds
-const POLL_TIMEOUT = 60000; // 1 minute initial delay before starting to poll
+const BUCKET_URL = process.env.NEXT_PUBLIC_BUCKET_URL as string;
+const WS_URL = process.env.NEXT_PUBLIC_OCR_API_URL as string;
 
-export default function ProcessOcrModal({ onOpenChange, isOpen, selectedChapters, chapters }: Props) {
+type SocketStatus = "disconnected" | "connecting" | "connected" | "authenticated" | "error";
+
+export default function ProcessOcrModal({ onOpenChange, isOpen, selectedChapters }: Props) {
   const [imagesLanguage, setImagesLanguage] = useState<LocaleType>("en");
-  const [processingStatuses, setProcessingStatuses] = useState<Partial<Record<string, ProcessStatus>>>({});
-  const [currentChapterIndex, setCurrentChapterIndex] = useState<number>(-1);
-  const [isPolling, setIsPolling] = useState(false);
+  const [ocrToken, setOcrToken] = useState<string | null>(null);
+  const [ocrChapters, setOcrChapters] = useState<ChapterForOcr[]>([]);
+  const [fetchLoading, setFetchLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // Use refs to store the latest values for the polling function
-  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const currentChapterIndexRef = useRef(-1);
-  const selectedChaptersRef = useRef<string[]>([]);
-  const processingStatusesRef = useRef<Partial<Record<string, ProcessStatus>>>({});
+  const [processingStatuses, setProcessingStatuses] = useState<Partial<Record<string, "pending" | "processing" | "finished" | "error">>>({});
+  const [currentChapterIndex, setCurrentChapterIndex] = useState(-1);
+
+  const [socketStatus, setSocketStatus] = useState<SocketStatus>("disconnected");
+  const [metaMessage, setMetaMessage] = useState<string | null>(null);
+  const wsRef = useRef<OcrWsClient | null>(null);
+
+  const processingChapter = currentChapterIndex >= 0 ? selectedChapters[currentChapterIndex] : null;
   const isProcessing = Object.values(processingStatuses).some(status => status === "processing");
 
-  // Update refs when state changes
+  const currentChapterIndexRef = useRef(currentChapterIndex);
+
   useEffect(() => {
     currentChapterIndexRef.current = currentChapterIndex;
   }, [currentChapterIndex]);
 
+
+  // --- Fetch OCR data on modal open, language or chapters change ---
   useEffect(() => {
-    selectedChaptersRef.current = selectedChapters;
-  }, [selectedChapters]);
+    async function fetchOcrData() {
+      if (isOpen && selectedChapters.length > 0) {
+        setFetchLoading(true);
+        setFetchError(null);
+        setOcrChapters([]);
+        setOcrToken(null);
 
-  useEffect(() => {
-    processingStatusesRef.current = processingStatuses;
-  }, [processingStatuses]);
-
-  const processingChapter = currentChapterIndex >= 0 ? selectedChapters[currentChapterIndex] : null;
-
-  // Poll OCR status
-  const pollOCRStatus = async () => {
-    try {
-      const result = await checkOCRStatus();
-
-      if (!result.success) {
-        console.error('OCR status check failed:', result.error);
-        // Handle error but continue polling
-        return;
-      }
-
-      // If OCR is available (not busy), process next chapter
-      if (result.status === "available") {
-        console.log("OCR is available, processing next chapter");
-
-        const currentIndex = currentChapterIndexRef.current;
-        const chapters = selectedChaptersRef.current;
-
-        if (currentIndex >= 0 && currentIndex < chapters.length) {
-          // Mark current chapter as finished
-          setProcessingStatuses(prev => ({
-            ...prev,
-            [chapters[currentIndex]]: "finished"
-          }));
-        }
-
-        // Move to next chapter
-        const nextIndex = currentIndex + 1;
-
-        if (nextIndex < chapters.length) {
-          setCurrentChapterIndex(nextIndex);
-          setProcessingStatuses(prev => ({
-            ...prev,
-            [chapters[nextIndex]]: "processing"
-          }));
-
-          // Start OCR for next chapter
-          try {
-            await scanOCR(chapters[nextIndex], imagesLanguage);
-          } catch (error) {
-            console.error('OCR scan failed:', error);
-            setProcessingStatuses(prev => ({
-              ...prev,
-              [chapters[nextIndex]]: "error"
-            }));
+        try {
+          const res = await fetch("/api/ocr/get-chapter-ocr-data", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chapterIds: selectedChapters, imagesLanguage })
+          });
+          const data = await res.json();
+          if (!res.ok || !data.token) {
+            setFetchError("Failed to retrieve OCR token.");
+          } else {
+            setOcrToken(data.token);
+            setOcrChapters(data.chapters); // [{id, images: [...] }]
           }
-        } else {
-          // All chapters processed
-          console.log("All chapters processed");
-          stopPolling();
+        } catch (err) {
+          setFetchError("Network error or unauthorized.");
         }
-      } else if (result.status === "error") {
-        console.error("OCR API returned error status");
-        if (processingChapter) {
-          setProcessingStatuses(prev => ({
-            ...prev,
-            [processingChapter]: "error"
-          }));
-        }
-        stopPolling();
+        setFetchLoading(false);
       }
-      // If status is "busy", continue polling
-    } catch (error) {
-      console.error('Error during OCR status polling:', error);
     }
+    if (isOpen) fetchOcrData();
+    // eslint-disable-next-line
+  }, [isOpen, selectedChapters, imagesLanguage]);
+
+  // --- Guard before connect/start ---
+  const canConnect = !!ocrToken && ocrChapters.length === selectedChapters.length && !fetchLoading;
+  const canStartOcr = socketStatus === "authenticated" && canConnect && !isProcessing;
+
+  // --- Connect WS ---
+  const connectWS = () => {
+    if (!canConnect || !ocrToken) return;
+    if (wsRef.current) wsRef.current.close();
+
+    setSocketStatus("connecting");
+    setMetaMessage(null);
+
+    wsRef.current = new OcrWsClient({
+      url: WS_URL + "/ws",
+      apiKey: ocrToken,
+      handlers: {
+        onAuthenticated: (frame) => {
+          setSocketStatus("authenticated");
+          setMetaMessage(frame.message);
+          // if (frame.status === "authenticated" && "processing_status" in frame && typeof frame.processing_status === "string") {
+          //   if (frame.processing_status === "available") handleAvailable();
+          // }
+        },
+        onProcessingStatus: (frame) => {
+          if ("processing_status" in frame) {
+            if (frame.processing_status === "available" && frame.status !== "authenticated") {
+              handleAvailable();
+            }
+            else if (frame.processing_status === "busy") setMetaMessage("OCR processor busy...");
+            else if (frame.processing_status === "error") {
+              setMetaMessage("OCR error!");
+              if (processingChapter) updateStatus(processingChapter, "error");
+            }
+          }
+        },
+        onNotification: (frame) => setMetaMessage("Notification: " + frame.message),
+        onSuccess: (frame) => {
+          setMetaMessage("Success: " + frame.message);
+          handleAvailable();
+        },
+        onError: (_frame) => setSocketStatus("error"),
+        onMetadata: (data) => {}, // handle as you want
+        onClose: () => {
+          setSocketStatus("disconnected");
+          setMetaMessage(null);
+        }
+      }
+    });
+
+    wsRef.current.connect();
   };
 
-  const startPolling = () => {
-    if (pollIntervalRef.current) {
-      clearInterval(pollIntervalRef.current);
-    }
-
-    setIsPolling(true);
-    pollIntervalRef.current = setInterval(pollOCRStatus, POLL_INTERVAL);
+  // --- Disconnect WS ---
+  const disconnectWS = () => {
+    wsRef.current?.close();
+    wsRef.current = null;
+    setSocketStatus("disconnected");
+    setMetaMessage(null);
   };
 
-  const stopPolling = () => {
-    if (pollIntervalRef.current) {
-      clearInterval(pollIntervalRef.current);
-      pollIntervalRef.current = null;
+
+  // --- Handle next chapter when available ---
+  function handleAvailable() {
+    if (!ocrChapters.length) return;
+    const chs = selectedChapters;
+    const currentIdx = currentChapterIndexRef.current;
+    if (currentIdx >= 0 && currentIdx < chs.length) {
+      updateStatus(chs[currentIdx], "finished");
     }
-    setIsPolling(false);
-    setCurrentChapterIndex(-1);
-  };
 
-  async function processOCR() {
-    if (selectedChapters.length === 0) return;
 
-    // Initialize all chapters as pending
-    const initialStatuses = selectedChapters.reduce((acc, id, index) => ({
-      ...acc,
-      [id]: index === 0 ? "processing" : "pending"
-    }), {});
-
-    setProcessingStatuses(initialStatuses);
-    setCurrentChapterIndex(0);
-
-    try {
-      // Start OCR for the first chapter
-      console.log("Starting OCR for first chapter:", selectedChapters[0]);
-      await scanOCR(selectedChapters[0], imagesLanguage);
-
-      // Start polling after initial delay
-      setTimeout(() => {
-        startPolling();
-      }, POLL_TIMEOUT);
-
-    } catch (error) {
-      console.error('Failed to start OCR process:', error);
-      setProcessingStatuses(prev => ({
-        ...prev,
-        [selectedChapters[0]]: "error"
-      }));
+    const nextIdx = currentIdx + 1;
+    if (nextIdx < chs.length) {
+      setCurrentChapterIndex(nextIdx);
+      updateStatus(chs[nextIdx], "processing");
+      const chapter = ocrChapters.find(ch => ch.id === chs[nextIdx]);
+      const imgUrls = chapter?.images.map(img => BUCKET_URL + img.src) || [];
+      if (chapter) {
+        wsRef.current?.sendStart({ chapterId: chapter.id, images: imgUrls });
+      }
+    } else {
+      setMetaMessage("All chapters processed!");
+      disconnectWS();
     }
   }
 
-  const getStatusDisplay = (status: ProcessStatus) => {
-    switch (status) {
-      case "pending":
-        return { text: "Pending", color: "text-gray-500" };
-      case "processing":
-        return { text: "Processing...", color: "text-blue-500" };
-      case "finished":
-        return { text: "Completed", color: "text-green-500" };
-      case "error":
-        return { text: "Error", color: "text-red-500" };
-      default:
-        return { text: "Unknown", color: "text-gray-500" };
+  function updateStatus(chapterId: string, status: "pending" | "processing" | "finished" | "error") {
+    setProcessingStatuses(prev => ({ ...prev, [chapterId]: status }));
+  }
+
+  // --- Start OCR process ---
+  function processOCR() {
+    if (!wsRef.current || !ocrChapters.length || socketStatus !== "authenticated") return;
+    if (selectedChapters.length === 0) return;
+
+    // Mark statuses
+    const initial = selectedChapters.reduce((acc, id, idx) => ({
+      ...acc,
+      [id]: idx === 0 ? "processing" : "pending"
+    }), {});
+    setProcessingStatuses(initial);
+    setCurrentChapterIndex(0);
+
+    // Send start job for first chapter
+    const chapter = ocrChapters.find(ch => ch.id === selectedChapters[0]);
+    const imgUrls = chapter?.images.map(img => BUCKET_URL + img.src) || [];
+    if (chapter) {
+      wsRef.current?.sendStart({ chapterId: chapter.id, images: imgUrls });
+      setMetaMessage("Started OCR for chapter " + chapter.id);
     }
+  }
+
+  // --- Reset on modal close ---
+  // useEffect(() => {
+  //   if (!isOpen) {
+  //     disconnectWS();
+  //     setProcessingStatuses({});
+  //     setCurrentChapterIndex(-1);
+  //   }
+  //   // eslint-disable-next-line
+  // }, [isOpen]);
+
+  // --- Status Display ---
+  const statusColors: Record<SocketStatus, string> = {
+    "disconnected": "text-gray-500",
+    "connecting": "text-blue-500 animate-pulse",
+    "connected": "text-blue-600",
+    "authenticated": "text-green-600",
+    "error": "text-red-600",
   };
 
+  // --- Render Modal ---
   return (
     <Modal
       size="full"
@@ -204,7 +238,7 @@ export default function ProcessOcrModal({ onOpenChange, isOpen, selectedChapters
                   onSelectionChange={keys => {
                     setImagesLanguage((keys.currentKey ?? "en") as LocaleType)
                   }}
-                  isDisabled={isPolling}
+                  isDisabled={isProcessing || fetchLoading}
                 >
                   {Object.keys(ChapterLanguage).map(lang =>
                     <SelectItem key={lang.toLowerCase()}>
@@ -212,14 +246,23 @@ export default function ProcessOcrModal({ onOpenChange, isOpen, selectedChapters
                     </SelectItem>
                   )}
                 </Select>
-
-                {isPolling && (
-                  <div className="flex items-center gap-2 text-sm text-blue-600">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-                    Polling OCR status...
-                  </div>
-                )}
               </div>
+
+              {/* OCR data loading spinner and errors */}
+              {fetchLoading && (
+                <div className="flex items-center gap-2 my-3 text-blue-600"><Spinner size="sm" />Fetching chapters & token...</div>
+              )}
+              {fetchError && (
+                <div className="my-3 text-red-600">Error: {fetchError}</div>
+              )}
+              {ocrChapters.length === selectedChapters.length && !fetchLoading && (
+                <div className={`font-medium mt-2 mb-3 ${statusColors[socketStatus]}`}>
+                  WebSocket Status: {socketStatus[0].toUpperCase() + socketStatus.substring(1)}
+                  {metaMessage && (
+                    <span className="ml-2 text-sm text-gray-600">| {metaMessage}</span>
+                  )}
+                </div>
+              )}
 
               <Card>
                 <CardHeader>
@@ -228,21 +271,29 @@ export default function ProcessOcrModal({ onOpenChange, isOpen, selectedChapters
                 <CardBody>
                   <div className="flex flex-col gap-3 max-h-96 overflow-y-auto">
                     {selectedChapters.map((id, index) => {
-                      const chapter = chapters?.find(ch => ch.id === id);
+                      const chapter = ocrChapters.find(ch => ch.id === id);
                       const status = processingStatuses[id];
-                      const statusDisplay = status ? getStatusDisplay(status) : null;
-
+                      const color =
+                        status === "pending"
+                          ? "text-gray-500"
+                          : status === "processing"
+                            ? "text-blue-500"
+                            : status === "finished"
+                              ? "text-green-500"
+                              : status === "error"
+                                ? "text-red-500"
+                                : "text-gray-500";
                       return (
                         <div key={id} className="flex items-center justify-between p-3 border rounded-lg">
                           <div className="flex-1">
                             <p className="font-medium">
-                              {chapter?.titles[0]?.value || `Chapter ${index + 1}`}
+                              {chapter ? `Chapter ${index + 1}` : "(loading...)"}
                             </p>
                             <p className="text-sm text-gray-600">ID: {id}</p>
                           </div>
-                          {statusDisplay && (
-                            <div className={`font-medium ${statusDisplay.color}`}>
-                              {statusDisplay.text}
+                          {status && (
+                            <div className={`font-medium ${color}`}>
+                              {status[0].toUpperCase() + status.substring(1)}
                             </div>
                           )}
                         </div>
@@ -252,7 +303,7 @@ export default function ProcessOcrModal({ onOpenChange, isOpen, selectedChapters
                 </CardBody>
               </Card>
             </ModalBody>
-            <ModalFooter>
+            <ModalFooter className="flex gap-3">
               <Button
                 onPress={onClose}
                 color="danger"
@@ -260,10 +311,17 @@ export default function ProcessOcrModal({ onOpenChange, isOpen, selectedChapters
                 Close
               </Button>
               <Button
+                color={socketStatus === "disconnected" || socketStatus === "error" ? "primary" : "secondary"}
+                onPress={socketStatus === "disconnected" || socketStatus === "error" ? connectWS : disconnectWS}
+                isDisabled={!canConnect}
+              >
+                {socketStatus === "disconnected" || socketStatus === "error" ? "Connect WebSocket" : "Disconnect"}
+              </Button>
+              <Button
                 color="primary"
                 isLoading={isProcessing}
                 onPress={processOCR}
-                isDisabled={isProcessing || selectedChapters.length === 0}
+                isDisabled={!canStartOcr}
               >
                 {isProcessing ? "Processing..." : "Start OCR"}
               </Button>
