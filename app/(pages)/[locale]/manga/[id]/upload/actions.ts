@@ -287,7 +287,7 @@ export async function initiateChapterUpload(
       return { success: false, message: "Manga not found" };
     }
 
-    const existingChapter = await Chapter.exists({ number, mangaId: manga._id });
+    const existingChapter = await Chapter.exists({ number, mangaId: manga.id });
 
     if (existingChapter) {
       return { success: false, message: "Chapter with this number already exists in this manga" };
