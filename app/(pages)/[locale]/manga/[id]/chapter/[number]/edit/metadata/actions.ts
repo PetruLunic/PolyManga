@@ -75,6 +75,8 @@ export async function saveMetadata (metadataContent: Box[], chapterId: string) {
   const chapter = await Chapter.findOne({id: chapterId}).lean();
   const manga = await Manga.findOne({id: chapter?.mangaId}).lean();
 
+  console.log(`chapter-${manga?.slug}-${chapter?.number}`)
+
   revalidateTag(`chapter-${manga?.slug}-${chapter?.number}`)
 }
 

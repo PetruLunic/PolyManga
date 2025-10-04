@@ -82,10 +82,10 @@ export default function ChapterListEdit({chapters, slug}: Props) {
  return (
    <>
      <div className="flex flex-col gap-4">
-       <div className="flex gap-3 self-end">
+       <div className="flex p-1 h-fit items-center sm:justify-end flex-nowrap overflow-x-scroll scrollbar-hide bg-transparent dark:bg-transparent rounded-none gap-1 md:gap-3">
          <Button
            variant="light"
-           className=""
+           className="min-w-32"
            onPress={() => setDescending(prev => !prev)}
          >
            {descending ? "Descending" : "Ascending"}
@@ -103,6 +103,7 @@ export default function ChapterListEdit({chapters, slug}: Props) {
            color={selectedChapters.length ? "danger" : "default"}
            isDisabled={!selectedChapters.length}
            startContent={<FaRegTrashCan/>}
+           className="min-w-fit"
            onPress={deleteDisclosure.onOpen}
            isLoading={loading}
          >
@@ -112,6 +113,7 @@ export default function ChapterListEdit({chapters, slug}: Props) {
            color={selectedChapters.length ? "primary" : "default"}
            isDisabled={!selectedChapters.length}
            startContent={<IoLanguage/>}
+           className="min-w-fit"
            onPress={translateDisclosure.onOpen}
          >
            Translate selected ({selectedChapters.length})
@@ -121,6 +123,7 @@ export default function ChapterListEdit({chapters, slug}: Props) {
            isDisabled={!selectedChapters.length}
            startContent={<IoLanguage/>}
            onPress={ocrDisclosure.onOpen}
+           className="min-w-fit"
          >
            Process OCR selected ({selectedChapters.length})
          </Button>
@@ -138,7 +141,7 @@ export default function ChapterListEdit({chapters, slug}: Props) {
                  value={chapter.id}
                  classNames={{label: "flex justify-between w-full items-center before:hidden"}}
                  variant="flat"
-                 className="w-full justify-start h-auto flex max-w-full gap-2 py-1"
+                 className="w-full justify-start h-auto flex max-w-full gap-2 py-1 overflow-x-scroll scrollbar-hide"
                >
                  <div className="flex gap-3">
                    <span>{extractMangaTitle(chapter.titles, locale as LocaleType)}</span>

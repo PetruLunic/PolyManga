@@ -220,6 +220,7 @@ export default function ProcessOcrModal({ onOpenChange, isOpen, selectedChapters
   return (
     <Modal
       size="full"
+      scrollBehavior="inside"
       onOpenChange={onOpenChange}
       isOpen={isOpen}
     >
@@ -264,12 +265,8 @@ export default function ProcessOcrModal({ onOpenChange, isOpen, selectedChapters
                 </div>
               )}
 
-              <Card>
-                <CardHeader>
                   <h3 className="text-lg font-semibold">Processing Status</h3>
-                </CardHeader>
-                <CardBody>
-                  <div className="flex flex-col gap-3 max-h-96 overflow-y-auto">
+                  <div className="flex flex-col gap-3">
                     {selectedChapters.map((id, index) => {
                       const chapter = ocrChapters.find(ch => ch.id === id);
                       const status = processingStatuses[id];
@@ -300,8 +297,6 @@ export default function ProcessOcrModal({ onOpenChange, isOpen, selectedChapters
                       );
                     })}
                   </div>
-                </CardBody>
-              </Card>
             </ModalBody>
             <ModalFooter className="flex gap-3">
               <Button
@@ -315,7 +310,7 @@ export default function ProcessOcrModal({ onOpenChange, isOpen, selectedChapters
                 onPress={socketStatus === "disconnected" || socketStatus === "error" ? connectWS : disconnectWS}
                 isDisabled={!canConnect}
               >
-                {socketStatus === "disconnected" || socketStatus === "error" ? "Connect WebSocket" : "Disconnect"}
+                {socketStatus === "disconnected" || socketStatus === "error" ? "Connect WS" : "Disconnect"}
               </Button>
               <Button
                 color="primary"

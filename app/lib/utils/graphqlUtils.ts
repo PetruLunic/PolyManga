@@ -47,7 +47,7 @@ export async function queryGraphql<TData, TVariables extends { [key: string]: un
     cacheKey,
     {
       tags: options?.tags || [],
-      revalidate: options?.revalidate || 60
+      revalidate: options?.revalidate || 1
     }
   );
 
