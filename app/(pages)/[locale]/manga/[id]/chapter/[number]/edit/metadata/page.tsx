@@ -18,7 +18,11 @@ export default async function Page({params}: Props) {
   const number = Number.parseFloat(numberString);
   if (Number.isNaN(number)) notFound();
 
-  const {data} = await queryGraphql(GET_CHAPTER, {number, slug: id, locale});
+  const {data} = await queryGraphql(
+    GET_CHAPTER,
+    {number, slug: id, locale},
+    { tags: [`chapter-${id}-${number}`, `chapter-${id}-${number}-${locale}`]}
+  );
   if (!data) notFound();
 
   const chapter = data.chapter;

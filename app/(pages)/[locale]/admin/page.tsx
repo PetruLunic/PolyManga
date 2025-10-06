@@ -11,6 +11,11 @@ export default function Page() {
    }}>
     Clean aws bucket
    </Button>
+    {/*<Button*/}
+    {/*  onPress={deleteChapterDuplicates}*/}
+    {/*>*/}
+    {/*  deleteChapterDuplicates*/}
+    {/*</Button>*/}
   </div>
  );
 };
