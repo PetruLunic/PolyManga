@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const { title, number, images, mangaId } = body;
 
     // Validation
-    if (!title || !number || !Array.isArray(images) || !mangaId) {
+    if (!title || (!number && number !== 0) || !Array.isArray(images) || !mangaId) {
       return NextResponse.json(
         { error: 'Invalid request body' },
         { status: 400 }

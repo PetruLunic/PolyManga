@@ -114,7 +114,6 @@ export const EditChapterInputSchema = z.object({
   languages: z.string(),
   number: z
     .number({required_error: "Chapter number is required", invalid_type_error: "Chapter number must be a number"})
-    .int("Chapter number must be integer")
     .nonnegative("Chapter number must be positive"),
   titles: z.array(z.object({
     language: z.string(),
