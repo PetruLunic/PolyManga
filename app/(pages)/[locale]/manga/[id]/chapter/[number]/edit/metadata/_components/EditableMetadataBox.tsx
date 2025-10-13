@@ -16,6 +16,8 @@ import hexToRgb from "@/app/lib/utils/hexToRgb";
 import {FaAlignCenter, FaAlignLeft, FaAlignRight, FaBold, FaItalic} from "react-icons/fa";
 import invertColor from "@/app/lib/utils/invertColor";
 import {VscColorMode} from "react-icons/vsc";
+import fonts from "@/app/lib/fonts";
+import {DEFAULT_CHAPTER_FONT_FAMILY} from "@/app/lib/utils/constants";
 
 const FONT_SIZES = Array.from({ length: 50 }, (_, index) => 10 + index * 2);
 const OPACITY_VALUES = Array.from({ length: 11 }, (_, index) => index / 10);
@@ -90,6 +92,11 @@ function EditableMetadataBox({
     if (!debouncedBoxStyle) return;
     handleBoxStyleChange(box.id, debouncedBoxStyle);
   }, [debouncedBoxStyle]);
+
+  if (isFocused) {
+    console.log(box.style);
+    console.log(boxStyle);
+  }
 
   useEffect(() => {
     setLanguage(defaultTextLanguage);
@@ -409,9 +416,9 @@ function EditableMetadataBox({
             data-id={box.id} // Pass the ID as a custom attribute for identification
         >
           <Card
-              className="relative light min-w-full min-h-full overflow-visible rounded-[10em] shadow-none text-center uppercase hyphens-auto"
+              className={`relative light min-w-full min-h-full overflow-visible rounded-[10em] shadow-none text-center uppercase hyphens-auto`}
               lang={language}
-              style={box.style}
+              style={{...fonts[boxStyle?.fontFamily as keyof typeof fonts ?? DEFAULT_CHAPTER_FONT_FAMILY]?.style, ...box.style}}
               data-id={box.id}
           >
             <CardBody
@@ -555,6 +562,22 @@ function EditableMetadataBox({
                       ))}
                     </Select>
                   </div>
+                  <Select
+                    label={"Font"}
+                    selectedKeys={[box.style?.fontFamily ?? DEFAULT_CHAPTER_FONT_FAMILY]}
+                    disallowEmptySelection
+                    onSelectionChange={(keys) => {
+                      setBoxStyle(prev => ({
+                          ...prev,
+                          fontFamily: keys.currentKey ?? DEFAULT_CHAPTER_FONT_FAMILY
+                      }))
+                    }}
+                    size="sm"
+                  >
+                    {Object.keys(fonts).map(font => (
+                      <SelectItem key={font}>{font}</SelectItem>
+                      ))}
+                  </Select>
                   {!isEditing ? (
                       <Button
                           size="sm"

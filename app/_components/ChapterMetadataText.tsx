@@ -1,6 +1,5 @@
 "use client"
 
-import wildWords from "@/app/lib/fonts/WildWords";
 import React from "react";
 import {TextItem} from "@/app/types";
 import 'quill/dist/quill.core.css';
@@ -24,7 +23,7 @@ export default function ChapterMetadataText({value}: Props) {
        }`}
      </style>
      <div
-       className={`relative display-area ql-editor ${wildWords.className}`}
+       className={`relative display-area ql-editor`}
        style={{
          fontSize: value?.fontSize ?? 32,
          lineHeight: 1.25,
@@ -34,7 +33,7 @@ export default function ChapterMetadataText({value}: Props) {
        <div
          className={`
                   relative 
-                  [-webkit-text-stroke:0.2em_white]
+                  [-webkit-text-stroke:0.12em_white]
                   text-balance
                   whitespace-pre-line
                   `}

@@ -38,6 +38,9 @@ export const ChapterMetadataSchema = new Schema<ChapterMetadataRaw>({
       },
       color: {
         type: String
+      },
+      fontFamily: {
+        type: String
       }
     },
     translatedTexts: [{

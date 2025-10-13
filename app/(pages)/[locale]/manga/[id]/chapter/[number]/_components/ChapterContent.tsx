@@ -16,6 +16,8 @@ import {useChapterLanguage} from "@/app/lib/hooks/useChapterLanguage";
 import {ChapterImage} from "@/app/lib/graphql/schema";
 import ChapterMetadataText from "@/app/_components/ChapterMetadataText";
 import scaleFontSizes from "@/app/lib/utils/scaleFontSizes";
+import fonts from "@/app/lib/fonts";
+import {DEFAULT_CHAPTER_FONT_FAMILY} from "@/app/lib/utils/constants";
 
 const METADATA_BOX_PADDING = 0;
 const BUCKET_URL = process.env.NEXT_PUBLIC_BUCKET_URL;
@@ -153,7 +155,8 @@ export default function ChapterContent({chapter, metadata}: Props) {
                   width: `${width}px`,
                   minHeight: `${height}px`,
                   maxWidth: `${screenWidth}px`,
-                  ...data.style
+                  ...data.style,
+                  ...fonts[data.style?.fontFamily as keyof typeof fonts ?? DEFAULT_CHAPTER_FONT_FAMILY]?.style // applying fonts
                 }}
                 onPress={() => {
                   if (imagesLanguage !== targetLang) return;

@@ -142,7 +142,8 @@ export const GET_CHAPTER = gql(`
             textAlign,
             fontWeight,
             fontStyle,
-            color
+            color,
+            fontFamily
           },
           translatedTexts {
             language,

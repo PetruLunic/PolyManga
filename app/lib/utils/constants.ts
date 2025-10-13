@@ -4,3 +4,4 @@ export const MAX_CHAPTER_IMAGE_HEIGHT = 3000;
 export const CHAPTER_IMAGE_WIDTH = 700;
 export const DEFAULT_LANGUAGE = "en";
 export const GEMINI_MODEL = "gemini-2.5-flash";
+export const DEFAULT_CHAPTER_FONT_FAMILY = "wildWords";

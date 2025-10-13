@@ -433,6 +433,9 @@ export class ContentItemStyle implements React.CSSProperties {
 
   @Field(() => String, { nullable: true })
   color?: React.CSSProperties['color'];
+
+  @Field(() => String, { nullable: true })
+  fontFamily?: React.CSSProperties['fontFamily'];
 }
 
 @ObjectType("ContentItemRaw")
