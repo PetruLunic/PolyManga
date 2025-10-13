@@ -15,6 +15,7 @@ import {NavigationLoadingIndicator} from "@/app/_components/NavigationLoadingInd
 import {locales} from "@/i18n/routing";
 import {SWRegistration} from "@/app/_components/SWRegistration";
 import ScrollOnTop from "@/app/_components/ScrollOnTop";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -72,6 +73,7 @@ export default async function RootLayout({children, params}: Props) {
       </Providers>
     </NextIntlClientProvider>
     <SpeedInsights/>
+    <Analytics />
     </body>
     </html>
   );
